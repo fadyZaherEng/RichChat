@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
+import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/show_animated_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/my_chats/widgets/my_chats_user_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 
 class PublicGroupScreen extends BaseStatefulWidget {
   const PublicGroupScreen({super.key});
@@ -48,8 +52,7 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                       return Center(child: Text(snapshot.error.toString()));
                     } else if (snapshot.data != null &&
                         snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text("No Public Group Found"));
+                      return const Center(child: Text("No Public Group Found"));
                     }
                     return Expanded(
                       child: ListView.separated(
@@ -61,6 +64,50 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                             isGroup: true,
                             onTap: () {
                               //TODO: navigate to chat screen
+                              if (groupModel.membersUIDS
+                                  .contains(GetUserUseCase(injector())().uId)) {
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.chatWithFriendScreen,
+                                  arguments: {
+                                    "friendId": groupModel.groupID,
+                                    "friendName": groupModel.groupName,
+                                    "friendImage": groupModel.groupLogo,
+                                    "groupId": groupModel.groupID,
+                                  },
+                                );
+                                return;
+                              }
+                              if (groupModel.requestToJoin) {
+                                if(groupModel.awaitingApprovalUIDS.contains(GetUserUseCase(injector())().uId)){
+                                  //show snack bar
+                                  CustomSnackBarWidget.show(
+                                    context: context,
+                                    message: "Request Already Sent",
+                                    path: ImagePaths.icSuccess,
+                                    backgroundColor: ColorSchemes.green,
+                                  );
+                                  return;
+                                }
+                                //show dialog to join
+                                showAnimatedDialog(
+                                  context: context,
+                                  textAction: "Request To Join",
+                                  title: "Request To Join",
+                                  content:
+                                      "you need request to join this group,before you can chat with members of this group",
+                                  onActionTap: (value) {
+                                    //TODO: send request to join
+                                    CustomSnackBarWidget.show(
+                                      context: context,
+                                      message: "Request Sent",
+                                      path: ImagePaths.icSuccess,
+                                      backgroundColor: ColorSchemes.green,
+                                    );
+                                  },
+                                );
+                                return;
+                              }
                               _bloc
                                   .setGroup(group: groupModel)
                                   .whenComplete(() {

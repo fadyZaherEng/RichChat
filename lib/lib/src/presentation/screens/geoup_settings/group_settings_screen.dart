@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
+import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/create_group/widgets/setting_list_tile_widget.dart';
@@ -112,16 +113,18 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
   }
 
   String _getGroupAdminNames() {
+    //get uid
+    final uid = FirebaseSingleTon.auth.currentUser!.uid;
     //check if there are group members
     if (groupProvider.groupMembersList.isEmpty) {
       return "To Assign Admin roles ,Please add at least one member to the group";
     } else {
-      List<String> groupAdminNames = [S.of(context).you];
+      List<String> groupAdminNames = [];
       //get the list of group admins
       List<UserModel> groupAdminsList = groupProvider.groupMembersList;
       //get a list of names from the list of group admins
       List<String> groupAdminNamesList =
-          groupAdminsList.map((e) => e.name).toList();
+          groupAdminsList.map((e) => e.uId==uid?S.of(context).you:e.name).toList();
       //add the group admin names to the list
       groupAdminNames.addAll(groupAdminNamesList);
       //return the list of group admin names
@@ -129,7 +132,7 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
           ? groupAdminNames.join(" and ")
           : groupAdminNames.length > 2
               ? "${groupAdminNames.sublist(0, groupAdminNames.length - 1).join(", ")} and ${groupAdminNames.last}"
-              : groupAdminNames.first;
+              : S.of(context).you;
     }
   }
 

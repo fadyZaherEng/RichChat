@@ -6,6 +6,7 @@ import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/friend_view_type.dart';
+import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/friends/friends_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
@@ -60,6 +61,9 @@ class _FriendWidgetState extends State<FriendWidget> {
   }
 
   Widget _buildFriendWidget(BuildContext context) {
+    //get uid
+    final uid = FirebaseSingleTon.auth.currentUser!.uid;
+    String name=uid==widget.friend.uId?S.of(context).you:widget.friend.name;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       onTap: () {
@@ -68,7 +72,7 @@ class _FriendWidgetState extends State<FriendWidget> {
       leading:
           UserImageWidget(image: widget.friend.image, width: 50, height: 50),
       title: Text(
-        widget.friend.name,
+        name,
         style: GoogleFonts.openSans(
           fontSize: 16,
           fontWeight: FontWeight.bold,

@@ -49,8 +49,8 @@ class _GroupInformationScreenState extends State<GroupInformationScreen> {
                 children: [
                   GroupCardDetailsWidget(bloc: _bloc, isAdmin: isAdmin),
                   const SizedBox(height: 10),
-                  const SettingsAndMediaWidget(),
-                  const SizedBox(height: 10),
+                  SettingsAndMediaWidget(isAdmin: isAdmin, bloc: _bloc),
+                  const SizedBox(height: 20),
                   AddMembers(
                     bloc: _bloc,
                     isAdmin: isAdmin,
