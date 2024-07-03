@@ -23,3 +23,7 @@ final class CreateGroupLoadingState extends GroupState {}
 final class GroupMembersListUpdateSuccessState extends GroupState {}
 final class GroupAdminsListUpdateSuccessState extends GroupState {}
 final class ChangeGroupType extends GroupState{}
+final class SendRequestToJoinGroupSuccessState extends GroupState{}
+final class SendRequestToJoinGroupErrorState extends GroupState{}
+final class AcceptRequestToJoinGroupSuccessState extends GroupState{}
+final class AcceptRequestToJoinGroupErrorState extends GroupState{}

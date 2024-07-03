@@ -18,9 +18,8 @@ part 'group_state.dart';
 
 class GroupBloc extends Bloc<GroupEvent, GroupState> {
   GroupBloc() : super(GroupInitial()) {
-    on<GroupEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+    on<SendRequestToJoinGroupEvent>(_onSendRequestToJoinGroupEvent);
+    on<AcceptRequestToJoinGroupEvent>(_onAcceptRequestToJoinGroupEvent);
   }
 
   bool _isLoading = false;
@@ -93,7 +92,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   void setEditSettings({required bool editSettings}) {
     _group.editSettings = editSettings;
     emit(GroupEditSettingsState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -101,7 +100,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   void setApproveNewMembers({required bool approveNewMembers}) {
     _group.approveMembers = approveNewMembers;
     emit(GroupApproveNewMembersState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -109,7 +108,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   void setRequestToJoin({required bool requestToJoin}) {
     _group.requestToJoin = requestToJoin;
     emit(GroupRequestToJoinState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -117,12 +116,12 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   void setLockMassages({required bool lockMassages}) {
     _group.lockMassages = lockMassages;
     emit(GroupLockMassagesState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
   //group
-  Future<void> setGroup({required Group group})async {
+  Future<void> setGroup({required Group group}) async {
     _group = group;
     emit(GroupModelState());
   }
@@ -132,7 +131,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     _groupMembersList.add(groupMember);
     _group.membersUIDS.add(groupMember.uId);
     emit(GroupMembersListState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -141,7 +140,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     _groupAdminsList.add(groupAdmin);
     _group.adminsUIDS.add(groupAdmin.uId);
     emit(GroupAdminsListState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -151,7 +150,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     _groupAdminsList.remove(user);
     _group.membersUIDS.remove(user.uId); //TODO: check this code
     emit(RemoveMemberFromGroupListState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -160,7 +159,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     _groupAdminsList.remove(user);
     _group.adminsUIDS.remove(user.uId);
     emit(RemoveMemberFromAdminListState());
-    if(_group.groupID.isEmpty)return;
+    if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
@@ -327,12 +326,14 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     //   },
     // );
   }
+
   //get list of group members data from firestore with uids
-  Future<List<UserModel>>getGroupMembersDataFromFirestore({required bool isAdmin})async{
-    List<UserModel>groupMembersList=[];
-    List<String>membersUIDS=isAdmin?_group.adminsUIDS:_group.membersUIDS;
-    for(var uid in membersUIDS){
-      var user=await FirebaseFirestore.instance
+  Future<List<UserModel>> getGroupMembersDataFromFirestore(
+      {required bool isAdmin}) async {
+    List<UserModel> groupMembersList = [];
+    List<String> membersUIDS = isAdmin ? _group.adminsUIDS : _group.membersUIDS;
+    for (var uid in membersUIDS) {
+      var user = await FirebaseFirestore.instance
           .collection(Constants.users)
           .doc(uid)
           .get();
@@ -340,22 +341,93 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
     return groupMembersList;
   }
+
   //update group members list
-  Future<void>updateGroupMembersList()async{
+  Future<void> updateGroupMembersList() async {
     _groupMembersList.clear();
-    _groupMembersList.addAll(await getGroupMembersDataFromFirestore(isAdmin: false));
+    _groupMembersList
+        .addAll(await getGroupMembersDataFromFirestore(isAdmin: false));
     emit(GroupMembersListUpdateSuccessState());
   }
+
   //update group admins list
-  Future<void>updateGroupAdminsList()async{
+  Future<void> updateGroupAdminsList() async {
     _groupAdminsList.clear();
-    _groupAdminsList.addAll(await getGroupMembersDataFromFirestore(isAdmin: true));
+    _groupAdminsList
+        .addAll(await getGroupMembersDataFromFirestore(isAdmin: true));
     emit(GroupAdminsListUpdateSuccessState());
   }
+
   //changeGroupType
-  void changeGroupType(){
-    _group.isPrivate=!_group.isPrivate;
+  void changeGroupType() {
+    _group.isPrivate = !_group.isPrivate;
     emit(ChangeGroupType());
     updateGroupDataInFirestore();
+  }
+
+  //send request to join group
+  Future<void> sendRequestToJoinGroup({
+    required String groupId,
+    required String groupName,
+    required String groupImage,
+    required String uid,
+  }) async {
+    try {
+      await FirebaseSingleTon.db
+          .collection(Constants.groups)
+          .doc(groupId)
+          .update({
+        "awaitingApprovalUIDS": FieldValue.arrayUnion([uid])
+      });
+      //send notification to group admin
+      emit(SendRequestToJoinGroupSuccessState());
+    } catch (e) {
+      emit(SendRequestToJoinGroupErrorState());
+    }
+  }
+
+  //accept request to join group
+  Future<void> acceptRequestToJoinGroup({
+    required String groupId,
+    required String uid,
+  }) async {
+    try {
+      await FirebaseSingleTon.db
+          .collection(Constants.groups)
+          .doc(groupId)
+          .update({
+        "awaitingApprovalUIDS": FieldValue.arrayRemove([uid])
+      });
+      await FirebaseSingleTon.db
+          .collection(Constants.groups)
+          .doc(groupId)
+          .update({
+        "membersUIDS": FieldValue.arrayUnion([uid])
+      });
+      //update group members list
+      await updateGroupMembersList();
+      //send notification to group admin
+      emit(AcceptRequestToJoinGroupSuccessState());
+    } catch (e) {
+      emit(AcceptRequestToJoinGroupErrorState());
+    }
+  }
+
+  FutureOr<void> _onSendRequestToJoinGroupEvent(
+      SendRequestToJoinGroupEvent event, Emitter<GroupState> emit) async {
+    await sendRequestToJoinGroup(
+      groupId: event.groupId,
+      groupName: event.groupName,
+      groupImage: event.groupImage,
+      uid: event.uid,
+    );
+  }
+
+  FutureOr<void> _onAcceptRequestToJoinGroupEvent(
+      AcceptRequestToJoinGroupEvent event, Emitter<GroupState> emit) async {
+    await acceptRequestToJoinGroup(
+      groupId: event.groupId,
+      uid: event.uid,
+    );
   }
 }

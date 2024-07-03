@@ -27,7 +27,16 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
   @override
   Widget baseBuild(BuildContext context) {
     return BlocConsumer<GroupBloc, GroupState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is SendRequestToJoinGroupSuccessState) {
+          CustomSnackBarWidget.show(
+            context: context,
+            message: "Request Sent",
+            path: ImagePaths.icSuccess,
+            backgroundColor: ColorSchemes.green,
+          );
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           body: SafeArea(
@@ -66,20 +75,26 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                               //TODO: navigate to chat screen
                               if (groupModel.membersUIDS
                                   .contains(GetUserUseCase(injector())().uId)) {
-                                Navigator.pushNamed(
-                                  context,
-                                  Routes.chatWithFriendScreen,
-                                  arguments: {
-                                    "friendId": groupModel.groupID,
-                                    "friendName": groupModel.groupName,
-                                    "friendImage": groupModel.groupLogo,
-                                    "groupId": groupModel.groupID,
-                                  },
-                                );
+                                _bloc
+                                    .setGroup(group: groupModel)
+                                    .whenComplete(() {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.chatWithFriendScreen,
+                                    arguments: {
+                                      "friendId": groupModel.groupID,
+                                      "friendName": groupModel.groupName,
+                                      "friendImage": groupModel.groupLogo,
+                                      "groupId": groupModel.groupID,
+                                    },
+                                  );
+                                });
                                 return;
                               }
                               if (groupModel.requestToJoin) {
-                                if(groupModel.awaitingApprovalUIDS.contains(GetUserUseCase(injector())().uId)){
+                                //check if request already sent
+                                if (groupModel.awaitingApprovalUIDS.contains(
+                                    GetUserUseCase(injector())().uId)) {
                                   //show snack bar
                                   CustomSnackBarWidget.show(
                                     context: context,
@@ -89,7 +104,7 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                                   );
                                   return;
                                 }
-                                //show dialog to join
+                                //show dialog to send request to join group
                                 showAnimatedDialog(
                                   context: context,
                                   textAction: "Request To Join",
@@ -98,12 +113,14 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                                       "you need request to join this group,before you can chat with members of this group",
                                   onActionTap: (value) {
                                     //TODO: send request to join
-                                    CustomSnackBarWidget.show(
-                                      context: context,
-                                      message: "Request Sent",
-                                      path: ImagePaths.icSuccess,
-                                      backgroundColor: ColorSchemes.green,
-                                    );
+                                    if (value) {
+                                      _bloc.add(SendRequestToJoinGroupEvent(
+                                        uid: GetUserUseCase(injector())().uId,
+                                        groupName: groupModel.groupName,
+                                        groupImage: groupModel.groupLogo,
+                                        groupId: groupModel.groupID,
+                                      ));
+                                    }
                                   },
                                 );
                                 return;

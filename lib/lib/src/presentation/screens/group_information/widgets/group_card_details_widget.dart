@@ -114,13 +114,18 @@ class GroupCardDetailsWidget extends StatelessWidget {
   Widget _getRequestWidget(BuildContext context, bool isAdmin) {
     if (isAdmin) {
       if (bloc.group.awaitingApprovalUIDS.isNotEmpty) {
-        return const CircleAvatar(
-          radius: 18,
-          backgroundColor: Colors.orangeAccent,
-          child: Icon(
-            Icons.person_add,
-            color: Colors.white,
-            size: 15,
+        return InkWell(
+          onTap: () {
+            //navigate to add members screen
+          },
+          child: const CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.orangeAccent,
+            child: Icon(
+              Icons.person_add,
+              color: Colors.white,
+              size: 15,
+            ),
           ),
         );
       } else {

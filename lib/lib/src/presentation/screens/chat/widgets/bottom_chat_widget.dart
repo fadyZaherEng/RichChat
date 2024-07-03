@@ -1,12 +1,18 @@
 import 'dart:io';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:lottie/lottie.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
+import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
+import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
+import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/record_audio_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 
 class BottomChatWidget extends StatefulWidget {
   final String friendName;
@@ -66,6 +72,86 @@ class BottomChatWidget extends StatefulWidget {
 class _BottomChatWidgetState extends State<BottomChatWidget> {
   @override
   Widget build(BuildContext context) {
+    if (widget.groupId.isNotEmpty) {
+      return _buildLockedMessage();
+    }
+    return _buildBottomChatWidget(context);
+  }
+
+  Widget _buildLockedMessage() {
+    //get uid
+    final uid = FirebaseSingleTon.auth.currentUser!.uid;
+    //get GroupBloc
+    final groupProvider = BlocProvider.of<GroupBloc>(context);
+    //check if admin
+    final isAdmin = groupProvider.group.adminsUIDS.contains(uid);
+    //check if member
+    final isMember = groupProvider.group.membersUIDS.contains(uid);
+    //check if locked
+    final isLocked = groupProvider.group.lockMassages;
+
+    return isAdmin
+        ? _buildBottomChatWidget(context)
+        : isMember
+            ? _buildMemberWidget(isLocked)
+            : SizedBox(
+                height: 60,
+              child: Center(
+                child: InkWell(
+                    onTap: ()async {
+                      //send request to join
+                    await groupProvider.sendRequestToJoinGroup(
+                        groupId: groupProvider.group.groupID,
+                        groupName: groupProvider.group.groupName,
+                        groupImage: groupProvider.group.groupLogo,
+                        uid: uid,
+                      ).whenComplete(() {
+                        CustomSnackBarWidget.show(
+                          context: context,
+                          message: "Request Sent",
+                          path: ImagePaths.icSuccess,
+                          backgroundColor: ColorSchemes.green,
+                        );
+                      });
+                    },
+                    child: const SizedBox(
+                      height: 50,
+                      child: Center(
+                        child: Text(
+                          "you are not member of this group,\n click here to send request to join",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ),
+            );
+  }
+
+  Widget _buildMemberWidget(bool isLocked) {
+    return isLocked
+        ? const SizedBox(
+            height: 50,
+            child: Center(
+              child: Text(
+                "this group is locked,only admin can send messages",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          )
+        : _buildBottomChatWidget(context);
+  }
+
+  Widget _buildBottomChatWidget(context) {
     return IntrinsicHeight(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
