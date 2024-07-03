@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_animated_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
@@ -117,6 +118,7 @@ class GroupCardDetailsWidget extends StatelessWidget {
         return InkWell(
           onTap: () {
             //navigate to add members screen
+            Navigator.pushNamed(context, Routes.friendRequestScreen);
           },
           child: const CircleAvatar(
             radius: 18,

@@ -23,31 +23,50 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
       GetFriendsRequestsEvent event, Emitter<FriendsState> emit) async {
     emit(GetFriendsRequestsLoading());
     try {
-      String currentUserId = FirebaseSingleTon.auth.currentUser!.uid;
-      //get all friends of current user from firebase
-      DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
-          .collection(Constants.users)
-          .doc(currentUserId)
-          .get();
-      List<dynamic> friendUIds = documentSnapshot.get("friendsRequestsUIds");
-      List<UserModel> friendsRequests = [];
-      for (String friendUId in friendUIds) {
+      if (event.groupId.isNotEmpty) {
+        //get all friends of current user from firebase
+        DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
+            .collection(Constants.groups)
+            .doc(event.groupId)
+            .get();
+        List<dynamic> requestsUIds = documentSnapshot.get("awaitingApprovalUIDS");
+        List<UserModel> friendsRequests = [];
+        for (String friendUId in requestsUIds) {
+          DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
+              .collection(Constants.users)
+              .doc(friendUId)
+              .get();
+          UserModel friend =
+          UserModel.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+          friendsRequests.add(friend);
+        }
+        emit(GetFriendsRequestsSuccess(friendsRequests: friendsRequests));
+      }else{
+        //get all friends of current user from firebase
         DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
             .collection(Constants.users)
-            .doc(friendUId)
+            .doc(event.uid)
             .get();
-        UserModel friend =
-        UserModel.fromJson(documentSnapshot.data() as Map<String, dynamic>);
-        friendsRequests.add(friend);
+        List<dynamic> friendUIds = documentSnapshot.get("friendsRequestsUIds");
+        List<UserModel> friendsRequests = [];
+        for (String friendUId in friendUIds) {
+          DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
+              .collection(Constants.users)
+              .doc(friendUId)
+              .get();
+          UserModel friend =
+          UserModel.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+          friendsRequests.add(friend);
+        }
+        emit(GetFriendsRequestsSuccess(friendsRequests: friendsRequests));
       }
-      emit(GetFriendsRequestsSuccess(friendsRequests: friendsRequests));
     } catch (e) {
       emit(GetFriendsRequestsError(message: e.toString()));
     }
   }
 
   FutureOr<void> _onAcceptFriendRequestEvent(
-      AcceptFriendRequestEvent event, Emitter<FriendsState> emit) async{
+      AcceptFriendRequestEvent event, Emitter<FriendsState> emit) async {
     emit(AcceptFriendRequestsLoading());
     try {
       //TODO: implement accept friend request
@@ -56,7 +75,7 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
           .doc(event.friendId)
           .update({
         "friendsUIds":
-        FieldValue.arrayUnion([FirebaseSingleTon.auth.currentUser!.uid]),
+            FieldValue.arrayUnion([FirebaseSingleTon.auth.currentUser!.uid]),
       });
       await FirebaseSingleTon.db
           .collection(Constants.users)
@@ -69,7 +88,7 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
           .doc(event.friendId)
           .update({
         "sendFriendRequestsUIds":
-        FieldValue.arrayRemove([FirebaseSingleTon.auth.currentUser!.uid]),
+            FieldValue.arrayRemove([FirebaseSingleTon.auth.currentUser!.uid]),
       });
       await FirebaseSingleTon.db
           .collection(Constants.users)
@@ -83,30 +102,32 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
       emit(AcceptFriendRequestsError(message: e.toString()));
     }
   }
+
   FutureOr<void> _onGetFriends(
       GetFriends event, Emitter<FriendsState> emit) async {
     emit(GetFriendsLoading());
-   try{
-     String currentUserId = FirebaseSingleTon.auth.currentUser!.uid;
-     //get all friends of current user from firebase
-     DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
-         .collection(Constants.users)
-         .doc(currentUserId)
-         .get();
-     List<dynamic>friendUIds = documentSnapshot.get("friendsUIds");
+    try {
+      String currentUserId = FirebaseSingleTon.auth.currentUser!.uid;
+      //get all friends of current user from firebase
+      DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
+          .collection(Constants.users)
+          .doc(currentUserId)
+          .get();
+      List<dynamic> friendUIds = documentSnapshot.get("friendsUIds");
 
-     List<UserModel> friends = [];
-     for (String friendUId in friendUIds) {
-       DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
-           .collection(Constants.users)
-           .doc(friendUId)
-           .get();
-       UserModel friend = UserModel.fromJson(documentSnapshot.data() as Map<String, dynamic>);
-       friends.add(friend);
-     }
-     emit(GetFriendsSuccess(friends: friends));
-   }catch(e){
-     emit(GetFriendsError(error: e.toString()));
-   }
+      List<UserModel> friends = [];
+      for (String friendUId in friendUIds) {
+        DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
+            .collection(Constants.users)
+            .doc(friendUId)
+            .get();
+        UserModel friend =
+            UserModel.fromJson(documentSnapshot.data() as Map<String, dynamic>);
+        friends.add(friend);
+      }
+      emit(GetFriendsSuccess(friends: friends));
+    } catch (e) {
+      emit(GetFriendsError(error: e.toString()));
+    }
   }
 }

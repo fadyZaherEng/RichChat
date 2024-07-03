@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
-import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/friend_view_type.dart';
+import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/friends/friends_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/friend_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
 class FriendsListWidget extends StatefulWidget {
   final FriendViewType friendViewType;
@@ -40,7 +39,10 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
         // _bloc.add(GetGroups());
         break;
       case FriendViewType.friendRequest:
-        _bloc.add(GetFriendsRequestsEvent());
+        _bloc.add(GetFriendsRequestsEvent(
+          uid: FirebaseSingleTon.auth.currentUser!.uid,
+          groupId:
+        ));
       default:
         break;
     }
