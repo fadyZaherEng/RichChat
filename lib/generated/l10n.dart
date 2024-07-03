@@ -692,10 +692,10 @@ class S {
     );
   }
 
-  /// `Friends Requests`
+  /// `Requests`
   String get friendsRequests {
     return Intl.message(
-      'Friends Requests',
+      'Requests',
       name: 'friendsRequests',
       desc: '',
       args: [],
@@ -967,6 +967,36 @@ class S {
     return Intl.message(
       'Done',
       name: 'done',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Group Description`
+  String get groupDescription {
+    return Intl.message(
+      'Group Description',
+      name: 'groupDescription',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Private`
+  String get private {
+    return Intl.message(
+      'Private',
+      name: 'private',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Public`
+  String get public {
+    return Intl.message(
+      'Public',
+      name: 'public',
       desc: '',
       args: [],
     );

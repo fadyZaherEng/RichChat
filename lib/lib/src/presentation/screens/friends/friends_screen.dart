@@ -48,7 +48,10 @@ class _FriendsScreenState extends BaseState<FriendsScreen> {
                 ),
               ),
               const SizedBox(height: 15),
-              const FriendsListWidget(friendViewType: FriendViewType.friend),
+              const FriendsListWidget(
+                friendViewType: FriendViewType.friend,
+                groupId: '',
+              ),
             ],
           ),
         );

@@ -18,11 +18,13 @@ class FriendWidget extends StatefulWidget {
   final FriendViewType friendViewType;
   final void Function()? onAcceptRequest;
   bool? isAdminView;
+  final String groupId;
 
   FriendWidget({
     super.key,
     required this.friend,
     required this.friendViewType,
+    required this.groupId,
     this.onAcceptRequest,
     this.isAdminView,
   });
@@ -63,7 +65,8 @@ class _FriendWidgetState extends State<FriendWidget> {
   Widget _buildFriendWidget(BuildContext context) {
     //get uid
     final uid = FirebaseSingleTon.auth.currentUser!.uid;
-    String name=uid==widget.friend.uId?S.of(context).you:widget.friend.name;
+    String name =
+        uid == widget.friend.uId ? S.of(context).you : widget.friend.name;
     return ListTile(
       contentPadding: EdgeInsets.zero,
       onTap: () {
@@ -114,6 +117,15 @@ class _FriendWidgetState extends State<FriendWidget> {
       );
     } else {
       //check The Checkbox
+      if(widget.groupId.isNotEmpty){
+          Navigator.pushNamed(
+            context,
+            Routes.profileScreen,
+            arguments: {
+              "userId": widget.friend.uId,
+            },
+          );
+      }
     }
   }
 
@@ -126,7 +138,23 @@ class _FriendWidgetState extends State<FriendWidget> {
                     borderRadius: BorderRadius.circular(10.0))),
             onPressed: () {
               //TODO: accept request
-              _bloc.add(AcceptFriendRequestEvent(friendId: widget.friend.uId));
+              if (widget.groupId.isEmpty) {//not in group
+                _bloc.add(AcceptFriendRequestEvent(
+                  friendId: widget.friend.uId,
+                ));
+              } else {//in group
+                context.read<GroupBloc>().acceptRequestToJoinGroup(
+                      groupId: widget.groupId,
+                      uid: FirebaseSingleTon.auth.currentUser!.uid,
+                    ).whenComplete(() {
+                      CustomSnackBarWidget.show(
+                        context: context,
+                        message:"${widget.friend.name} is now your group member",
+                        path: ImagePaths.icSuccess,
+                        backgroundColor: ColorSchemes.green,
+                      );
+                });
+              }
               // if (widget.onAcceptRequest != null) widget.onAcceptRequest!();
             },
             child: Text(S.of(context).accept.toUpperCase(),

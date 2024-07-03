@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
-import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
@@ -11,11 +10,9 @@ import 'package:rich_chat_copilot/lib/src/core/utils/enum/friend_view_type.dart'
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
-import 'package:rich_chat_copilot/lib/src/domain/usecase/get_theme_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/cricle_loading_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/friend_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
 class GlobeScreen extends BaseStatefulWidget {
   const GlobeScreen({super.key});
@@ -106,7 +103,10 @@ class _GlobeScreenState extends BaseState<GlobeScreen> {
                     return Padding(
                       padding: const EdgeInsetsDirectional.only(start: 0),
                       child: FriendWidget(
-                          friend: user, friendViewType: FriendViewType.allUsers),
+                        friend: user,
+                        friendViewType: FriendViewType.allUsers,
+                        groupId: "",
+                      ),
                       // ListTile(
                       //   onTap: () {
                       //     Navigator.pushNamed(

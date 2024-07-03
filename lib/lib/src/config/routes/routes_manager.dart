@@ -69,7 +69,11 @@ class RoutesManager {
           userId: arg["userId"],
         ));
       case Routes.friendRequestScreen:
-        return _materialRoute(const FriendRequestsScreen());
+        Map<String, dynamic> arg =
+            routeSettings.arguments as Map<String, dynamic>;
+        return _materialRoute( FriendRequestsScreen(
+          groupId: arg["groupId"],
+        ));
       case Routes.friendsScreen:
         return _materialRoute(const FriendsScreen());
       case Routes.chatWithFriendScreen:

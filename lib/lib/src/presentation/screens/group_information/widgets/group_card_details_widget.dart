@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_animated_dialog.dart';
-import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
 class GroupCardDetailsWidget extends StatelessWidget {
   final GroupBloc bloc;
   final bool isAdmin;
+
   const GroupCardDetailsWidget({
     super.key,
     required this.bloc,
@@ -73,7 +74,9 @@ class GroupCardDetailsWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Text(
-                              bloc.group.isPrivate ? "Private" : "Public",
+                              bloc.group.isPrivate
+                                  ? S.of(context).private
+                                  : S.of(context).public,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -92,9 +95,9 @@ class GroupCardDetailsWidget extends StatelessWidget {
               color: Colors.grey,
               thickness: 1,
             ),
-            const Text(
-              "Group Description",
-              style: TextStyle(
+            Text(
+              S.of(context).groupDescription,
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -118,7 +121,13 @@ class GroupCardDetailsWidget extends StatelessWidget {
         return InkWell(
           onTap: () {
             //navigate to add members screen
-            Navigator.pushNamed(context, Routes.friendRequestScreen);
+            Navigator.pushNamed(
+              context,
+              Routes.friendRequestScreen,
+              arguments: {
+                "groupId": bloc.group.groupID,
+              },
+            );
           },
           child: const CircleAvatar(
             radius: 18,

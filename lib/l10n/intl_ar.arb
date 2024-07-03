@@ -91,5 +91,8 @@
   "lockMassages": "قفل الرسائل",
   "onlyAdminsCanSendMessagesOtherMembersCanNotSendMessages": "لا يمكنك الارسال للرسائل الاخرى فقط للمشرفين",
   "selectGroupAdmins": "حدد المشرفين للمجموعة",
-  "done": "تم"
+  "done": "تم",
+  "groupDescription": "وصف المجموعة",
+  "private": "خاصة",
+  "public": "عامة"
 }

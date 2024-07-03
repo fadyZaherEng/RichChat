@@ -34,6 +34,7 @@ class BottomSheetContentWidget extends StatelessWidget {
                         friend: friend,
                         friendViewType: FriendViewType.groupView,
                       isAdminView: true,
+                      groupId: groupProvider.group.groupID,
                     );
                   }
                 )

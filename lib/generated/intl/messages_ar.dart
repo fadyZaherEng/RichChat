@@ -69,6 +69,8 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("طلبات الصداقة"),
         "gallery": MessageLookupByLibrary.simpleMessage("المعرض"),
         "globes": MessageLookupByLibrary.simpleMessage("الاشخاص"),
+        "groupDescription":
+            MessageLookupByLibrary.simpleMessage("وصف المجموعة"),
         "groupSettings":
             MessageLookupByLibrary.simpleMessage("اعدادات المجموعة"),
         "groups": MessageLookupByLibrary.simpleMessage("المجموعات"),
@@ -104,8 +106,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "لا يمكنك الارسال للرسائل الاخرى فقط للمشرفين"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("رقم الهاتف"),
+        "private": MessageLookupByLibrary.simpleMessage("خاصة"),
         "privateGroup": MessageLookupByLibrary.simpleMessage("المجموعة الخاصة"),
         "profile": MessageLookupByLibrary.simpleMessage("الملف الشخصي"),
+        "public": MessageLookupByLibrary.simpleMessage("عامة"),
         "publicGroup": MessageLookupByLibrary.simpleMessage("المجموعة العامة"),
         "requestCanceled":
             MessageLookupByLibrary.simpleMessage("تم الغاء طلب الصداقة"),

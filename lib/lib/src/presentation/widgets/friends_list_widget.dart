@@ -13,10 +13,12 @@ import 'package:rich_chat_copilot/lib/src/presentation/widgets/friend_widget.dar
 
 class FriendsListWidget extends StatefulWidget {
   final FriendViewType friendViewType;
+  final String groupId;
 
   const FriendsListWidget({
     super.key,
     required this.friendViewType,
+    required this.groupId,
   });
 
   @override
@@ -41,7 +43,7 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
       case FriendViewType.friendRequest:
         _bloc.add(GetFriendsRequestsEvent(
           uid: FirebaseSingleTon.auth.currentUser!.uid,
-          groupId:
+          groupId: widget.groupId,
         ));
       default:
         break;
@@ -97,6 +99,7 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
                 return FriendWidget(
                   friend: friends[index],
                   friendViewType: widget.friendViewType,
+                  groupId: widget.groupId,
                   onAcceptRequest: () {
                     //TODO: accept request
                     _bloc.add(

@@ -69,25 +69,26 @@ class _CreateGroupScreenState extends BaseState<CreateGroupScreen> {
                 child: CircleAvatar(
                   child: _bloc.iSLoading
                       ? const Padding(
-                        padding: EdgeInsets.all(3.0),
-                        child: Center(
-                          child: CircularProgressIndicator(
+                          padding: EdgeInsets.all(3.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
                               color: Colors.white,
                             ),
-                        ),
-                      )
+                          ),
+                        )
                       : Padding(
-                        padding: const EdgeInsets.all(3.0),
-                        child: Center(
-                          child: IconButton(
-                              icon: const Icon(Icons.check, color: Colors.white),
+                          padding: const EdgeInsets.all(3.0),
+                          child: Center(
+                            child: IconButton(
+                              icon:
+                                  const Icon(Icons.check, color: Colors.white),
                               onPressed: () {
                                 //create group
                                 _createGroup(context);
                               },
                             ),
+                          ),
                         ),
-                      ),
                 ),
               ),
             ],
@@ -178,8 +179,10 @@ class _CreateGroupScreenState extends BaseState<CreateGroupScreen> {
                         horizontal: 10, vertical: 15),
                     onChanged: (value) {},
                   ),
-                  const FriendsListWidget(
-                      friendViewType: FriendViewType.friendRequest),
+                   const FriendsListWidget(
+                    friendViewType: FriendViewType.friendRequest,
+                     groupId: "",
+                  ),
                 ],
               ),
             ),

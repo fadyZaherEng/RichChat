@@ -65,10 +65,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "friendRequestAccepted":
             MessageLookupByLibrary.simpleMessage("Friend Request Accepted"),
         "friends": MessageLookupByLibrary.simpleMessage("Friends"),
-        "friendsRequests":
-            MessageLookupByLibrary.simpleMessage("Friends Requests"),
+        "friendsRequests": MessageLookupByLibrary.simpleMessage("Requests"),
         "gallery": MessageLookupByLibrary.simpleMessage("Gallery"),
         "globes": MessageLookupByLibrary.simpleMessage("People"),
+        "groupDescription":
+            MessageLookupByLibrary.simpleMessage("Group Description"),
         "groupSettings": MessageLookupByLibrary.simpleMessage("Group Settings"),
         "groups": MessageLookupByLibrary.simpleMessage("Groups"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
@@ -102,8 +103,10 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage(
                 "Only admins can send messages other members can not send messages"),
         "phoneNumber": MessageLookupByLibrary.simpleMessage("Phone Number"),
+        "private": MessageLookupByLibrary.simpleMessage("Private"),
         "privateGroup": MessageLookupByLibrary.simpleMessage("Private Group"),
         "profile": MessageLookupByLibrary.simpleMessage("Profile"),
+        "public": MessageLookupByLibrary.simpleMessage("Public"),
         "publicGroup": MessageLookupByLibrary.simpleMessage("Public Group"),
         "requestCanceled":
             MessageLookupByLibrary.simpleMessage("Request Canceled"),

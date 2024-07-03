@@ -64,7 +64,7 @@
   "requestCanceled": "Request Canceled",
   "chat": "Chat",
   "friends": "Friends",
-  "friendsRequests": "Friends Requests",
+  "friendsRequests": "Requests",
   "noFriendsYet": "No Friends Yet",
   "noFriendRequestsYet": "No Friend Requests Yet",
   "noMessagesYet": "No Messages Yet",
@@ -91,5 +91,8 @@
   "lockMassages": "Lock Massages",
   "onlyAdminsCanSendMessagesOtherMembersCanNotSendMessages": "Only admins can send messages other members can not send messages",
   "selectGroupAdmin": "Select Group Admin",
-  "done": "Done"
+  "done": "Done",
+  "groupDescription": "Group Description",
+  "private": "Private",
+  "public": "Public"
 }

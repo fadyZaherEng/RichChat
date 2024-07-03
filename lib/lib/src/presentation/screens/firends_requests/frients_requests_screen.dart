@@ -7,7 +7,12 @@ import 'package:rich_chat_copilot/lib/src/presentation/widgets/friends_list_widg
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_app_bar_widget.dart';
 
 class FriendRequestsScreen extends BaseStatefulWidget {
-  const FriendRequestsScreen({super.key});
+  final String groupId;
+
+  const FriendRequestsScreen({
+    super.key,
+    required this.groupId,
+  });
 
   @override
   BaseState<FriendRequestsScreen> baseCreateState() =>
@@ -46,7 +51,10 @@ class _FriendRequestsScreenState extends BaseState<FriendRequestsScreen> {
           const SizedBox(
             height: 15,
           ),
-          const FriendsListWidget(friendViewType: FriendViewType.friendRequest),
+          FriendsListWidget(
+            friendViewType: FriendViewType.friendRequest,
+            groupId: widget.groupId,
+          ),
         ],
       ),
     );
