@@ -65,7 +65,7 @@ class _CreateGroupScreenState extends BaseState<CreateGroupScreen> {
             ),
             actions: [
               Padding(
-                padding: const EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: CircleAvatar(
                   child: _bloc.iSLoading
                       ? const Padding(
@@ -180,7 +180,7 @@ class _CreateGroupScreenState extends BaseState<CreateGroupScreen> {
                     onChanged: (value) {},
                   ),
                    const FriendsListWidget(
-                    friendViewType: FriendViewType.friendRequest,
+                    friendViewType: FriendViewType.groupView,
                      groupId: "",
                   ),
                 ],

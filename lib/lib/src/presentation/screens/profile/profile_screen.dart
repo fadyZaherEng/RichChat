@@ -335,6 +335,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     return Container(
       width: width,
       decoration: BoxDecoration(
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: backgroundColor,
@@ -343,9 +344,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
         boxShadow: [
           BoxShadow(
             color: ColorSchemes.lightGray.withOpacity(0.3),
-            spreadRadius: 1,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
+            spreadRadius: 2,
+            blurRadius: 2,
+            offset: const Offset(0,4),
           ),
         ],
       ),

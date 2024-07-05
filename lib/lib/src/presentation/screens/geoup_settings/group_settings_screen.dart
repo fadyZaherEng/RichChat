@@ -30,82 +30,84 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
             title: Text(S.of(context).groupSettings),
             centerTitle: true,
           ),
-          body: Column(
-            children: [
-              SettingsSwitchListTileWidget(
-                title: S.of(context).editGroupSettings,
-                value: groupProvider.group.editSettings,
-                subtitle: S.of(context).onlyAdminsCanEditGroupSettings,
-                backgroundColor: Colors.green,
-                icon: Icons.edit,
-                onChanged: (value) {
-                  groupProvider.setEditSettings(editSettings: value);
-                },
-              ),
-              const SizedBox(height: 10),
-              groupProvider.group.approveMembers
-                  ? SettingsSwitchListTileWidget(
-                      title: S.of(context).approveNewMembers,
-                      value: groupProvider.group.approveMembers,
-                      subtitle: S
-                          .of(context)
-                          .NewMembersWillBeApprovedOnlyAfterAdminApproval,
-                      backgroundColor: Colors.blue,
-                      icon: Icons.approval,
-                      onChanged: (value) {
-                        groupProvider.setApproveNewMembers(
-                            approveNewMembers: value);
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                SettingsSwitchListTileWidget(
+                  title: S.of(context).editGroupSettings,
+                  value: groupProvider.group.editSettings,
+                  subtitle: S.of(context).onlyAdminsCanEditGroupSettings,
+                  backgroundColor: Colors.green,
+                  icon: Icons.edit,
+                  onChanged: (value) {
+                    groupProvider.setEditSettings(editSettings: value);
+                  },
+                ),
+                const SizedBox(height: 10),
+                groupProvider.group.approveMembers
+                    ? SettingsSwitchListTileWidget(
+                        title: S.of(context).approveNewMembers,
+                        value: groupProvider.group.approveMembers,
+                        subtitle: S
+                            .of(context)
+                            .NewMembersWillBeApprovedOnlyAfterAdminApproval,
+                        backgroundColor: Colors.blue,
+                        icon: Icons.approval,
+                        onChanged: (value) {
+                          groupProvider.setApproveNewMembers(
+                              approveNewMembers: value);
+                        },
+                      )
+                    : const SizedBox.shrink(),
+                const SizedBox(height: 10),
+                SettingsSwitchListTileWidget(
+                  title: S.of(context).requestToJoinGroup,
+                  value: groupProvider.group.requestToJoin,
+                  subtitle: S
+                      .of(context)
+                      .requestIncomingMembersToJoinTheGroupBeforeViewingTheGroup,
+                  backgroundColor: Colors.orange,
+                  icon: Icons.request_page,
+                  onChanged: (value) {
+                    groupProvider.setRequestToJoin(requestToJoin: value);
+                  },
+                ),
+                const SizedBox(height: 10),
+                SettingsSwitchListTileWidget(
+                  title: S.of(context).lockMassages,
+                  value: groupProvider.group.lockMassages,
+                  subtitle: S
+                      .of(context)
+                      .onlyAdminsCanSendMessagesOtherMembersCanNotSendMessages,
+                  backgroundColor: Colors.deepPurple,
+                  icon: Icons.lock,
+                  onChanged: (value) {
+                    groupProvider.setLockMassages(lockMassages: value);
+                  },
+                ),
+                const SizedBox(height: 10),
+                Card(
+                  elevation: 2,
+                  color: _getGroupAdminColor(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: SettingListTileWidget(
+                      title: "Group Admind",
+                      subtitle: _getGroupAdminNames(),
+                      icon: Icons.admin_panel_settings,
+                      iconColor: Colors.red,
+                      onTap: () {
+                        if (groupProvider.groupMembersList.isEmpty) {
+                          return;
+                        }
+                        //show bottom sheet to select admin
+                        _showSelectAdminBottomSheet(context);
                       },
-                    )
-                  : const SizedBox.shrink(),
-              const SizedBox(height: 10),
-              SettingsSwitchListTileWidget(
-                title: S.of(context).requestToJoinGroup,
-                value: groupProvider.group.requestToJoin,
-                subtitle: S
-                    .of(context)
-                    .requestIncomingMembersToJoinTheGroupBeforeViewingTheGroup,
-                backgroundColor: Colors.orange,
-                icon: Icons.request_page,
-                onChanged: (value) {
-                  groupProvider.setRequestToJoin(requestToJoin: value);
-                },
-              ),
-              const SizedBox(height: 10),
-              SettingsSwitchListTileWidget(
-                title: S.of(context).lockMassages,
-                value: groupProvider.group.lockMassages,
-                subtitle: S
-                    .of(context)
-                    .onlyAdminsCanSendMessagesOtherMembersCanNotSendMessages,
-                backgroundColor: Colors.deepPurple,
-                icon: Icons.lock,
-                onChanged: (value) {
-                  groupProvider.setLockMassages(lockMassages: value);
-                },
-              ),
-              const SizedBox(height: 10),
-              Card(
-                elevation: 2,
-                color: _getGroupAdminColor(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: SettingListTileWidget(
-                    title: "Group Admind",
-                    subtitle: _getGroupAdminNames(),
-                    icon: Icons.admin_panel_settings,
-                    iconColor: Colors.red,
-                    onTap: () {
-                      if (groupProvider.groupMembersList.isEmpty) {
-                        return;
-                      }
-                      //show bottom sheet to select admin
-                      _showSelectAdminBottomSheet(context);
-                    },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

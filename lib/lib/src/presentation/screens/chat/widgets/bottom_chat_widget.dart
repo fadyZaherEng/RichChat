@@ -236,9 +236,9 @@ class _BottomChatWidgetState extends State<BottomChatWidget> {
                         minLines: 1,
                         onChanged: (value) {
                           widget.onTextChange(value);
-                          setState(() {
-                            widget.isShowSendButton = value.isNotEmpty;
-                          });
+                           // setState(() {
+                           //  widget.isShowSendButton = value.isNotEmpty;
+                           // });
                         },
                         decoration: const InputDecoration(
                           hintText: 'Type a message...',

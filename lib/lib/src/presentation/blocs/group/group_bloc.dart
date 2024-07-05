@@ -288,14 +288,6 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     );
   }
 
-  //stream group data
-  Stream<DocumentSnapshot> getGroupStream({required String groupId}) {
-    return FirebaseFirestore.instance
-        .collection(Constants.groups)
-        .doc(groupId)
-        .snapshots();
-  }
-
   //stream users data from firestore
   Stream<List<DocumentSnapshot>> streamGroupMembersData({
     required List<String> membersUIDS,

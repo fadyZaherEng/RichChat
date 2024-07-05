@@ -37,7 +37,7 @@ class _FriendWidgetState extends State<FriendWidget> {
   FriendsBloc get _bloc => BlocProvider.of<FriendsBloc>(context);
 
   bool _checkUserIsMemberList() {
-    return widget.isAdminView!
+    return widget.isAdminView != null && widget.isAdminView!
         ? context.read<GroupBloc>().groupAdminsList.contains(widget.friend)
         : context.read<GroupBloc>().groupMembersList.contains(widget.friend);
     // return BlocProvider.of<GroupBloc>(context).groupMembersList.contains(widget.friend);
@@ -61,7 +61,6 @@ class _FriendWidgetState extends State<FriendWidget> {
       },
     );
   }
-
   Widget _buildFriendWidget(BuildContext context) {
     //get uid
     final uid = FirebaseSingleTon.auth.currentUser!.uid;
@@ -72,8 +71,11 @@ class _FriendWidgetState extends State<FriendWidget> {
       onTap: () {
         _onTap(context);
       },
-      leading:
-          UserImageWidget(image: widget.friend.image, width: 50, height: 50),
+      leading: UserImageWidget(
+        image: widget.friend.image,
+        width: 50,
+        height: 50,
+      ),
       title: Text(
         name,
         style: GoogleFonts.openSans(
@@ -90,7 +92,17 @@ class _FriendWidgetState extends State<FriendWidget> {
           color: ColorSchemes.black,
         ),
       ),
-      trailing: _buildTrailing(context),
+      trailing: BlocConsumer<GroupBloc, GroupState>(
+        listener: (context, state) {
+          // TODO: implement listener
+          if(state is GroupMembersListState){
+
+          }
+        },
+        builder: (context, state) {
+          return _buildTrailing(context);
+        },
+      ),
     );
   }
 
@@ -117,14 +129,14 @@ class _FriendWidgetState extends State<FriendWidget> {
       );
     } else {
       //check The Checkbox
-      if(widget.groupId.isNotEmpty){
-          Navigator.pushNamed(
-            context,
-            Routes.profileScreen,
-            arguments: {
-              "userId": widget.friend.uId,
-            },
-          );
+      if (widget.groupId.isNotEmpty) {
+        Navigator.pushNamed(
+          context,
+          Routes.profileScreen,
+          arguments: {
+            "userId": widget.friend.uId,
+          },
+        );
       }
     }
   }
@@ -135,37 +147,47 @@ class _FriendWidgetState extends State<FriendWidget> {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).cardColor,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0))),
+                  borderRadius: BorderRadius.circular(10.0),
+                )),
             onPressed: () {
               //TODO: accept request
-              if (widget.groupId.isEmpty) {//not in group
-                _bloc.add(AcceptFriendRequestEvent(
-                  friendId: widget.friend.uId,
-                ));
-              } else {//in group
-                context.read<GroupBloc>().acceptRequestToJoinGroup(
+              if (widget.groupId.isEmpty) {
+                //not in group
+                _bloc
+                    .add(AcceptFriendRequestEvent(friendId: widget.friend.uId));
+              } else {
+                //in group
+                context
+                    .read<GroupBloc>()
+                    .acceptRequestToJoinGroup(
                       groupId: widget.groupId,
                       uid: widget.friend.uId,
-                    ).whenComplete(() {
-                      CustomSnackBarWidget.show(
-                        context: context,
-                        message:"${widget.friend.name} is now your group member",
-                        path: ImagePaths.icSuccess,
-                        backgroundColor: ColorSchemes.green,
-                      );
+                    )
+                    .whenComplete(() {
+                  CustomSnackBarWidget.show(
+                    context: context,
+                    message: "${widget.friend.name} is now your group member",
+                    path: ImagePaths.icSuccess,
+                    backgroundColor: ColorSchemes.green,
+                  );
                 });
               }
               // if (widget.onAcceptRequest != null) widget.onAcceptRequest!();
             },
-            child: Text(S.of(context).accept.toUpperCase(),
-                style: GoogleFonts.openSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary)))
+            child: Text(
+              S.of(context).accept.toUpperCase(),
+              style: GoogleFonts.openSans(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          )
         : widget.friendViewType == FriendViewType.groupView
             ? Checkbox(
                 value: _checkUserIsMemberList(),
                 onChanged: (value) {
+                  // setState(() {});
                   //TODO: check the checkbox
                   if (widget.isAdminView != null && widget.isAdminView!) {
                     if (value != null && value) {

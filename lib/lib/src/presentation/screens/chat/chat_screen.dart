@@ -137,6 +137,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   @override
   Widget baseBuild(BuildContext context) {
+    print(widget.groupId);
     return BlocConsumer<ChatsBloc, ChatsState>(listener: (context, state) {
       if (state is SendTextMessageSuccess) {
         _massageController.clear();
@@ -266,7 +267,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   _scrollToBottom();
                 },
                 onTextChange: (String value) {
-                  _scrollToBottom();
+                  _isShowSendButton = value.isNotEmpty;
+                   _scrollToBottom();
                   _massageController.text = value;
                 },
                 onAttachPressed: () {
@@ -577,15 +579,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   void _scrollToBottom() {
     //add list view scroll to bottom
     //check if  arrive max of screen
-    if(){
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   WidgetsBinding.instance.addPostFrameCallback((_) {
         _massagesScrollController.animateTo(
           _massagesScrollController.position.minScrollExtent,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
-      });
-      setState(() {});
-    }
+      // });
+       setState(() {});
   }
 }

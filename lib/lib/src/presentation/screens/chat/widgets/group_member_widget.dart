@@ -19,30 +19,35 @@ class GroupMemberWidget extends StatelessWidget {
           .read<GroupBloc>()
           .streamGroupMembersData(membersUIDS: membersUIDS),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: SizedBox());
-        } else if (snapshot.hasError) {
-          return const Center(child: Text("Something went wrong"));
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return const Center(child: SizedBox());
+        // } else if (snapshot.hasError) {
+        //   return const Center(child: Text("Something went wrong"));
+        // }
+        if (snapshot.hasData) {
+          final members = snapshot.data;
+          //get list of members names
+          List<String> memberNames = [];
+          for (var element in members!) {
+            memberNames.add(element["name"] == GetUserUseCase(injector())().name
+                ? "You"
+                : element["name"]);
+          }
+          return Text(
+            memberNames.length == 2
+                ? memberNames.join(" and ")
+                : memberNames.length > 2
+                    ? "${memberNames.sublist(0, memberNames.length - 1).join(", ")} and ${memberNames.last}"
+                    : memberNames.first,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w300,
+            ),
+          );
         }
-        final members = snapshot.data;
-        //get list of members names
-        List<String> memberNames = [];
-        for (var element in members!) {
-          memberNames.add(element["name"] ==GetUserUseCase(injector())().name?"You":element["name"]);
-        }
-        return Text(
-          memberNames.length == 2
-              ? memberNames.join(" and ")
-              : memberNames.length > 2
-                  ? "${memberNames.sublist(0, memberNames.length - 1).join(", ")} and ${memberNames.last}"
-                  : memberNames.first,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
-        );
+        return const SizedBox();
       },
     );
   }
