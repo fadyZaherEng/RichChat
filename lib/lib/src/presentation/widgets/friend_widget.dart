@@ -36,7 +36,7 @@ class FriendWidget extends StatefulWidget {
 class _FriendWidgetState extends State<FriendWidget> {
   FriendsBloc get _bloc => BlocProvider.of<FriendsBloc>(context);
 
-  bool _checkUserIsMemberList() {
+  bool _checkUserIsMemberList() {//here issuse
     return widget.isAdminView != null && widget.isAdminView!
         ? context.read<GroupBloc>().groupAdminsList.contains(widget.friend)
         : context.read<GroupBloc>().groupMembersList.contains(widget.friend);
@@ -92,17 +92,7 @@ class _FriendWidgetState extends State<FriendWidget> {
           color: ColorSchemes.black,
         ),
       ),
-      trailing: BlocConsumer<GroupBloc, GroupState>(
-        listener: (context, state) {
-          // TODO: implement listener
-          if(state is GroupMembersListState){
-
-          }
-        },
-        builder: (context, state) {
-          return _buildTrailing(context);
-        },
-      ),
+      trailing:_buildTrailing(context),
     );
   }
 

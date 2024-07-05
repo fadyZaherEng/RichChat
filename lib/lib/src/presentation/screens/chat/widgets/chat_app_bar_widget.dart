@@ -90,9 +90,10 @@ class ChatAppBarWidget extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   icon: Icon(
-                    Icons.arrow_back,
-                    color: Theme.of(context).iconTheme.color,
+                    Icons.arrow_back_ios_new,
                     textDirection: TextDirection.rtl,
+                    color: Theme.of(context).iconTheme.color,
+                    // textDirection: TextDirection.rtl,
                   )
                 ),
               ],

@@ -102,8 +102,9 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
                   groupId: widget.groupId,
                   onAcceptRequest: () {
                     //TODO: accept request
-                    _bloc.add(
-                        AcceptFriendRequestEvent(friendId: friends[index].uId));
+                    _bloc.add(AcceptFriendRequestEvent(
+                      friendId: friends[index].uId,
+                    ));
                   },
                 );
                 //   ListTile(

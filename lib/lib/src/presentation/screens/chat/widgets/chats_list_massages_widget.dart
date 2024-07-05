@@ -113,8 +113,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                   // });
                   //set massage as seen in fireStore
                   double myMassagePadding = massage.reactions.isEmpty ? 8 : 20;
-                  double otherMassagePadding =
-                      massage.reactions.isEmpty ? 8 : 25;
+                  double otherMassagePadding = massage.reactions.isEmpty ? 8 : 25;
                   if (widget.groupId.isNotEmpty) {
                     BlocProvider.of<ChatsBloc>(context).setMassageAsSeen(
                       senderId: widget.currentUser.uId,
@@ -166,8 +165,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                         child: Padding(
                           padding: EdgeInsets.only(
                             top: 8.0,
-                            bottom:
-                                isMe ? myMassagePadding : otherMassagePadding,
+                            bottom: isMe ? myMassagePadding : otherMassagePadding,
                           ),
                           child: MassageWidget(
                             massage: massage,

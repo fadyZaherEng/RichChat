@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,6 +75,18 @@ class GroupChatAppBar extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+                //TODO: add back arrow
+                IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_new,
+                      textDirection: TextDirection.rtl,
+                      color: Theme.of(context).iconTheme.color,
+                      // textDirection: TextDirection.rtl,
+                    )
                 ),
               ],
             ),

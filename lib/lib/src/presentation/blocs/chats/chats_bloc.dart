@@ -299,6 +299,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     required String receiverId,
     required String isGroup,
   }) {
+    print("isGroup = $isGroup");
     if (isGroup.isNotEmpty) {
       return FirebaseSingleTon.db
           .collection(Constants.groups)
