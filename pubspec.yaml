@@ -89,12 +89,13 @@ dependencies:
   hexcolor:
   adaptive_theme:
   timeago:
-  flutter_sound:
+#  flutter_sound:
   audioplayers:
   video_player:
   audio_session:
   emoji_picker_flutter:
   animate_do:
+  flutter_sound_record: ^3.1.0
 
 
 

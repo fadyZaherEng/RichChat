@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound_record/flutter_sound_record.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,6 +16,7 @@ import 'package:rich_chat_copilot/lib/src/core/utils/show_action_dialog.dart';
 
 class RecordVoiceWidget extends StatefulWidget {
   int maxRecordingDuration;
+  final FlutterSoundRecord flutterSoundRecord;
   final void Function({
     required File audioFile,
     required bool isSendingButtonShow,
@@ -25,6 +26,7 @@ class RecordVoiceWidget extends StatefulWidget {
     super.key,
     this.maxRecordingDuration = 60 * 5,
     required this.onSendAudio,
+    required this.flutterSoundRecord,
   });
 
   @override
@@ -32,7 +34,6 @@ class RecordVoiceWidget extends StatefulWidget {
 }
 
 class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
-  final recorder = FlutterSoundRecorder();
   bool isRecording = false;
   double playbackProgress = 0.0;
   bool isRecorderReady = false;
@@ -124,15 +125,15 @@ class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
       dir = await getApplicationDocumentsDirectory();
     }
     final record =
-        await recorder.startRecorder(toFile: "${dir.path}/audio.aac");
-    recorder.onProgress!.listen((event) {
-      setState(() {
-        playbackProgress = event.duration.inSeconds.toDouble();
-        if (playbackProgress > max) {
-          _stopRecording();
-        }
-      });
-    });
+        await widget.flutterSoundRecord.start(path: "${dir.path}/audio.aac");
+    // recorder.onProgress!.listen((event) {
+    //   setState(() {
+    //     playbackProgress = event.duration.inSeconds.toDouble();
+    //     if (playbackProgress > max) {
+    //       _stopRecording();
+    //     }
+    //   });
+    // });
     return record;
   }
 
@@ -142,7 +143,7 @@ class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
       isRecording = false;
       isShowSendButton = false;
     });
-    String audioPath = await recorder.stopRecorder() ?? "";
+    String audioPath = await widget.flutterSoundRecord.stop() ?? "";
 
     if (audioPath.isEmpty) {
       ///emit audio path event empty
@@ -155,11 +156,11 @@ class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
     }
   }
 
-  @override
-  void dispose() {
-    recorder.closeRecorder();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   recorder.closeRecorder();
+  //   super.dispose();
+  // }
 
   String twoDigits(int n) => n.toString().padLeft(2, "0");
 
@@ -168,7 +169,7 @@ class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
       setting: Permission.microphone,
     )) {
       await initRecorder();
-      if (recorder.isRecording) {
+      if (await widget.flutterSoundRecord.isRecording()) {
         await _stopRecording();
       } else {
         await _startRecording();
@@ -196,10 +197,10 @@ class _RecordVoiceWidgetState extends State<RecordVoiceWidget> {
     if (Platform.isIOS) {
       await _handleIOSAudio();
     }
-    await recorder.openRecorder();
+    // await recorder.openRecorder();
     isRecorderReady = true;
-    await recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
-    return recorder;
+    // await recorder.setSubscriptionDuration(const Duration(milliseconds: 500));
+    // return recorder;
   }
 
   //some configuration for start record in ios

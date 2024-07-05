@@ -20,7 +20,7 @@ class ShowAudioWidget extends StatefulWidget {
   State<ShowAudioWidget> createState() => _ShowAudioWidgetState();
 }
 
-//issue in counter maintaim value of previous sole it in video in course review this section again
+//issue in counter maintain value of previous sole it in video in course review this section again
 class _ShowAudioWidgetState extends State<ShowAudioWidget> {
   AudioPlayer audioPlayer = AudioPlayer();
   bool isPlaying = false;
@@ -31,14 +31,16 @@ class _ShowAudioWidgetState extends State<ShowAudioWidget> {
   @override
   void initState() {
     super.initState();
-    // init audio player
-    audioPlayer = AudioPlayer();
-    isPlaying = false;
-    duration = Duration.zero;
-    position = Duration.zero;
-    _isMuted = false;
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      if(mounted){
+    // // init audio player
+    // audioPlayer = AudioPlayer();
+    // isPlaying = false;
+    // duration = Duration.zero;
+    // position = Duration.zero;
+    // _isMuted = false;
+    if (mounted) {
+      audioPlayer.play(UrlSource(widget
+          .audioPath)); //here issues in video in course review this section again
+      audioPlayer.onPlayerStateChanged.listen((state) {
         if (state == PlayerState.completed) {
           setState(() {
             isPlaying = false;
@@ -55,35 +57,22 @@ class _ShowAudioWidgetState extends State<ShowAudioWidget> {
             isPlaying = false;
           });
         }
-      }
-    });
-    // set audio duration
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      if(mounted){
-        setState(() {
-          duration = newDuration;
-        });
-      }
-    });
-    //set audio position
-    audioPlayer.onPositionChanged.listen((newPosition) {
-      if(mounted){
-        setState(() {
-          position = newPosition;
-        });
-      }
-    });
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if(mounted){
-      audioPlayer
-          .play(UrlSource(widget.audioPath))
-          .then((value) => audioPlayer.pause());//here issues in video in course review this section again
-      setState(() {
-        isPlaying = false;
+      });
+      // set audio duration
+      audioPlayer.onDurationChanged.listen((newDuration) {
+        if (mounted) {
+          setState(() {
+            duration = newDuration;
+          });
+        }
+      });
+      //set audio position
+      audioPlayer.onPositionChanged.listen((newPosition) {
+        if (mounted) {
+          setState(() {
+            position = newPosition;
+          });
+        }
       });
     }
   }
@@ -186,11 +175,11 @@ class _ShowAudioWidgetState extends State<ShowAudioWidget> {
     return [if (duration.inHours > 0) hours, minutes, seconds].join(':');
   }
 
-  @override
-  void dispose() {
-    audioPlayer.pause();
-    audioPlayer.stop();
-    audioPlayer.dispose();
-    super.dispose();
-  }
+// @override
+// void dispose() {
+//   audioPlayer.pause();
+//   audioPlayer.stop();
+//   audioPlayer.dispose();
+//   super.dispose();
+// }
 }
