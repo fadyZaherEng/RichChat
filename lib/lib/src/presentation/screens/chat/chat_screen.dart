@@ -576,13 +576,16 @@ class _ChatScreenState extends BaseState<ChatScreen> {
 
   void _scrollToBottom() {
     //add list view scroll to bottom
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _massagesScrollController.animateTo(
-        _massagesScrollController.position.minScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    });
-    setState(() {});
+    //check if  arrive max of screen
+    if(){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _massagesScrollController.animateTo(
+          _massagesScrollController.position.minScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      });
+      setState(() {});
+    }
   }
 }
