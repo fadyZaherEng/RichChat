@@ -102,31 +102,34 @@ class _ChatsScreenState extends BaseState<ChatsScreen> {
                     if (snapshot.hasData &&
                         snapshot.data != null &&
                         snapshot.data!.isNotEmpty) {
-                      return ListView.separated(
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          final chats = snapshot.data![index];
-                          return LastMassageChatWidget(
-                            chats: chats,
-                            isGroup: false,
-                            onTap: () {
-                              //TODO: navigate to chat screen
-                              Navigator.pushNamed(
-                                context,
-                                Routes.chatWithFriendScreen,
-                                arguments: {
-                                  "friendId": chats.receiverId,
-                                  "friendName": chats.receiverName,
-                                  "friendImage": chats.receiverImage,
-                                  "groupId": ""
-                                },
-                              );
-                            },
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const Divider();
-                        },
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: ListView.separated(
+                          itemCount: snapshot.data!.length,
+                          itemBuilder: (context, index) {
+                            final chats = snapshot.data![index];
+                            return LastMassageChatWidget(
+                              chats: chats,
+                              isGroup: false,
+                              onTap: () {
+                                //TODO: navigate to chat screen
+                                Navigator.pushNamed(
+                                  context,
+                                  Routes.chatWithFriendScreen,
+                                  arguments: {
+                                    "friendId": chats.receiverId,
+                                    "friendName": chats.receiverName,
+                                    "friendImage": chats.receiverImage,
+                                    "groupId": ""
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const Divider();
+                          },
+                        ),
                       );
                     } else {
                       return const Center(

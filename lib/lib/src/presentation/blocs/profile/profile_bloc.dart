@@ -22,15 +22,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   FutureOr<void> _onSendFriendRequest(
       SendFriendRequestEvent event, Emitter<ProfileState> emit) async {
-    emit(SendFriendRequestLoading());
+    // emit(SendFriendRequestLoading());
     try {
       //TODO: implement send friend request
       await FirebaseSingleTon.db
           .collection(Constants.users)
           .doc(event.friendId)
           .update({
-        "friendsRequestsUIds":
-            FieldValue.arrayUnion([FirebaseSingleTon.auth.currentUser!.uid]),
+        "friendsRequestsUIds": FieldValue.arrayUnion([FirebaseSingleTon.auth.currentUser!.uid]),
       });
       await FirebaseSingleTon.db
           .collection(Constants.users)

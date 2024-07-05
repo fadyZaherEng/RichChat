@@ -260,8 +260,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               _bloc.add(CancelFriendRequestEvent(_otherUser.uId));
             },
           );
-        } else if (otherUser.sentFriendsRequestsUIds
-            .contains(_currentUser.uId)) {
+        } else if (otherUser.sendFriendRequestsUIds.contains(_currentUser.uId)) {
           return _buildButton(
             width: MediaQuery.of(context).size.width * 0.6,
             textColor: Theme.of(context).colorScheme.primary,

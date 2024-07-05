@@ -26,7 +26,9 @@ class _SplashScreenState extends State<SplashScreen>
         await Future.delayed(const Duration(seconds: 3));
         FirebaseSingleTon.auth.authStateChanges().listen((User? user) {
           if (user != null) {
-            Navigator.pushReplacementNamed(context, Routes.mainScreen);
+            if(mounted){
+              Navigator.pushReplacementNamed(context, Routes.mainScreen);
+            }
           } else {
             Navigator.pushReplacementNamed(context, Routes.logInScreen);
           }

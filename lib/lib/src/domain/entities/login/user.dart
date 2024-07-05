@@ -12,7 +12,7 @@ class UserModel extends Equatable {
   bool isOnline;
   List<dynamic> friendsUIds;
   List<dynamic> friendsRequestsUIds;
-  List<dynamic> sentFriendsRequestsUIds;
+  List<dynamic> sendFriendRequestsUIds;
 
   UserModel({
     this.uId = '',
@@ -26,7 +26,7 @@ class UserModel extends Equatable {
     this.isOnline = false,
     this.friendsUIds = const [],
     this.friendsRequestsUIds = const [],
-    this.sentFriendsRequestsUIds = const [],
+    this.sendFriendRequestsUIds = const [],
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -42,7 +42,7 @@ class UserModel extends Equatable {
       isOnline: json['isOnline'],
       friendsUIds: json['friendsUIds'],
       friendsRequestsUIds: json['friendsRequestsUIds'],
-      sentFriendsRequestsUIds: json['sentFriendsRequestsUIds'],
+      sendFriendRequestsUIds: json['sendFriendRequestsUIds'],
     );
   }
 
@@ -58,7 +58,7 @@ class UserModel extends Equatable {
         'isOnline': isOnline,
         'friendsUIds': friendsUIds,
         'friendsRequestsUIds': friendsRequestsUIds,
-        'sentFriendsRequestsUIds': sentFriendsRequestsUIds,
+        'sendFriendRequestsUIds': sendFriendRequestsUIds,
       };
 
   @override
@@ -74,7 +74,7 @@ class UserModel extends Equatable {
         isOnline,
         friendsUIds,
         friendsRequestsUIds,
-        sentFriendsRequestsUIds,
+    sendFriendRequestsUIds,
       ];
 
 //copy with
@@ -104,8 +104,8 @@ class UserModel extends Equatable {
       isOnline: isOnline ?? this.isOnline,
       friendsUIds: friendsUIds ?? this.friendsUIds,
       friendsRequestsUIds: friendsRequestsUIds ?? this.friendsRequestsUIds,
-      sentFriendsRequestsUIds:
-          sentFriendsRequestsUIds ?? this.sentFriendsRequestsUIds,
+      sendFriendRequestsUIds:
+          sentFriendsRequestsUIds ?? this.sendFriendRequestsUIds,
     );
   }
 
@@ -123,7 +123,7 @@ class UserModel extends Equatable {
       isOnline: isOnline,
       friendsUIds: friendsUIds,
       friendsRequestsUIds: friendsRequestsUIds,
-      sentFriendsRequestsUIds: sentFriendsRequestsUIds,
+      sendFriendRequestsUIds: sendFriendRequestsUIds,
     );
   }
 }

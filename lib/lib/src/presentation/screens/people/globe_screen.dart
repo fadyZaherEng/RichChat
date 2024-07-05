@@ -90,71 +90,74 @@ class _GlobeScreenState extends BaseState<GlobeScreen> {
                     ),
                   );
                 }
-                return ListView.separated(
-                  physics: const BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: snapshot.data!.docs.length,
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const SizedBox(height: 15);
-                  },
-                  itemBuilder: (BuildContext context, int index) {
-                    UserModel user =
-                        UserModel.fromJson(snapshot.data!.docs[index].data());
-                    return Padding(
-                      padding: const EdgeInsetsDirectional.only(start: 0),
-                      child: FriendWidget(
-                        friend: user,
-                        friendViewType: FriendViewType.allUsers,
-                        groupId: "",
-                      ),
-                      // ListTile(
-                      //   onTap: () {
-                      //     Navigator.pushNamed(
-                      //       context,
-                      //       Routes.profileScreen,
-                      //       arguments: {"userId": user.uId},
-                      //     );
-                      //   },
-                      //   leading: UserImageWidget(
-                      //     image: user.image,
-                      //     width: 50,
-                      //     height: 50,
-                      //   ),
-                      //   title: Text(user.name,
-                      //       style: Theme.of(context).textTheme.bodyLarge),
-                      //   subtitle: Text(user.aboutMe,
-                      //       style: Theme.of(context).textTheme.bodySmall),
-                      //   trailing: ElevatedButton(
-                      //     style: ElevatedButton.styleFrom(
-                      //       backgroundColor:
-                      //           Theme.of(context).colorScheme.primary,
-                      //       shape: RoundedRectangleBorder(
-                      //         borderRadius: BorderRadius.circular(10.0),
-                      //       ),
-                      //     ),
-                      //     onPressed: () {
-                      //       //ToDO navigate to chat screen
-                      //       Navigator.pushNamed(
-                      //           context, Routes.chatWithFriendScreen,
-                      //           arguments: {
-                      //             "friendId": user.uId,
-                      //             "friendName": user.name,
-                      //             "friendImage": user.image,
-                      //             "groupId": ""
-                      //           });
-                      //     },
-                      //     child: Text(
-                      //       S.of(context).chat.toUpperCase(),
-                      //       style: GoogleFonts.openSans(
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.bold,
-                      //         color: Theme.of(context).cardColor,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    );
-                  },
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: ListView.separated(
+                    physics: const BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    separatorBuilder: (BuildContext context, int index) {
+                      return const SizedBox(height: 15);
+                    },
+                    itemBuilder: (BuildContext context, int index) {
+                      UserModel user =
+                          UserModel.fromJson(snapshot.data!.docs[index].data());
+                      return Padding(
+                        padding: const EdgeInsetsDirectional.only(start: 0),
+                        child: FriendWidget(
+                          friend: user,
+                          friendViewType: FriendViewType.allUsers,
+                          groupId: "",
+                        ),
+                        // ListTile(
+                        //   onTap: () {
+                        //     Navigator.pushNamed(
+                        //       context,
+                        //       Routes.profileScreen,
+                        //       arguments: {"userId": user.uId},
+                        //     );
+                        //   },
+                        //   leading: UserImageWidget(
+                        //     image: user.image,
+                        //     width: 50,
+                        //     height: 50,
+                        //   ),
+                        //   title: Text(user.name,
+                        //       style: Theme.of(context).textTheme.bodyLarge),
+                        //   subtitle: Text(user.aboutMe,
+                        //       style: Theme.of(context).textTheme.bodySmall),
+                        //   trailing: ElevatedButton(
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor:
+                        //           Theme.of(context).colorScheme.primary,
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(10.0),
+                        //       ),
+                        //     ),
+                        //     onPressed: () {
+                        //       //ToDO navigate to chat screen
+                        //       Navigator.pushNamed(
+                        //           context, Routes.chatWithFriendScreen,
+                        //           arguments: {
+                        //             "friendId": user.uId,
+                        //             "friendName": user.name,
+                        //             "friendImage": user.image,
+                        //             "groupId": ""
+                        //           });
+                        //     },
+                        //     child: Text(
+                        //       S.of(context).chat.toUpperCase(),
+                        //       style: GoogleFonts.openSans(
+                        //         fontSize: 14,
+                        //         fontWeight: FontWeight.bold,
+                        //         color: Theme.of(context).cardColor,
+                        //       ),
+                        //     ),
+                        //   ),
+                        // ),
+                      );
+                    },
+                  ),
                 );
               },
             ),

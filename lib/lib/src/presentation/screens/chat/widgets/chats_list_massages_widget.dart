@@ -12,6 +12,7 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/utils/show_r
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_date_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/cricle_loading_widget.dart';
 
 class ChatsListMassagesWidget extends StatefulWidget {
   final Stream<List<Massage>> massagesStream;
