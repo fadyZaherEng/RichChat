@@ -145,7 +145,7 @@ class _FriendWidgetState extends State<FriendWidget> {
               } else {//in group
                 context.read<GroupBloc>().acceptRequestToJoinGroup(
                       groupId: widget.groupId,
-                      uid: FirebaseSingleTon.auth.currentUser!.uid,
+                      uid: widget.friend.uId,
                     ).whenComplete(() {
                       CustomSnackBarWidget.show(
                         context: context,

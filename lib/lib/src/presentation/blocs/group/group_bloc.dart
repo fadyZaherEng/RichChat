@@ -396,16 +396,11 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
           .collection(Constants.groups)
           .doc(groupId)
           .update({
-        "awaitingApprovalUIDS": FieldValue.arrayRemove([uid])
-      });
-      await FirebaseSingleTon.db
-          .collection(Constants.groups)
-          .doc(groupId)
-          .update({
+        "awaitingApprovalUIDS": FieldValue.arrayRemove([uid]),
         "membersUIDS": FieldValue.arrayUnion([uid])
       });
-      //update group members list
-      await updateGroupMembersList();
+      _group.awaitingApprovalUIDS.remove(uid);
+      _group.membersUIDS.add(uid);
       //send notification to group admin
       emit(AcceptRequestToJoinGroupSuccessState());
     } catch (e) {
