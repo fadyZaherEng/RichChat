@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
@@ -60,10 +61,12 @@ class LastMassageChatWidget extends StatelessWidget {
                   )
                 : const SizedBox.shrink(),
             const SizedBox(width: 5),
-            MassageReplyTypeWidget(
-              massageType: massageType,
-              massage: lastMassage,
-              context: context,
+            Expanded(
+              child: MassageReplyTypeWidget(
+                massageType: massageType,
+                massage: lastMassage,
+                context: context,
+              ),
             ),
           ],
         ),

@@ -173,6 +173,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                             isViewOnly: false,
                             isGroupChat: widget.groupId.isNotEmpty,
                             onRightSwipe: () {
+                              print("onRightSwipe${massage.massage}");
                               final massageReply = MassageReply(
                                 massage: massage.massage,
                                 senderName: massage.senderName,

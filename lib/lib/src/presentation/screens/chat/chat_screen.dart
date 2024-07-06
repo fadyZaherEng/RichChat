@@ -193,6 +193,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   massagesScrollController: _massagesScrollController,
                   currentUser: currentUser,
                   onRightSwipe: (MassageReply massageReply) {
+                    print('massageReply ${massageReply.massage}');
                     _bloc.setMassageReply(massageReply);
                   },
                   showEmojiKeyword: (massage) {
@@ -259,8 +260,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                 },
                 isShowEmojiPicker: _isShowEmojiPicker,
                 onBackspacePressed: () {
-                  _massageController.text =
-                      _massageController.text.characters.skipLast(1).toString();
+                  // _massageController.text =
+                  //     _massageController.text.characters.skipLast(1).toString();
                 },
                 toggleEmojiKeyWordContainer: () {
                   _toggleEmojiKeyWordContainer();

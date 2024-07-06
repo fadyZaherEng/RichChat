@@ -700,7 +700,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
           .doc(receiverId)
           .collection(Constants.messages)
           .where(Constants.isSeen, isEqualTo: false)
-          .where("senderId", isEqualTo: userId)
+          .where("senderId", isNotEqualTo: userId)
           .snapshots()
           .map((event) {
         return event.docs.length;
