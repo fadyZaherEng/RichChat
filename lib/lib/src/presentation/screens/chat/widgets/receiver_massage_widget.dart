@@ -57,32 +57,55 @@ class ReceiverMassageWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (isReplying) ...[
-                          Container(
-                            padding: const EdgeInsets.all(8.0),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade500,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  senderName,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
-                                    fontWeight: FontWeight.bold,
+                          IntrinsicHeight(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 4),
+                              margin: const EdgeInsets.only(bottom: 5),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade500,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 5,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        bottomLeft: Radius.circular(20),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                DisplayMassageTypeWidget(
-                                  massageType: massage.repliedMessageType,
-                                  massage: massage.repliedMessage,
-                                  color: Colors.black,
-                                  maxLines: 1,
-                                  textOverflow: TextOverflow.ellipsis,
-                                  context: context,
-                                  isReplying: true,
-                                ),
-                              ],
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          senderName,
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        DisplayMassageTypeWidget(
+                                          massageType: massage.repliedMessageType,
+                                          massage: massage.repliedMessage,
+                                          color: Colors.black,
+                                          maxLines: 1,
+                                          textOverflow: TextOverflow.ellipsis,
+                                          context: context,
+                                          isReplying: true,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         ],

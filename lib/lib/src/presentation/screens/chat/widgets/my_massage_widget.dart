@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
@@ -65,32 +67,56 @@ class MyMassageWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       if (isReplying) ...[
-                        Container(
-                          padding: const EdgeInsets.all(8.0),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).cardColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                massage.repliedTo,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
+                        IntrinsicHeight(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 4),
+                            margin: const EdgeInsets.only(bottom: 5),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).cardColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 5,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              DisplayMassageTypeWidget(
-                                massageType: massage.repliedMessageType,
-                                massage: massage.repliedMessage,
-                                color: Colors.white,
-                                maxLines: 1,
-                                textOverflow: TextOverflow.ellipsis,
-                                context: context,
-                                isReplying: true,
-                              ),
-                            ],
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        massage.repliedTo,
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      DisplayMassageTypeWidget(
+                                        massageType: massage.repliedMessageType,
+                                        massage: massage.repliedMessage,
+                                        color: Colors.white,
+                                        maxLines: 1,
+                                        textOverflow: TextOverflow.ellipsis,
+                                        context: context,
+                                        isReplying: true,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         )
                       ],

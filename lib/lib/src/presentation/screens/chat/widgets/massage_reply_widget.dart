@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_reply_type_widget.dart';
@@ -38,6 +36,9 @@ class MassageReplyWidget extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(8.5),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                   width: 5,
@@ -54,14 +55,13 @@ class MassageReplyWidget extends StatelessWidget {
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     getTitle(),
-                    Expanded(
-                      child: MassageReplyTypeWidget(
-                        massage: massageReply!.massage,
-                        massageType: type,
-                        context: context,
-                      ),
+                    MassageReplyTypeWidget(
+                      massage: massageReply!.massage,
+                      massageType: type,
+                      context: context,
                     ),
                   ],
                 ),
@@ -89,10 +89,7 @@ class MassageReplyWidget extends StatelessWidget {
                               .withOpacity(0.5),
                           width: 1,
                         )),
-                    child: const Padding(
-                      padding: EdgeInsets.all(4.0),
-                      child: Icon(Icons.close),
-                    )),
+                    child: const Icon(Icons.close,size: 18,)),
               ),
             ],
           ),
@@ -109,15 +106,17 @@ class MassageReplyWidget extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: const TextStyle(
           fontWeight: FontWeight.bold,
+          color: Colors.blue,
         ),
       );
     }
     return Text(
-      massage!.senderName,
+      massage!.repliedTo,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(
         fontWeight: FontWeight.bold,
+        color: Colors.blue,
       ),
     );
   }
