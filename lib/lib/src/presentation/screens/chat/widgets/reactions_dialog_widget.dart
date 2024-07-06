@@ -29,15 +29,7 @@ class ReactionsDialogWidget extends StatefulWidget {
 
 class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
   //list of default reactions
-  final List<String> _reactions = [
-    "👍",
-    "❤️",
-    "😂",
-    "😮",
-    "😢",
-    "😡",
-    "➕",
-  ];
+  final List<String> _reactions = ["👍", "❤️", "😂", "😮", "😢", "😡", "➕"];
   final List<String> _contextMenu = ["Reply", "Copy", "Delete"];
   bool reactionClicked = false;
   int clickedReactionIndex = -1;
@@ -183,16 +175,20 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
                               },
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(contextMenu,
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.black,
-                                        )),
+                                    Text(
+                                      contextMenu,
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                     Pulse(
                                       infinite: false,
                                       duration:
