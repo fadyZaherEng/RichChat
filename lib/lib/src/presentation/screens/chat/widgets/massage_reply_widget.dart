@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_reply_type_widget.dart';
@@ -52,45 +53,9 @@ class MassageReplyWidget extends StatelessWidget {
               const SizedBox(
                 width: 10,
               ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    getTitle(),
-                    MassageReplyTypeWidget(
-                      massage: massageReply!.massage,
-                      massageType: type,
-                      context: context,
-                    ),
-                  ],
-                ),
-              ),
+              _namedAndTypeWidget(type: type, context: context),
               const Spacer(),
-              InkWell(
-                onTap: () {
-                  //TODO: set reply to null
-                  setReplyMessageWithNull();
-                },
-                child: Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .color!
-                            .withOpacity(0.02),
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: Theme.of(context)
-                              .textTheme
-                              .titleLarge!
-                              .color!
-                              .withOpacity(0.5),
-                          width: 1,
-                        )),
-                    child: const Icon(Icons.close,size: 18,)),
-              ),
+              _closedButtonWidget(context),
             ],
           ),
         ),
@@ -117,6 +82,56 @@ class MassageReplyWidget extends StatelessWidget {
       style: const TextStyle(
         fontWeight: FontWeight.bold,
         color: Colors.blue,
+      ),
+    );
+  }
+
+  Widget _closedButtonWidget(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        //TODO: set reply to null
+        setReplyMessageWithNull();
+      },
+      child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+              color: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .color!
+                  .withOpacity(0.02),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .color!
+                    .withOpacity(0.5),
+                width: 1,
+              )),
+          child: const Icon(
+            Icons.close,
+            size: 18,
+          )),
+    );
+  }
+
+  Widget _namedAndTypeWidget({
+    required MassageType type,
+    required BuildContext context,
+  }) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          getTitle(),
+          MassageReplyTypeWidget(
+            massage: massageReply!.massage,
+            massageType: type,
+            context: context,
+          ),
+        ],
       ),
     );
   }
