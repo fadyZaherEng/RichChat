@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/friend_view_type.dart';
@@ -18,7 +19,7 @@ class BottomSheetContentWidget extends StatelessWidget {
       height: MediaQuery
           .of(context)
           .size
-          .height * 0.7,
+          .height * 0.8,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -48,29 +49,34 @@ class BottomSheetContentWidget extends StatelessWidget {
   Widget _buildTitleWidget(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Text(
           S
               .of(context)
               .selectGroupAdmin,
           style: const TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-        // const Spacer(),
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Text(
-            S
-                .of(context)
-                .done,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue,
+         const Spacer(),
+        const Spacer(),
+        Expanded(
+          child: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Text(
+              S
+                  .of(context)
+                  .done,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
             ),
           ),
         ),

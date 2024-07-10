@@ -126,8 +126,9 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
       //get the list of group admins
       List<UserModel> groupAdminsList = groupProvider.groupMembersList;
       //get a list of names from the list of group admins
-      List<String> groupAdminNamesList =
-          groupAdminsList.map((e) => e.uId==uid?S.of(context).you:e.name).toList();
+      List<String> groupAdminNamesList = groupAdminsList
+          .map((e) => e.uId == uid ? S.of(context).you : e.name)
+          .toList();
       //add the group admin names to the list
       groupAdminNames.addAll(groupAdminNamesList);
       //return the list of group admin names
@@ -147,13 +148,10 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
   }
 
   void _showSelectAdminBottomSheet(BuildContext context) {
-    showBottomSheet(
-      context: context,
-      builder: (context) {
-        return BottomSheetContentWidget(
-          groupProvider: groupProvider,
-        );
-      },
-    );
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheetContentWidget(groupProvider: groupProvider);
+        });
   }
 }
