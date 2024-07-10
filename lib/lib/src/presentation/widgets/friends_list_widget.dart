@@ -37,15 +37,16 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
       case FriendViewType.friend:
         _bloc.add(GetFriends());
         break;
-      case FriendViewType.groupView:
-        // _bloc.add(GetGroups());
-        break;
+      // case FriendViewType.groupView:
+      //   // _bloc.add(GetGroups());
+      //   break;
       case FriendViewType.friendRequest:
         _bloc.add(GetFriendsRequestsEvent(
           uid: FirebaseSingleTon.auth.currentUser!.uid,
           groupId: widget.groupId,
         ));
       default:
+        _bloc.add(GetFriends());
         break;
     }
     // friends.add(UserModel(

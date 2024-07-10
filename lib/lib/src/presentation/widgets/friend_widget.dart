@@ -36,11 +36,12 @@ class FriendWidget extends StatefulWidget {
 class _FriendWidgetState extends State<FriendWidget> {
   FriendsBloc get _bloc => BlocProvider.of<FriendsBloc>(context);
 
-  bool _checkUserIsMemberList() {//here issuse
+  GroupBloc get _groupBloc => BlocProvider.of<GroupBloc>(context);
+
+  bool _checkUserIsMemberList() {
     return widget.isAdminView != null && widget.isAdminView!
         ? context.read<GroupBloc>().groupAdminsList.contains(widget.friend)
         : context.read<GroupBloc>().groupMembersList.contains(widget.friend);
-    // return BlocProvider.of<GroupBloc>(context).groupMembersList.contains(widget.friend);
   }
 
   @override
@@ -61,6 +62,7 @@ class _FriendWidgetState extends State<FriendWidget> {
       },
     );
   }
+
   Widget _buildFriendWidget(BuildContext context) {
     //get uid
     final uid = FirebaseSingleTon.auth.currentUser!.uid;
@@ -92,7 +94,7 @@ class _FriendWidgetState extends State<FriendWidget> {
           color: ColorSchemes.black,
         ),
       ),
-      trailing:_buildTrailing(context),
+      trailing: _buildTrailing(context),
     );
   }
 
@@ -143,16 +145,14 @@ class _FriendWidgetState extends State<FriendWidget> {
               //TODO: accept request
               if (widget.groupId.isEmpty) {
                 //not in group
-                _bloc
-                    .add(AcceptFriendRequestEvent(friendId: widget.friend.uId));
+                _bloc.add(AcceptFriendRequestEvent(
+                  friendId: widget.friend.uId,
+                ));
               } else {
                 //in group
-                context
-                    .read<GroupBloc>()
+                _groupBloc
                     .acceptRequestToJoinGroup(
-                      groupId: widget.groupId,
-                      uid: widget.friend.uId,
-                    )
+                        groupId: widget.groupId, uid: widget.friend.uId)
                     .whenComplete(() {
                   CustomSnackBarWidget.show(
                     context: context,
@@ -174,32 +174,32 @@ class _FriendWidgetState extends State<FriendWidget> {
             ),
           )
         : widget.friendViewType == FriendViewType.groupView
-            ? Checkbox(
-                value: _checkUserIsMemberList(),
-                onChanged: (value) {
-                  // setState(() {});
-                  //TODO: check the checkbox
-                  if (widget.isAdminView != null && widget.isAdminView!) {
-                    if (value != null && value) {
-                      context
-                          .read<GroupBloc>()
-                          .addMemberToAdmin(groupAdmin: widget.friend);
-                    } else {
-                      context
-                          .read<GroupBloc>()
-                          .removeAdminFromAdmins(user: widget.friend);
-                    }
-                  } else {
-                    if (value != null && value) {
-                      context
-                          .read<GroupBloc>()
-                          .addMemberToGroup(groupMember: widget.friend);
-                    } else {
-                      context
-                          .read<GroupBloc>()
-                          .removeMemberFromGroup(user: widget.friend);
-                    }
-                  }
+            ? BlocConsumer<GroupBloc, GroupState>(
+                listener: (context, state) {
+                  // TODO: implement listener
+                },
+                builder: (context, state) {
+                  return Checkbox(
+                    value: _checkUserIsMemberList(),
+                    onChanged: (value) {
+                      //TODO: check the checkbox
+                      if (widget.isAdminView != null && widget.isAdminView!) {
+                        if (value != null && value) {
+                          _groupBloc.addMemberToAdmin(
+                              groupAdmin: widget.friend);
+                        } else {
+                          _groupBloc.removeAdminFromAdmins(user: widget.friend);
+                        }
+                      } else {
+                        if (value != null && value) {
+                          _groupBloc.addMemberToGroup(
+                              groupMember: widget.friend);
+                        } else {
+                          _groupBloc.removeMemberFromGroup(user: widget.friend);
+                        }
+                      }
+                    },
+                  );
                 },
               )
             : null;

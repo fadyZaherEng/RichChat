@@ -97,6 +97,7 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
                       icon: Icons.admin_panel_settings,
                       iconColor: Colors.red,
                       onTap: () {
+                        // check if there are group members
                         if (groupProvider.groupMembersList.isEmpty) {
                           return;
                         }
