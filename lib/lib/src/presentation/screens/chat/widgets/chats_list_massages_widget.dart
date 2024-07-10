@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_chat_reactions/flutter_chat_reactions.dart';
+import 'package:flutter_chat_reactions/model/menu_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/utils/show_reactions_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/my_massage_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/receiver_massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_date_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/hero_dialog_route.dart';
 
 class ChatsListMassagesWidget extends StatefulWidget {
   final Stream<List<Massage>> massagesStream;
@@ -23,7 +29,7 @@ class ChatsListMassagesWidget extends StatefulWidget {
   final void Function(String, Massage) onContextMenuSelected;
   final void Function(Massage) showEmojiKeyword;
   final String groupId;
-  final void Function()setMassageReplyNull;
+  final void Function() setMassageReplyNull;
 
   const ChatsListMassagesWidget({
     super.key,
@@ -114,7 +120,8 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                   // });
                   //set massage as seen in fireStore
                   double myMassagePadding = massage.reactions.isEmpty ? 8 : 20;
-                  double otherMassagePadding = massage.reactions.isEmpty ? 8 : 25;
+                  double otherMassagePadding =
+                      massage.reactions.isEmpty ? 8 : 25;
                   if (widget.groupId.isNotEmpty) {
                     BlocProvider.of<ChatsBloc>(context).setMassageAsSeen(
                       senderId: widget.currentUser.uId,
@@ -140,14 +147,13 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                     children: [
                       GestureDetector(
                         onLongPress: () async {
-                          _showReactionDialog(isMe, massage, context);
+                          //TODO: By Myself
+                          // _showReactionDialog(isMe, massage, context);
+                          //TODO: By Package
+                          //using by package flutter_chat_reaction
+                          _showReactionDialogByPackage(isMe, massage, context);
                         },
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            top: 8.0,
-                            bottom: isMe ? myMassagePadding : otherMassagePadding,
-                          ),
-                          child: MessageWidget(
+                        child: MessageWidget(
                             message: massage,
                             isMe: isMe,
                             isGroupChat: widget.groupId.isNotEmpty,
@@ -166,9 +172,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                             },
                             setMassageReplyNull: () {
                               widget.setMassageReplyNull();
-                            }
-                          ),
-                        ),
+                            }),
                       ),
                     ],
                   );
@@ -202,4 +206,46 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
     );
   }
 
+  void _showReactionDialogByPackage(bool isMe, massage, BuildContext context) {
+    Navigator.push(
+      context,
+      HeroDialogRoute(
+        builder: (context) => ReactionsDialogWidget(
+          id: massage.messageId,
+          messageWidget: isMe
+              ? MyMassageWidget(
+                  massage: massage,
+                  isReplying: massage.repliedTo.isNotEmpty,
+                  isGroupChat: widget.groupId.isNotEmpty,
+                  viewOnly: true,
+                  setMassageReplyNull: () {
+                    widget.setMassageReplyNull();
+                  },
+                )
+              : ReceiverMassageWidget(
+                  massage: massage,
+                  isReplying: massage.repliedTo.isNotEmpty,
+                  viewOnly: true,
+                  isGroupChat: widget.groupId.isNotEmpty,
+                  setMassageReplyNull: () {
+                    widget.setMassageReplyNull();
+                  },
+                ),
+          onReactionTap: (reaction) {
+            widget.onEmojiSelected(reaction, massage);
+          },
+          onContextMenuTap: (contextMenu) {
+            widget.onContextMenuSelected(contextMenu.label, massage);
+          },
+          widgetAlignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+          // menuItems: const[
+          //   MenuItem(label: Constants.reply, icon: Icons.reply),
+          //   MenuItem(label: Constants.copy, icon: Icons.copy),
+          //   MenuItem(label: "forward", icon: Icons.forward),
+          //   MenuItem(label: Constants.delete, icon: Icons.delete,isDestuctive: true),
+          // ],
+        ),
+      ),
+    );
+  }
 }

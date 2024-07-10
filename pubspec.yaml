@@ -96,6 +96,9 @@ dependencies:
   emoji_picker_flutter:
   animate_do:
   flutter_sound_record: ^3.1.0
+  #flutter_chat_reactions
+  flutter_chat_reactions:
+
 
 
 

@@ -46,6 +46,7 @@ class DisplayMassageTypeWidget extends StatelessWidget {
             ? const Icon(Icons.image)
             : SizedBox(
           height: 200,
+          width: 200,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: CachedNetworkImage(
@@ -55,6 +56,7 @@ class DisplayMassageTypeWidget extends StatelessWidget {
                 child: SkeletonLine(
                   style: SkeletonLineStyle(
                     height: 200,
+                    width: 200,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),

@@ -702,6 +702,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.1"
+  flutter_chat_reactions:
+    dependency: "direct main"
+    description:
+      name: flutter_chat_reactions
+      sha256: "20dfb534d9939112098d7aa540476352afba67eefb7d06aac131fb2670360f07"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   flutter_image_compress:
     dependency: "direct main"
     description:
