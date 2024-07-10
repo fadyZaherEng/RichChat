@@ -27,29 +27,29 @@ class UnReadMassageCounterWidget extends StatelessWidget {
           return const SizedBox();
         } else {
           final unreadMassages = snapshot.data ?? 0;
-          return unreadMassages == 0 ?
-          const SizedBox() : Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(25),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black12,
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Text(
-              unreadMassages.toString(),
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-              ),
-            ),
-          );
+          return unreadMassages > 0
+              ? Container(
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(25),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          spreadRadius: 1,
+                          blurRadius: 6.0,
+                          offset: Offset(0, 1),
+                        ),
+                      ]),
+                  child: Text(
+                    unreadMassages.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                    ),
+                  ),
+                )
+              : const SizedBox();
         }
       },
     );

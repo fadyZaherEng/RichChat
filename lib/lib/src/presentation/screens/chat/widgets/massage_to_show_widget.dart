@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 
-class MassageReplyTypeWidget extends StatelessWidget {
+class MassageToShowWidget extends StatelessWidget {
   final MassageType massageType;
   final String massage;
   final BuildContext context;
 
-  const MassageReplyTypeWidget({
+  const MassageToShowWidget({
     required this.massageType,
     required this.massage,
     required this.context,

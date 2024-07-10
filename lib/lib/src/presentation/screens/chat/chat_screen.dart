@@ -189,6 +189,10 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                     userId: currentUser.uId,
                     isGroup: widget.groupId,
                   ),
+                  setMassageReplyNull: () {
+                    _scrollToBottom();
+                    _bloc.setMassageReply(null);
+                  },
                   groupId: widget.groupId,
                   massagesScrollController: _massagesScrollController,
                   currentUser: currentUser,
@@ -269,7 +273,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                 },
                 onTextChange: (String value) {
                   _isShowSendButton = value.isNotEmpty;
-                   _scrollToBottom();
+                  _scrollToBottom();
                   _massageController.text = value;
                 },
                 onAttachPressed: () {
@@ -581,12 +585,12 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     //add list view scroll to bottom
     //check if  arrive max of screen
     //   WidgetsBinding.instance.addPostFrameCallback((_) {
-        _massagesScrollController.animateTo(
-          _massagesScrollController.position.minScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      // });
-       setState(() {});
+    _massagesScrollController.animateTo(
+      _massagesScrollController.position.minScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+    // });
+    setState(() {});
   }
 }

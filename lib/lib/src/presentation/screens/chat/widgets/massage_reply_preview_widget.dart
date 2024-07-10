@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_reply_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_to_show_widget.dart';
 
-class MassageReplyWidget extends StatelessWidget {
+class MassageReplyPreviewWidget extends StatelessWidget {
   final MassageReply? massageReply;
   final Massage? massage;
+  final bool viewOnly;
   final void Function() setReplyMessageWithNull;
 
-  const MassageReplyWidget({
+  const MassageReplyPreviewWidget({
     super.key,
     this.massageReply,
     this.massage,
     required this.setReplyMessageWithNull,
+    this.viewOnly = false,
   });
 
   @override
@@ -50,9 +53,7 @@ class MassageReplyWidget extends StatelessWidget {
                       bottomLeft: Radius.circular(20),
                     ),
                   )),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               _namedAndTypeWidget(type: type, context: context),
               const Spacer(),
               _closedButtonWidget(context),
@@ -93,26 +94,27 @@ class MassageReplyWidget extends StatelessWidget {
         setReplyMessageWithNull();
       },
       child: Container(
-          padding: const EdgeInsets.all(2),
-          decoration: BoxDecoration(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+            color: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .color!
+                .withOpacity(0.02),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
               color: Theme.of(context)
                   .textTheme
                   .titleLarge!
                   .color!
-                  .withOpacity(0.02),
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .color!
-                    .withOpacity(0.5),
-                width: 1,
-              )),
-          child: const Icon(
-            Icons.close,
-            size: 18,
-          )),
+                  .withOpacity(0.5),
+              width: 1,
+            )),
+        child: const Icon(
+          Icons.close,
+          size: 18,
+        ),
+      ),
     );
   }
 
@@ -126,11 +128,23 @@ class MassageReplyWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           getTitle(),
-          MassageReplyTypeWidget(
+          const SizedBox(height: 5),
+          massageReply != null
+              ?  MassageToShowWidget(
             massage: massageReply!.massage,
             massageType: type,
             context: context,
+          ) : DisplayMassageTypeWidget(
+            massage: massage!.massage,
+            isReplying: true,
+            context: context,
+            massageType: type,
+            textOverflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            color: Colors.white,
+            viewOnly: viewOnly,
           ),
+
         ],
       ),
     );

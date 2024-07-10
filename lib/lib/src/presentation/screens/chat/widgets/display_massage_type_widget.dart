@@ -10,10 +10,11 @@ class DisplayMassageTypeWidget extends StatelessWidget {
   final String massage;
   final MassageType massageType;
   final Color color;
-  final int? maxLines;
   final TextOverflow? textOverflow;
-  final BuildContext context;
   final bool isReplying;
+  final bool viewOnly;
+  final int? maxLines;
+  final BuildContext context;
 
   const DisplayMassageTypeWidget({
     super.key,
@@ -24,6 +25,7 @@ class DisplayMassageTypeWidget extends StatelessWidget {
     this.textOverflow,
     required this.context,
     required this.isReplying,
+    required this.viewOnly,
   });
 
   @override
@@ -43,38 +45,49 @@ class DisplayMassageTypeWidget extends StatelessWidget {
         return isReplying
             ? const Icon(Icons.image)
             : SizedBox(
-              height: 200,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: CachedNetworkImage(
-                    imageUrl: massage,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => const Center(
-                      child: SkeletonLine(
-                        style: SkeletonLineStyle(
-                          height: 200,
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                        ),
-                      )
-                    )
+          height: 200,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: CachedNetworkImage(
+              imageUrl: massage,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const Center(
+                child: SkeletonLine(
+                  style: SkeletonLineStyle(
+                    height: 200,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
                 ),
-            );
+              ),
+            ),
+          ),
+        );
       case MassageType.video:
         return isReplying
             ? const Icon(Icons.video_collection)
             : ShowVideoWidget(
-                videoPath: massage,
-                color: color,
-                onTap: () {
-                  Navigator.pushNamed(context, Routes.fullVideoScreen,
-                      arguments: {'videoPath': massage});
-                },
-              );
+          videoPath: massage,
+          color: color,
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              Routes.fullVideoScreen,
+              arguments: {
+                'videoPath': massage,
+              },
+            );
+          },
+          isViewOnly: viewOnly,
+        );
       case MassageType.audio:
         return isReplying
-            ?  Icon(Icons.audiotrack,color: Theme.of(context).colorScheme.secondary,)
-            : ShowAudioWidget(audioPath: massage, textDurationColor: color);
+            ? Icon(Icons.audiotrack,
+            color: Theme.of(context).colorScheme.secondary)
+            : ShowAudioWidget(
+          audioPath: massage,
+          textDurationColor: color,
+          viewOnly: viewOnly,
+        );
       case MassageType.file:
         return CachedNetworkImage(imageUrl: massage);
       default:

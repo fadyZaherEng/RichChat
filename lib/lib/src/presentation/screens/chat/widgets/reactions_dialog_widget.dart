@@ -13,6 +13,7 @@ class ReactionsDialogWidget extends StatefulWidget {
   final void Function(String, Massage) onEmojiSelected;
   final void Function(String, Massage) onContextMenuSelected;
   final String groupId;
+  final void Function() setMassageReplyNull;
 
   const ReactionsDialogWidget({
     super.key,
@@ -21,6 +22,7 @@ class ReactionsDialogWidget extends StatefulWidget {
     required this.onEmojiSelected,
     required this.onContextMenuSelected,
     required this.groupId,
+    required this.setMassageReplyNull,
   });
 
   @override
@@ -119,11 +121,13 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
                         massage: widget.message,
                         isReplying: widget.message.repliedTo.isNotEmpty,
                         isGroupChat: widget.groupId.isNotEmpty,
+                        setMassageReplyNull: widget.setMassageReplyNull,
                       )
                     : ReceiverMassageWidget(
                         massage: widget.message,
                         isReplying: widget.message.repliedTo.isNotEmpty,
                         isGroupChat: widget.groupId.isNotEmpty,
+                        setMassageReplyNull: widget.setMassageReplyNull,
                       ),
                 // child: _alignMassageReplyWidget(context),
               ),

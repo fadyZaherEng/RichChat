@@ -9,6 +9,7 @@ void showReactionsDialog({
   required String groupId,
   required void Function(String,Massage) onContextMenuSelected,
   required void Function(String,Massage) onEmojiSelected,
+  required void Function() setMassageReplyNull,
 }) {
   showDialog(
     context: context,
@@ -29,6 +30,7 @@ void showReactionsDialog({
           onEmojiSelected: (emoji,massage) {
             onEmojiSelected(emoji,massage);
           },
+          setMassageReplyNull: setMassageReplyNull,
         ),
       ),
     ),

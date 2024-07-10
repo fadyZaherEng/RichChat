@@ -12,7 +12,6 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/utils/show_r
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_date_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/widgets/cricle_loading_widget.dart';
 
 class ChatsListMassagesWidget extends StatefulWidget {
   final Stream<List<Massage>> massagesStream;
@@ -24,6 +23,7 @@ class ChatsListMassagesWidget extends StatefulWidget {
   final void Function(String, Massage) onContextMenuSelected;
   final void Function(Massage) showEmojiKeyword;
   final String groupId;
+  final void Function()setMassageReplyNull;
 
   const ChatsListMassagesWidget({
     super.key,
@@ -36,6 +36,7 @@ class ChatsListMassagesWidget extends StatefulWidget {
     required this.onContextMenuSelected,
     required this.showEmojiKeyword,
     required this.groupId,
+    required this.setMassageReplyNull,
   });
 
   @override
@@ -140,37 +141,15 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                       GestureDetector(
                         onLongPress: () async {
                           _showReactionDialog(isMe, massage, context);
-                          // final value = await Navigator.of(context).push(
-                          //   HeroDialogRoute(
-                          //     builder: (context) {
-                          //       return ReactionsContextMenu(
-                          //         isMe: isMe,
-                          //         massage: massage,
-                          //         onContextMenuSelected: (emoji, massage) {
-                          //           widget.onContextMenuSelected(
-                          //               emoji, massage);
-                          //         },
-                          //         onEmojiSelected: (emoji, massage) {
-                          //           widget.onEmojiSelected(emoji, massage);
-                          //         },
-                          //       );
-                          //     },
-                          //   ),
-                          // );
-                          // // if (value! == true) {
-                          // //   //show emoji keyboard
-                          // //   widget.showEmojiKeyword(massage);
-                          // // }
                         },
                         child: Padding(
                           padding: EdgeInsets.only(
                             top: 8.0,
                             bottom: isMe ? myMassagePadding : otherMassagePadding,
                           ),
-                          child: MassageWidget(
-                            massage: massage,
+                          child: MessageWidget(
+                            message: massage,
                             isMe: isMe,
-                            isViewOnly: false,
                             isGroupChat: widget.groupId.isNotEmpty,
                             onRightSwipe: () {
                               print("onRightSwipe${massage.massage}");
@@ -185,10 +164,12 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                               // _bloc.setMassageReply(massageReply);
                               widget.onRightSwipe(massageReply);
                             },
+                            setMassageReplyNull: () {
+                              widget.setMassageReplyNull();
+                            }
                           ),
                         ),
                       ),
-                      _stackedReactions(massage, isMe),
                     ],
                   );
                 },
@@ -215,32 +196,10 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
       onEmojiSelected: (emoji, massage) {
         widget.onEmojiSelected(emoji, massage);
       },
+      setMassageReplyNull: () {
+        widget.setMassageReplyNull();
+      },
     );
   }
 
-  Widget _stackedReactions(massage, bool isMe) {
-    return isMe
-        ? Positioned(
-            bottom: 4,
-            right: 90,
-            child: StackedReactionsWidget(
-              massage: massage,
-              size: 20,
-              onPressed: () {
-                //show bottom sheet with list of people reactions with massage
-              },
-            ),
-          )
-        : Positioned(
-            bottom: 4,
-            left: 50,
-            child: StackedReactionsWidget(
-              massage: massage,
-              size: 20,
-              onPressed: () {
-                //show bottom sheet with list of people reactions with massage
-              },
-            ),
-          );
-  }
 }

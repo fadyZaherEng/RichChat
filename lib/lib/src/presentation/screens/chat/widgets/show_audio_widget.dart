@@ -9,11 +9,12 @@ import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 class ShowAudioWidget extends StatefulWidget {
   final String audioPath;
   final Color textDurationColor;
-
+  final bool viewOnly;
   const ShowAudioWidget({
     Key? key,
     required this.audioPath,
     required this.textDurationColor,
+    this.viewOnly = false,
   }) : super(key: key);
 
   @override

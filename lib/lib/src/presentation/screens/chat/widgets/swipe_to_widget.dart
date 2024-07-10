@@ -8,38 +8,39 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/rece
 import 'package:swipe_to/swipe_to.dart';
 
 class SwipeToWidget extends StatelessWidget {
-  final Massage massage;
-  final void Function() onRightSwipe;
-  final bool isViewOnly;
+  final Function() onRightSwipe;
+  final Massage message;
   final bool isMe;
   final bool isGroupChat;
+  final void Function() setMassageReplyNull;
 
   const SwipeToWidget({
     super.key,
-    required this.massage,
     required this.onRightSwipe,
-    required this.isViewOnly,
+    required this.message,
     required this.isMe,
     required this.isGroupChat,
+    required this.setMassageReplyNull,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isReplying = massage.repliedTo.isNotEmpty;
     return SwipeTo(
       onRightSwipe: (details) {
         onRightSwipe();
       },
       child: isMe
           ? MyMassageWidget(
-              massage: massage,
-              isReplying: isReplying,
+              massage: message,
+              isReplying: message.repliedTo.isNotEmpty,
               isGroupChat: isGroupChat,
+              setMassageReplyNull: setMassageReplyNull,
             )
           : ReceiverMassageWidget(
-              isReplying: isReplying,
-              massage: massage,
+              massage: message,
               isGroupChat: isGroupChat,
+              isReplying: message.repliedTo.isNotEmpty,
+              setMassageReplyNull: setMassageReplyNull,
             ),
     );
   }

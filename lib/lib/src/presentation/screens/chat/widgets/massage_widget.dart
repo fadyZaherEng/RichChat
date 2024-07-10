@@ -4,47 +4,76 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/my_m
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/receiver_massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/swipe_to_widget.dart';
 
-class MassageWidget extends StatelessWidget {
-  final Massage massage;
-  final void Function() onRightSwipe;
-  final bool isViewOnly;
+class MessageWidget extends StatelessWidget {
+  final Massage message;
+  final Function() onRightSwipe;
   final bool isMe;
   final bool isGroupChat;
+  final void Function() setMassageReplyNull;
 
-  const MassageWidget({
+  const MessageWidget({
     super.key,
-    required this.massage,
+    required this.message,
     required this.onRightSwipe,
-    required this.isViewOnly,
     required this.isMe,
     required this.isGroupChat,
+    required this.setMassageReplyNull,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isReplying = massage.repliedTo.isNotEmpty;
-    return isMe
-        ? isViewOnly
-            ? MyMassageWidget(
-                massage: massage,
-                isReplying: isReplying,
-                isGroupChat: isGroupChat)
-            : SwipeToWidget(
-                massage: massage,
-                onRightSwipe: onRightSwipe,
-                isViewOnly: isViewOnly,
-                isMe: isMe,
-                isGroupChat: isGroupChat)
-        : isViewOnly
-            ? ReceiverMassageWidget(
-                isReplying: isReplying,
-                massage: massage,
-                isGroupChat: isGroupChat)
-            : SwipeToWidget(
-                isMe: isMe,
-                massage: massage,
-                isViewOnly: isViewOnly,
-                onRightSwipe: onRightSwipe,
-                isGroupChat: isGroupChat);
+    return SwipeToWidget(
+      onRightSwipe: onRightSwipe,
+      message: message,
+      isMe: isMe,
+      isGroupChat: isGroupChat,
+      setMassageReplyNull: setMassageReplyNull,
+    );
   }
 }
+
+//
+// class MassageWidget extends StatelessWidget {
+//   final Massage massage;
+//   final void Function() onRightSwipe;
+//   final bool isViewOnly;
+//   final bool isMe;
+//   final bool isGroupChat;
+//
+//   const MassageWidget({
+//     super.key,
+//     required this.massage,
+//     required this.onRightSwipe,
+//     required this.isViewOnly,
+//     required this.isMe,
+//     required this.isGroupChat,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final isReplying = massage.repliedTo.isNotEmpty;
+//     return isMe
+//         ? isViewOnly
+//             ? MyMassageWidget(
+//                 massage: massage,
+//                 isReplying: isReplying,
+//                 isGroupChat: isGroupChat)
+//             : SwipeToWidget(
+//                 massage: massage,
+//                 onRightSwipe: onRightSwipe,
+//                 isViewOnly: isViewOnly,
+//                 isMe: isMe,
+//                 isGroupChat: isGroupChat)
+//         : isViewOnly
+//             ? ReceiverMassageWidget(
+//                 isReplying: isReplying,
+//                 massage: massage,
+//                 isGroupChat: isGroupChat)
+//             : SwipeToWidget(
+//                 isMe: isMe,
+//                 massage: massage,
+//                 isViewOnly: isViewOnly,
+//                 onRightSwipe: onRightSwipe,
+//                 isGroupChat: isGroupChat);
+//   }
+// }

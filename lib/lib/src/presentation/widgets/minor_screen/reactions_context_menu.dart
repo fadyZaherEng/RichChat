@@ -3,7 +3,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_reply_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_to_show_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/my_massage_widget.dart';
 
 class ReactionsContextMenu extends StatefulWidget {
@@ -117,6 +117,7 @@ class _ReactionsContextMenuState extends State<ReactionsContextMenu> {
                   massage: widget.massage,
                   isReplying: widget.massage.repliedTo.isNotEmpty,
                   isGroupChat: true,
+                  setMassageReplyNull: () {},
                 ),
                 // child: _alignMassageReplyWidget(context),
               ),
@@ -227,7 +228,7 @@ class _ReactionsContextMenuState extends State<ReactionsContextMenu> {
       ),
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: MassageReplyTypeWidget(
+        child: MassageToShowWidget(
           massageType: widget.massage.massageType,
           massage: widget.massage.massage,
           context: context,

@@ -9,6 +9,7 @@ import 'package:video_player/video_player.dart';
 class ShowVideoWidget extends StatefulWidget {
   final String videoPath;
   final Color color;
+  final bool isViewOnly;
   final void Function() onTap;
 
   const ShowVideoWidget({
@@ -16,6 +17,7 @@ class ShowVideoWidget extends StatefulWidget {
     required this.videoPath,
     required this.color,
     required this.onTap,
+    this.isViewOnly = false,
   }) : super(key: key);
 
   @override

@@ -5,7 +5,7 @@ import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/last_massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/group/group.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_reply_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_to_show_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/my_chats/widgets/unread_massage_counter_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
@@ -62,7 +62,7 @@ class LastMassageChatWidget extends StatelessWidget {
                 : const SizedBox.shrink(),
             const SizedBox(width: 5),
             Expanded(
-              child: MassageReplyTypeWidget(
+              child: MassageToShowWidget(
                 massageType: massageType,
                 massage: lastMassage,
                 context: context,

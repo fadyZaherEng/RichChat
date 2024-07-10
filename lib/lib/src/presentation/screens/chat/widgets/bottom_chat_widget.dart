@@ -8,7 +8,7 @@ import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_preview_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/record_audio_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 import 'package:flutter_sound_record/flutter_sound_record.dart';
@@ -165,7 +165,7 @@ class _BottomChatWidgetState extends State<BottomChatWidget> {
         child: Column(
           children: [
             widget.massageReply != null
-                ? MassageReplyWidget(
+                ? MassageReplyPreviewWidget(
                     massageReply: widget.massageReply!,
                     setReplyMessageWithNull: widget.setReplyMessageWithNull,
                   )
