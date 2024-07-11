@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_reactions/widgets/stacked_reactions.dart';
 import 'package:intl/intl.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
@@ -12,8 +13,7 @@ class MyMassageWidget extends StatelessWidget {
   final bool isReplying;
   final bool isGroupChat;
   final bool viewOnly;
-  final void Function()setMassageReplyNull;
-
+  final void Function() setMassageReplyNull;
 
   const MyMassageWidget({
     super.key,
@@ -45,6 +45,8 @@ class MyMassageWidget extends StatelessWidget {
     final padding = massage.reactions.isNotEmpty
         ? const EdgeInsets.only(left: 20.0, bottom: 25.0)
         : const EdgeInsets.only(bottom: 0.0);
+    final massageReactions =
+        massage.reactions.map((e) => e.split("=")[1]).toList();
     return Align(
       alignment: Alignment.centerRight,
       child: ConstrainedBox(
@@ -112,70 +114,6 @@ class MyMassageWidget extends StatelessWidget {
                                 ),
                               ],
                             ),
-
-                            // if (isReplying) ...[
-                            //   IntrinsicHeight(
-                            //     child: Container(
-                            //       padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 4),
-                            //       margin: const EdgeInsets.only(bottom: 5),
-                            //       decoration: BoxDecoration(
-                            //         color: Theme.of(context).cardColor.withOpacity(0.2),
-                            //         borderRadius: BorderRadius.circular(10),
-                            //       ),
-                            //       child: Row(
-                            //         crossAxisAlignment: CrossAxisAlignment.start,
-                            //         mainAxisAlignment: MainAxisAlignment.start,
-                            //         mainAxisSize: MainAxisSize.min,
-                            //         children: [
-                            //           Container(
-                            //             width: 5,
-                            //             decoration: const BoxDecoration(
-                            //               color: Colors.green,
-                            //               borderRadius: BorderRadius.only(
-                            //                 topLeft: Radius.circular(20),
-                            //                 bottomLeft: Radius.circular(20),
-                            //               ),
-                            //             ),
-                            //           ),
-                            //           const SizedBox(width: 10),
-                            //           Expanded(
-                            //             child: Column(
-                            //               crossAxisAlignment: CrossAxisAlignment.start,
-                            //               children: [
-                            //                 Text(
-                            //                   massage.repliedTo,
-                            //                   style: const TextStyle(
-                            //                     color: Colors.blue,
-                            //                     fontWeight: FontWeight.bold,
-                            //                     fontSize: 16,
-                            //                   ),
-                            //                 ),
-                            //                 DisplayMassageTypeWidget(
-                            //                   massageType: massage.repliedMessageType,
-                            //                   massage: massage.repliedMessage,
-                            //                   color: Colors.white,
-                            //                   maxLines: 1,
-                            //                   textOverflow: TextOverflow.ellipsis,
-                            //                   context: context,
-                            //                   isReplying: true,
-                            //                   viewOnly: false,
-                            //                 ),
-                            //               ],
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   )
-                            // ],
-                            // DisplayMassageTypeWidget(
-                            //   massageType: massage.massageType,
-                            //   massage: massage.massage,
-                            //   color: Colors.white,
-                            //   context: context,
-                            //   isReplying: false,
-                            //   viewOnly: false,
-                            // ),
                           ],
                         ),
                       ),
@@ -185,16 +123,21 @@ class MyMassageWidget extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: 4,
-              right: 30,
-              child: StackedReactionsWidget(
-                massage: massage,
-                size: 20,
-                onPressed: () {
-                  //show bottom sheet with list of people reactions with massage
-                },
-              ),
-            )
+                bottom: 4,
+                right: 30,
+                child: //TODO: Add Package StackedReactions
+                    StackedReactions(
+                  reactions: massageReactions,
+                )
+                //TODO: Add My StackedReactionsWidget
+                // StackedReactionsWidget(
+                //   massage: massage,
+                //   size: 20,
+                //   onPressed: () {
+                //     //show bottom sheet with list of people reactions with massage
+                //   },
+                // ),
+                )
           ],
         ),
       ),
