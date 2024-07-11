@@ -155,32 +155,36 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                       ? const SizedBox.shrink()
                       : GestureDetector(
                           onLongPress: () async {
-                            //TODO: By Myself
+                            //TODO: Chat Reactions By Myself
                             // _showReactionDialog(isMe, massage, context);
-                            //TODO: By Package
+                            //TODO: Chat Reactions By Package
                             //using by package flutter_chat_reaction
                             _showReactionDialogByPackage(
-                                isMe, massage, context);
+                              isMe: isMe,
+                              massage: massage,
+                              context: context,
+                            );
                           },
                           child: MessageWidget(
-                              message: massage,
-                              isMe: isMe,
-                              isGroupChat: widget.groupId.isNotEmpty,
-                              onRightSwipe: () {
-                                final massageReply = MassageReply(
-                                  massage: massage.massage,
-                                  senderName: massage.senderName,
-                                  senderId: massage.senderId,
-                                  senderImage: massage.senderImage,
-                                  massageType: massage.massageType,
-                                  isMe: isMe,
-                                );
-                                // _bloc.setMassageReply(massageReply);
-                                widget.onRightSwipe(massageReply);
-                              },
-                              setMassageReplyNull: () {
-                                widget.setMassageReplyNull();
-                              }),
+                            message: massage,
+                            isMe: isMe,
+                            isGroupChat: widget.groupId.isNotEmpty,
+                            onRightSwipe: () {
+                              final massageReply = MassageReply(
+                                massage: massage.massage,
+                                senderName: massage.senderName,
+                                senderId: massage.senderId,
+                                senderImage: massage.senderImage,
+                                massageType: massage.massageType,
+                                isMe: isMe,
+                              );
+                              // _bloc.setMassageReply(massageReply);
+                              widget.onRightSwipe(massageReply);
+                            },
+                            setMassageReplyNull: () {
+                              widget.setMassageReplyNull();
+                            },
+                          ),
                         );
                 },
                 itemComparator: (massage1, massage2) =>
@@ -213,7 +217,11 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
     );
   }
 
-  void _showReactionDialogByPackage(bool isMe, massage, BuildContext context) {
+  void _showReactionDialogByPackage({
+    required bool isMe,
+    required Massage massage,
+    required BuildContext context,
+  }) {
     Navigator.push(
       context,
       HeroDialogRoute(
