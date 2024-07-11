@@ -78,21 +78,11 @@ class _FriendWidgetState extends State<FriendWidget> {
         width: 50,
         height: 50,
       ),
-      title: Text(
-        name,
-        style: GoogleFonts.openSans(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: ColorSchemes.black,
-        ),
-      ),
+      title: Text(name),
       subtitle: Text(
         widget.friend.aboutMe,
-        style: GoogleFonts.openSans(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: ColorSchemes.black,
-        ),
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
       ),
       trailing: _buildTrailing(context),
     );

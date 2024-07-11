@@ -4,7 +4,7 @@ import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/add_members_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/exit_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/group_card_details_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/info_card_details_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/group_members_card_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/settings_and_media_widget.dart';
 
@@ -45,7 +45,10 @@ class _GroupInformationScreenState extends State<GroupInformationScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  GroupCardDetailsWidget(bloc: _bloc, isAdmin: isAdmin),
+                  InfoCardDetailsWidget(
+                    bloc: _bloc,
+                    isAdmin: isAdmin,
+                  ),
                   const SizedBox(height: 10),
                   SettingsAndMediaWidget(isAdmin: isAdmin, bloc: _bloc),
                   const SizedBox(height: 20),
@@ -57,9 +60,16 @@ class _GroupInformationScreenState extends State<GroupInformationScreen> {
                     },
                   ),
                   const SizedBox(height: 10),
-                  GroupMembersCardWidget(isAdmin: isAdmin, bloc: _bloc),
-                  const SizedBox(height: 10),
-                  isMember ? const ExitWidget() : const SizedBox(),
+                  isMember
+                      ? Column(
+                          children: [
+                            GroupMembersCardWidget(
+                                isAdmin: isAdmin, bloc: _bloc),
+                            const SizedBox(height: 10),
+                            const ExitWidget(),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
                 ],
               ),
             ),

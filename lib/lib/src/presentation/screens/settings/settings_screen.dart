@@ -75,9 +75,9 @@ class _SettingsScreenState extends BaseState<SettingsScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
-                    //log out
-                    Icons.logout,
-                    color: Theme.of(context).colorScheme.secondary),
+                  Icons.logout,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
               ),
             ),
           ),
@@ -99,7 +99,7 @@ class _SettingsScreenState extends BaseState<SettingsScreen> {
                       } else {
                         AdaptiveTheme.of(context).setLight();
                       }
-                       RestartWidget.restartApp(context);
+                      RestartWidget.restartApp(context);
                     },
                     title: S.of(context).theme,
                   ),
@@ -108,7 +108,8 @@ class _SettingsScreenState extends BaseState<SettingsScreen> {
                     value: isArabic,
                     onChanged: (bool value) {
                       _bloc.add(ChangeLanguageEvent(
-                          language: value ? Constants.ar : Constants.en));
+                        language: value ? Constants.ar : Constants.en,
+                      ));
                       setState(() {
                         isArabic = value;
                       });
@@ -126,21 +127,22 @@ class _SettingsScreenState extends BaseState<SettingsScreen> {
 
   void _showLogOutDialog(BuildContext context) {
     showActionDialogWidget(
-        context: context,
-        text: S.of(context).logOut,
-        iconData: Icons.logout,
-        primaryText: S.of(context).yes,
-        secondaryText: S.of(context).no,
-        primaryAction: () async {
-          //log out
-          Navigator.pop(context);
-          await FirebaseSingleTon.auth.signOut();
-          Navigator.pushReplacementNamed(context, Routes.logInScreen);
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.clear();
-        },
-        secondaryAction: () {
-          Navigator.pop(context);
-        });
+      context: context,
+      text: S.of(context).logOut,
+      iconData: Icons.logout,
+      primaryText: S.of(context).yes,
+      secondaryText: S.of(context).no,
+      primaryAction: () async {
+        //log out
+        Navigator.pop(context);
+        await FirebaseSingleTon.auth.signOut();
+        Navigator.pushReplacementNamed(context, Routes.logInScreen);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+      },
+      secondaryAction: () {
+        Navigator.pop(context);
+      },
+    );
   }
 }

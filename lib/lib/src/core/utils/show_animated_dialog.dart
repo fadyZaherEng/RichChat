@@ -10,8 +10,8 @@ void showAnimatedDialog({
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
-    barrierLabel: "",
-    transitionDuration: const Duration(milliseconds: 300),
+    barrierLabel: '',
+    transitionDuration: const Duration(milliseconds: 200),
     pageBuilder: (context, animation1, animation2) {
       return Container();
     },

@@ -15,10 +15,7 @@ class BottomSheetContentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery
-          .of(context)
-          .size
-          .height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.8,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -27,18 +24,16 @@ class BottomSheetContentWidget extends StatelessWidget {
             const SizedBox(height: 15),
             Expanded(
                 child: ListView.builder(
-                  itemCount:groupProvider.groupMembersList.length,
-                  itemBuilder: (context, index) {
-                    final friend = groupProvider.groupMembersList[index];
-                    return FriendWidget(
+                    itemCount: groupProvider.groupMembersList.length,
+                    itemBuilder: (context, index) {
+                      final friend = groupProvider.groupMembersList[index];
+                      return FriendWidget(
                         friend: friend,
                         friendViewType: FriendViewType.groupView,
-                      isAdminView: true,
-                      groupId: groupProvider.group.groupID,
-                    );
-                  }
-                )
-            ),
+                        isAdminView: true,
+                        groupId: groupProvider.group.groupID,
+                      );
+                    })),
           ],
         ),
       ),
@@ -51,15 +46,13 @@ class BottomSheetContentWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         Text(
-          S
-              .of(context)
-              .selectGroupAdmin,
+          S.of(context).selectGroupAdmin,
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
-         const Spacer(),
+        const Spacer(),
         const Spacer(),
         Expanded(
           child: IconButton(
@@ -67,9 +60,7 @@ class BottomSheetContentWidget extends StatelessWidget {
               Navigator.pop(context);
             },
             icon: Text(
-              S
-                  .of(context)
-                  .done,
+              S.of(context).done,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,

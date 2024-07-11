@@ -94,5 +94,13 @@
   "done": "تم",
   "groupDescription": "وصف المجموعة",
   "private": "خاصة",
-  "public": "عامة"
+  "public": "عامة",
+  "account": "الحساب",
+  "myMedia": "معلوماتي",
+  "notifications": "الاشعارات",
+  "help": "مساعدة",
+  "share": "مشاركة",
+  "changeTheme": "تغير المظهر",
+  "changeLanguage": "تغير اللغة",
+  "areYouSureYouWantToLogout?": "هل انت متأكد من تسجيل الخروج؟"
 }

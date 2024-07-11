@@ -94,5 +94,14 @@
   "done": "Done",
   "groupDescription": "Group Description",
   "private": "Private",
-  "public": "Public"
+  "public": "Public",
+  "account": "Account",
+  "myMedia": "My Media",
+  "notifications": "Notifications",
+  "help": "Help",
+  "share": "Share",
+  "changeTheme": "Change Theme",
+  "changeLanguage":"Change Language",
+  "areYouSureYouWantToLogout?": "Are you sure you want to logout?"
+
 }

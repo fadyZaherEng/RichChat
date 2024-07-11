@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "accept": MessageLookupByLibrary.simpleMessage("Accept"),
         "acceptFriendRequest":
             MessageLookupByLibrary.simpleMessage("Accept Friend Request"),
+        "account": MessageLookupByLibrary.simpleMessage("Account"),
         "addYourPhoneNumberMessage": MessageLookupByLibrary.simpleMessage(
             "Add your phone number, we\'ll send you a verification code"),
         "appTitle": MessageLookupByLibrary.simpleMessage("Chats"),
@@ -43,6 +44,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
         "cancelFriendRequest":
             MessageLookupByLibrary.simpleMessage("Cancel Friend Request"),
+        "changeLanguage":
+            MessageLookupByLibrary.simpleMessage("Change Language"),
+        "changeTheme": MessageLookupByLibrary.simpleMessage("Change Theme"),
         "chat": MessageLookupByLibrary.simpleMessage("Chat"),
         "chats": MessageLookupByLibrary.simpleMessage("Chats"),
         "chooseFile": MessageLookupByLibrary.simpleMessage("Choose File"),
@@ -72,6 +76,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Group Description"),
         "groupSettings": MessageLookupByLibrary.simpleMessage("Group Settings"),
         "groups": MessageLookupByLibrary.simpleMessage("Groups"),
+        "help": MessageLookupByLibrary.simpleMessage("Help"),
         "home": MessageLookupByLibrary.simpleMessage("Home"),
         "image": MessageLookupByLibrary.simpleMessage("Image"),
         "language": MessageLookupByLibrary.simpleMessage("Language"),
@@ -79,6 +84,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "logOut": MessageLookupByLibrary.simpleMessage("Log Out"),
         "login": MessageLookupByLibrary.simpleMessage("Login"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "myMedia": MessageLookupByLibrary.simpleMessage("My Media"),
         "no": MessageLookupByLibrary.simpleMessage("No"),
         "noChats": MessageLookupByLibrary.simpleMessage("No Chats"),
         "noFoundChatsUntilNow":
@@ -96,6 +102,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noMessagesYet":
             MessageLookupByLibrary.simpleMessage("No Messages Yet"),
         "noUsers": MessageLookupByLibrary.simpleMessage("No Users"),
+        "notifications": MessageLookupByLibrary.simpleMessage("Notifications"),
         "ok": MessageLookupByLibrary.simpleMessage("Ok"),
         "onlyAdminsCanEditGroupSettings": MessageLookupByLibrary.simpleMessage(
             "Only admins can edit group settings,as Info, image and description"),
@@ -127,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("Send Friend Requests"),
         "sentTo": MessageLookupByLibrary.simpleMessage("Sent to"),
         "settings": MessageLookupByLibrary.simpleMessage("Settings"),
+        "share": MessageLookupByLibrary.simpleMessage("Share"),
         "somethingWentWrong":
             MessageLookupByLibrary.simpleMessage("Something went wrong"),
         "startConversation":

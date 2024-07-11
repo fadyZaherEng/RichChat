@@ -31,6 +31,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "accept": MessageLookupByLibrary.simpleMessage("قبول"),
         "acceptFriendRequest":
             MessageLookupByLibrary.simpleMessage("قبول طلب الصداقة"),
+        "account": MessageLookupByLibrary.simpleMessage("الحساب"),
         "addYourPhoneNumberMessage": MessageLookupByLibrary.simpleMessage(
             "اضف رقم هاتفك, سوف نرسل لك رمز التحقق."),
         "appTitle": MessageLookupByLibrary.simpleMessage("محادثة ذكية"),
@@ -43,6 +44,8 @@ class MessageLookup extends MessageLookupByLibrary {
         "cancel": MessageLookupByLibrary.simpleMessage("الغاء"),
         "cancelFriendRequest":
             MessageLookupByLibrary.simpleMessage("الغاء طلب الصداقة"),
+        "changeLanguage": MessageLookupByLibrary.simpleMessage("تغير اللغة"),
+        "changeTheme": MessageLookupByLibrary.simpleMessage("تغير المظهر"),
         "chat": MessageLookupByLibrary.simpleMessage("محادثة"),
         "chats": MessageLookupByLibrary.simpleMessage("المحادثات"),
         "chooseFile": MessageLookupByLibrary.simpleMessage("اختر ملف"),
@@ -74,6 +77,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "groupSettings":
             MessageLookupByLibrary.simpleMessage("اعدادات المجموعة"),
         "groups": MessageLookupByLibrary.simpleMessage("المجموعات"),
+        "help": MessageLookupByLibrary.simpleMessage("مساعدة"),
         "home": MessageLookupByLibrary.simpleMessage("الصفحة الرئيسية"),
         "image": MessageLookupByLibrary.simpleMessage("صورة"),
         "language": MessageLookupByLibrary.simpleMessage("اللغة"),
@@ -81,6 +85,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "logOut": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
         "login": MessageLookupByLibrary.simpleMessage("تسجيل الدخول"),
         "logout": MessageLookupByLibrary.simpleMessage("تسجيل الخروج"),
+        "myMedia": MessageLookupByLibrary.simpleMessage("معلوماتي"),
         "no": MessageLookupByLibrary.simpleMessage("لا"),
         "noChats": MessageLookupByLibrary.simpleMessage("لا يوجد محادثات"),
         "noFoundChatsUntilNow":
@@ -99,6 +104,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "noMessagesYet":
             MessageLookupByLibrary.simpleMessage("لا يوجد رسائل حتى الان"),
         "noUsers": MessageLookupByLibrary.simpleMessage("لا يوجد مستخدمين"),
+        "notifications": MessageLookupByLibrary.simpleMessage("الاشعارات"),
         "ok": MessageLookupByLibrary.simpleMessage("موافق"),
         "onlyAdminsCanEditGroupSettings": MessageLookupByLibrary.simpleMessage(
             "لا يمكن تعديل الاعدادات فقط للمشرفين"),
@@ -128,6 +134,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("ارسال طلب الصداقة"),
         "sentTo": MessageLookupByLibrary.simpleMessage("ارسلت ل"),
         "settings": MessageLookupByLibrary.simpleMessage("الاعدادات"),
+        "share": MessageLookupByLibrary.simpleMessage("مشاركة"),
         "somethingWentWrong":
             MessageLookupByLibrary.simpleMessage("حدث خطأ ما"),
         "startConversation":

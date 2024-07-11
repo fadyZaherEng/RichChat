@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,11 +12,17 @@ import 'package:rich_chat_copilot/lib/src/core/utils/show_action_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
+import 'package:rich_chat_copilot/lib/src/domain/usecase/get_language_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
+import 'package:rich_chat_copilot/lib/src/domain/usecase/set_language_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/profile/profile_bloc.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/create_group/widgets/setting_list_tile_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_switch_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/info_card_details_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_app_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/restart_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends BaseStatefulWidget {
   final String userId;
@@ -30,13 +36,22 @@ class ProfileScreen extends BaseStatefulWidget {
 class _ProfileScreenState extends BaseState<ProfileScreen> {
   UserModel _currentUser = UserModel();
   UserModel _otherUser = UserModel();
+  bool isArabic = false;
+  bool isDarkMode = false;
 
   ProfileBloc get _bloc => BlocProvider.of<ProfileBloc>(context);
 
   @override
   void initState() {
+    getThemeMode();
     super.initState();
     _currentUser = GetUserUseCase(injector())();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    isArabic = GetLanguageUseCase(injector())() == Constants.ar;
   }
 
   @override
@@ -107,15 +122,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             backgroundColor: Theme.of(context).cardColor,
             context,
             title: S.of(context).profile,
-            actionWidget: IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, Routes.settingsScreen);
-              },
-              icon: Icon(
-                Icons.settings,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
             isHaveBackButton: true,
             onBackButtonPressed: () {
               Navigator.pop(context);
@@ -139,63 +145,35 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               }
               if (snapshot.hasData) {
                 _otherUser = UserModel.fromJson(snapshot.data!.data()!);
-                return Center(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          //TODO: navigate to user profile screen
-                        },
-                        child: UserImageWidget(
-                          width: 100,
-                          height: 100,
-                          image: _otherUser.image,
-                          isBorder: false,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        _otherUser.name,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      _currentUser.uId == _otherUser.uId
-                          ? const SizedBox.shrink()
-                          : Text(
-                              _otherUser.phoneNumber,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InfoCardDetailsWidget(userModel: _otherUser),
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            S.of(context).settings,
+                            style: GoogleFonts.openSans(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildDivider(),
-                            const SizedBox(width: 10),
-                            Text(
-                              S.of(context).aboutMe,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(width: 10),
-                            _buildDivider(),
-                          ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        _otherUser.aboutMe,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      const SizedBox(height: 10),
-                      _buildFriendRequestButton(
-                          currentUser: _currentUser, otherUser: _otherUser),
-                      const SizedBox(height: 10),
-                      _buildFriendsStatusButton(
-                          currentUser: _currentUser, otherUser: _otherUser),
-                      const SizedBox(height: 10),
-                    ],
+                        const SizedBox(height: 10),
+                        _buildAccountAndMediaAndNotificationSettings(),
+                        const SizedBox(height: 10),
+                        _buildHelpAndShareSettings(),
+                        const SizedBox(height: 10),
+                        _buildRestSettings(),
+                      ],
+                    ),
                   ),
                 );
               }
@@ -209,188 +187,177 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  Widget _buildFriendRequestButton({
-    required UserModel currentUser,
-    required UserModel otherUser,
-  }) {
-    if (currentUser.uId == otherUser.uId) {
-      if (otherUser.friendsRequestsUIds.isNotEmpty) {
-        return _buildButton(
-            width: MediaQuery.of(context).size.width * 0.7,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: ColorSchemes.white,
-            text: S.of(context).viewFriendRequests,
-            onPressed: () {
-              //TODO: navigate to friend requests screen
-              Navigator.pushNamed(context, Routes.friendRequestScreen);
-            });
-      } else {
-        return const SizedBox.shrink();
-      }
+  void _showLogOutDialog(BuildContext context) {
+    showActionDialogWidget(
+      context: context,
+      text: S.of(context).logOut,
+      iconData: Icons.logout,
+      primaryText: S.of(context).yes,
+      secondaryText: S.of(context).no,
+      primaryAction: () async {
+        //log out
+        Navigator.pop(context);
+        await FirebaseSingleTon.auth.signOut();
+        Navigator.pushReplacementNamed(context, Routes.logInScreen);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+      },
+      secondaryAction: () {
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  // get the saved theme mode
+  void getThemeMode() async {
+    // get the saved theme mode
+    final savedThemeMode = await AdaptiveTheme.getThemeMode();
+    // check if the saved theme mode is dark
+    if (savedThemeMode == AdaptiveThemeMode.dark) {
+      // set the isDarkMode to true
+      setState(() {
+        isDarkMode = true;
+      });
     } else {
-      return const SizedBox.shrink();
+      // set the isDarkMode to false
+      setState(() {
+        isDarkMode = false;
+      });
     }
   }
 
-  Widget _buildFriendsStatusButton({
-    required UserModel currentUser,
-    required UserModel otherUser,
-  }) {
-    if (currentUser.uId == otherUser.uId && otherUser.friendsUIds.isNotEmpty) {
-      return _buildButton(
-        width: MediaQuery.of(context).size.width * 0.6,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        textColor: ColorSchemes.white,
-        text: S.of(context).viewFriends,
-        onPressed: () {
-          //TODO: navigate to friends screen
-          Navigator.pushNamed(context, Routes.friendsScreen);
-        },
-      );
-    } else {
-      if (currentUser.uId != otherUser.uId) {
-        if (otherUser.friendsRequestsUIds.contains(_currentUser.uId)) {
-          return _buildButton(
-            width: MediaQuery.of(context).size.width * 0.6,
-            textColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).cardColor,
-            text: S.of(context).cancelFriendRequest,
-            onPressed: () {
-              //TODO: cancel friend request
-              _bloc.add(CancelFriendRequestEvent(_otherUser.uId));
+  Widget _buildAccountAndMediaAndNotificationSettings() {
+    return Card(
+      child: Column(
+        children: [
+          SettingListTileWidget(
+            title: S.of(context).account,
+            icon: Icons.person,
+            iconColor: Colors.deepPurple,
+            onTap: () {
+              // navigate to account settings
             },
-          );
-        } else if (otherUser.sendFriendRequestsUIds.contains(_currentUser.uId)) {
-          return _buildButton(
-            width: MediaQuery.of(context).size.width * 0.6,
-            textColor: Theme.of(context).colorScheme.primary,
-            backgroundColor: Theme.of(context).cardColor,
-            text: S.of(context).acceptFriendRequest,
-            onPressed: () {
-              //TODO: accept friend request
-              _bloc.add(AcceptFriendRequestEvent(otherUser.uId));
+          ),
+          SettingListTileWidget(
+            title: S.of(context).myMedia,
+            icon: Icons.image,
+            iconColor: Colors.green,
+            onTap: () {
+              // navigate to account settings
             },
-          );
-        } else if (otherUser.friendsUIds.contains(_currentUser.uId)) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildButton(
-                width: MediaQuery.of(context).size.width * 0.4,
-                textColor: ColorSchemes.white,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                text: S.of(context).unFriend.toUpperCase(),
-                onPressed: () {
-                  //TODO: unfriend
-                  //show dialog to confirm unfriend
-                  _showLogOutDialog(context);
-                },
-              ),
-              _buildButton(
-                width: MediaQuery.of(context).size.width * 0.4,
-                textColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context).cardColor,
-                text: S.of(context).chat.toUpperCase(),
-                onPressed: () {
-                  //TODO: navigate to chat screen
-                  Navigator.pushNamed(
-                    context,
-                    Routes.chatWithFriendScreen,
-                    arguments: {
-                      "friendId": _otherUser.uId,
-                      "friendName": _otherUser.name,
-                      "friendImage": _otherUser.image,
-                      "groupId": ""
-                    },
-                  );
-                },
-              ),
-            ],
-          );
-        } else {
-          return _buildButton(
-            width: MediaQuery.of(context).size.width * 0.6,
-            textColor: Theme.of(context).primaryColor,
-            backgroundColor: Theme.of(context).cardColor,
-            text: S.of(context).sendFriendRequests,
-            onPressed: () {
-              //TODO: send friend request
-              _bloc.add(SendFriendRequestEvent(otherUser.uId));
+          ),
+          SettingListTileWidget(
+            title: S.of(context).notifications,
+            icon: Icons.notifications,
+            iconColor: Colors.red,
+            onTap: () {
+              // navigate to account settings
             },
-          );
-        }
-      } else {
-        return const SizedBox.shrink();
-      }
-    }
-  }
-
-  Widget _buildButton({
-    required String text,
-    required Color textColor,
-    required Color backgroundColor,
-    required double width,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      width: width,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: backgroundColor,
-          width: 0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: ColorSchemes.lightGray.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 2,
-            offset: const Offset(0,4),
           ),
         ],
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: Text(
-          text.toUpperCase(),
-          style: GoogleFonts.openSans(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: textColor,
-          ),
-        ),
       ),
     );
   }
 
-  _buildDivider() => const SizedBox(
-        height: 40,
-        width: 40,
-        child: Divider(
-          color: ColorSchemes.gray,
-          thickness: 1,
-        ),
-      );
+  Widget _buildHelpAndShareSettings() {
+    return Card(
+      child: Column(
+        children: [
+          SettingListTileWidget(
+            title: S.of(context).help,
+            icon: Icons.help,
+            iconColor: Colors.yellow,
+            onTap: () {
+              // navigate to account settings
+            },
+          ),
+          SettingListTileWidget(
+            title: S.of(context).share,
+            icon: Icons.share,
+            iconColor: Colors.blue,
+            onTap: () {
+              // navigate to account settings
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
-  void _showLogOutDialog(BuildContext context) {
-    showActionDialogWidget(
-        context: context,
-        text: S.of(context).unFriend,
-        iconData: CupertinoIcons.delete,
-        primaryText: S.of(context).yes,
-        secondaryText: S.of(context).no,
-        primaryAction: () async {
-          _bloc.add(UnfriendEvent(_otherUser.uId));
-        },
-        secondaryAction: () {
-          Navigator.pop(context);
-        });
+  Widget _buildRestSettings() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Card(
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  isDarkMode ? Icons.nightlight_round : Icons.wb_sunny_rounded,
+                  color: isDarkMode ? Colors.black : Colors.white,
+                ),
+              ),
+            ),
+            title: Text(S.of(context).changeTheme),
+            trailing: Switch(
+                value: isDarkMode,
+                onChanged: (value) {
+                  // set the isDarkMode to the value
+                  setState(() {
+                    isDarkMode = value;
+                  });
+                  // check if the value is true
+                  if (value) {
+                    // set the theme mode to dark
+                    AdaptiveTheme.of(context).setDark();
+                  } else {
+                    // set the theme mode to light
+                    AdaptiveTheme.of(context).setLight();
+                  }
+                }),
+          ),
+        ),
+        const SizedBox(height: 10),
+        CustomSwitchWidget(
+          value: isArabic,
+          onChanged: (bool value) async {
+            await SetLanguageUseCase(injector())(
+                value ? Constants.ar : Constants.en);
+            setState(() {
+              isArabic = value;
+            });
+            Future.delayed(const Duration(milliseconds: 300), () {
+              RestartWidget.restartApp(context);
+            });
+          },
+          title: S.of(context).language,
+        ),
+        const SizedBox(height: 10),
+        //isMe
+        _currentUser.uId == widget.userId
+            ? const SizedBox.shrink()
+            : Card(
+                child: Column(
+                  children: [
+                    SettingListTileWidget(
+                      title: S.of(context).logout,
+                      icon: Icons.logout_outlined,
+                      iconColor: Colors.red,
+                      onTap: () {
+                        //TODO: logout
+                        _showLogOutDialog(context);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+      ],
+    );
   }
 }
