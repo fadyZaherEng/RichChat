@@ -20,12 +20,14 @@ import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/permission_service_handler.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_action_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_bottom_sheet_upload_media.dart';
+import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/bottom_chat_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/chat_app_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/chats_list_massages_widget.dart';
@@ -234,6 +236,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                         _navigateBackEvent();
                         _onContextMenuSelected(contextMenu, massage);
                       },
+                    );
+                  },
+                  deleteMessage: ({
+                    required Massage message,
+                    required String currentUserId,
+                    required bool isSenderOrAdmin,
+                  }) {
+                    showDeleteBottomSheet(
+                      message: message,
+                      currentUserId: currentUserId,
+                      isSenderOrAdmin: isSenderOrAdmin,
                     );
                   },
                 ),
@@ -554,7 +567,34 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   void _onContextMenuSelected(String contextMenu, Massage massage) {
     switch (contextMenu) {
       case Constants.delete:
-        // _bloc.add(DeleteMassageEvent(massage: massage));
+        final currentUserId = FirebaseSingleTon.auth.currentUser!.uid;
+        final groupProvider = context.read<GroupBloc>();
+
+        if (widget.groupId.isNotEmpty) {
+          if (groupProvider.isSenderOrAdmin(
+            message: massage,
+            uid: currentUserId,
+          )) {
+            showDeleteBottomSheet(
+              message: massage,
+              currentUserId: currentUserId,
+              isSenderOrAdmin: true,
+            );
+            return;
+          } else {
+            showDeleteBottomSheet(
+              message: massage,
+              currentUserId: currentUserId,
+              isSenderOrAdmin: false,
+            );
+            return;
+          }
+        }
+        showDeleteBottomSheet(
+          message: massage,
+          currentUserId: currentUserId,
+          isSenderOrAdmin: true,
+        );
         break;
       case Constants.reply:
         final massageReply = MassageReply(
@@ -592,5 +632,92 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     );
     // });
     setState(() {});
+  }
+
+  //bottom sheet for deleting message
+  void showDeleteBottomSheet({
+    required Massage message,
+    required String currentUserId,
+    required bool isSenderOrAdmin,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isDismissible: false,
+      builder: (context) {
+        return BlocConsumer<ChatsBloc, ChatsState>(
+          listener: (context, state) {
+            if (state is DeleteMassageSuccess) {
+              Navigator.of(context).pop();
+            } else if (state is DeleteMassageError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+              Navigator.of(context).pop();
+            }
+          },
+          builder: (context, state) {
+            return SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 20.0,
+                  horizontal: 20.0,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (state is DeleteMassageLoading)
+                      const LinearProgressIndicator(),
+                    ListTile(
+                      leading: const Icon(Icons.delete),
+                      title: const Text('Delete for me'),
+                      onTap: state is DeleteMassageLoading
+                          ? null
+                          : () async {
+                              _bloc.add(DeleteMassageEvent(
+                                currentUserId: currentUserId,
+                                contactUID: widget.friendId,
+                                messageId: message.messageId,
+                                messageType: message.massageType.name,
+                                isGroupChat: widget.groupId.isNotEmpty,
+                                deleteForEveryone: false,
+                              ));
+                            },
+                    ),
+                    isSenderOrAdmin
+                        ? ListTile(
+                            leading: const Icon(Icons.delete_forever),
+                            title: const Text('Delete for everyone'),
+                            onTap: state is DeleteMassageLoading
+                                ? null
+                                : () async {
+                                    _bloc.add(DeleteMassageEvent(
+                                      currentUserId: currentUserId,
+                                      contactUID: widget.friendId,
+                                      messageId: message.messageId,
+                                      messageType: message.massageType.name,
+                                      isGroupChat: widget.groupId.isNotEmpty,
+                                      deleteForEveryone: true,
+                                    ));
+                                  },
+                          )
+                        : const SizedBox.shrink(),
+                    ListTile(
+                      leading: const Icon(Icons.cancel),
+                      title: Text(S.of(context).cancel),
+                      onTap: state is DeleteMassageLoading
+                          ? null
+                          : () {
+                              Navigator.pop(context);
+                            },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

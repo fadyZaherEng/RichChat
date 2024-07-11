@@ -32,6 +32,7 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<SelectImageEvent>(_onSelectImageEvent);
     on<SelectVideoFromGalleryEvent>(_onSelectVideoFromGalleryEvent);
     on<SelectReactionEvent>(_onSelectReactionEven);
+    on<DeleteMassageEvent>(_onDeleteMassageEvent);
   }
 
   //replay message
@@ -336,22 +337,24 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     required String receiverId,
     required String massageId,
     required bool isGroupChat,
-    required List<String>isSeenByList,
+    required List<String> isSeenByList,
   }) async {
     try {
       //check if group
       if (isGroupChat) {
         //handle group massage as seen
-        if(isSeenByList.contains(senderId)){
+        if (isSeenByList.contains(senderId)) {
           return;
-        }else{
+        } else {
           //add the current user to isSeenByList in all massages
           await FirebaseSingleTon.db
               .collection(Constants.groups)
               .doc(receiverId)
               .collection(Constants.messages)
               .doc(massageId)
-              .update({"isSeenBy": FieldValue.arrayUnion([senderId])});
+              .update({
+            "isSeenBy": FieldValue.arrayUnion([senderId])
+          });
         }
         emit(SetMassageAsSeenSuccess());
       } else {
@@ -459,7 +462,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
       await FirebaseSingleTon.db
           .collection(Constants.groups)
           .doc(groupId)
-          .update({
+          .update(
+        {
           "lastMessage": fileUrl,
           "timeSent": DateTime.now().millisecondsSinceEpoch,
           "senderId": sender.uId,
@@ -562,7 +566,8 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
           });
         } else {
           //get UIDS list from reactions
-          final List<String> UIDS = massage.reactions.map((e) => e.split("=")[0]).toList();
+          final List<String> UIDS =
+              massage.reactions.map((e) => e.split("=")[0]).toList();
           //check if reaction already added
           if (UIDS.contains(senderId)) {
             //get index of reaction
@@ -706,6 +711,149 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
         return event.docs.length;
       });
     }
+  }
+  FutureOr<void> _onDeleteMassageEvent(
+      DeleteMassageEvent event, Emitter<ChatsState> emit) async {
+    await deleteMessage(
+      currentUserId: event.currentUserId,
+      contactUID: event.contactUID,
+      messageId: event.messageId,
+      messageType: event.messageType,
+      isGroupChat: event.isGroupChat,
+      deleteForEveryone: event.deleteForEveryone,
+      success: (message) {
+        emit(DeleteMassageSuccess(massage: message));
+      },
+      failure: (message) {
+        emit(DeleteMassageError(message: message));
+      },
+      setLoading: (isLoading) {
+        emit(DeleteMassageLoading());
+      },
+    );
+  }
+  //delete massage
+  // delete message
+  Future<void> deleteMessage({
+    required String currentUserId,
+    required String contactUID,
+    required String messageId,
+    required String messageType,
+    required bool isGroupChat,
+    required bool deleteForEveryone,
+    required void Function(String message) success,
+    required void Function(String message) failure,
+    required void Function(bool isLoading) setLoading,
+  }) async {
+    // set loading
+    setLoading(true);
+    try {
+      // check if its group chat
+      if (isGroupChat) {
+        // handle group message
+        await FirebaseSingleTon.db
+            .collection(Constants.groups)
+            .doc(contactUID)
+            .collection(Constants.messages)
+            .doc(messageId)
+            .update({
+          "isDeletedBy": FieldValue.arrayUnion([currentUserId])
+        });
+        // is is delete for everyone and message type is not text, we also dele the file from storage
+        if (deleteForEveryone) {
+          // get all group members uids and put them in deletedBy list
+          final groupData = await FirebaseSingleTon.db
+              .collection(Constants.groups)
+              .doc(contactUID)
+              .get();
+
+          final List<String> groupMembers =
+              List<String>.from(groupData.data()!["membersUIDS"]);
+
+          // update the message as deleted for everyone
+          await FirebaseSingleTon.db
+              .collection(Constants.groups)
+              .doc(contactUID)
+              .collection(Constants.messages)
+              .doc(messageId)
+              .update({"isDeletedBy": FieldValue.arrayUnion(groupMembers)});
+
+          if (messageType != MassageType.text.name) {
+            // delete the file from storage
+            await deleteFileFromStorage(
+              currentUserId: currentUserId,
+              contactUID: contactUID,
+              messageId: messageId,
+              messageType: messageType,
+            );
+          }
+        }
+        // set loading to false
+        setLoading(false);
+        success("Message deleted successfully");
+      } else {
+        // handle contact message
+        // 1. update the current message as deleted
+        await FirebaseSingleTon.db
+            .collection(Constants.users)
+            .doc(currentUserId)
+            .collection(Constants.chats)
+            .doc(contactUID)
+            .collection(Constants.messages)
+            .doc(messageId)
+            .update({
+          "isDeletedBy": FieldValue.arrayUnion([currentUserId])
+        });
+        // 2. check if delete for everyone then return if false
+        if (!deleteForEveryone) {
+          // set loading to false
+          setLoading(false);
+          return;
+        }
+
+        // 3. update the contact message as deleted
+        await FirebaseSingleTon.db
+            .collection(Constants.users)
+            .doc(contactUID)
+            .collection(Constants.chats)
+            .doc(currentUserId)
+            .collection(Constants.messages)
+            .doc(messageId)
+            .update({
+          "isDeletedBy": FieldValue.arrayUnion([currentUserId])
+        });
+        // 4. delete the file from storage
+        if (messageType != MassageType.text.name) {
+          await deleteFileFromStorage(
+            currentUserId: currentUserId,
+            contactUID: contactUID,
+            messageId: messageId,
+            messageType: messageType,
+          );
+        }
+        // set loading to false
+        setLoading(false);
+        success("Message deleted successfully");
+      }
+    } catch (e) {
+      // set loading to false
+      setLoading(false);
+      // return error
+      failure(e.toString());
+    }
+  }
+
+  Future<void> deleteFileFromStorage({
+    required String currentUserId,
+    required String contactUID,
+    required String messageId,
+    required String messageType,
+  }) async {
+    final firebaseStorage = FirebaseStorage.instance;
+    // delete the file from storage
+    await firebaseStorage
+        .ref('chatFiles/$messageType/$currentUserId/$contactUID/$messageId.jpg')
+        .delete();
   }
 
 }

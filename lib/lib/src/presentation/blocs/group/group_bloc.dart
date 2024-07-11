@@ -8,6 +8,7 @@ import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/save_image_to_storage.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
+import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/group/group.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:uuid/uuid.dart';
@@ -416,5 +417,19 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       groupId: event.groupId,
       uid: event.uid,
     );
+  }
+
+  // check if is sender or admin
+  bool isSenderOrAdmin({
+    required Massage message,
+    required String uid,
+  }) {
+    if (message.senderId == uid) {
+      return true;
+    } else if (_group.adminsUIDS.contains(uid)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

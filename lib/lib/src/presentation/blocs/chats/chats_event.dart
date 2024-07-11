@@ -95,11 +95,31 @@ class SelectReactionEvent extends ChatsEvent {
   final String receiverId;
   final String reaction;
   final bool groupId;
+
   SelectReactionEvent({
     required this.massageId,
     required this.senderId,
     required this.receiverId,
     required this.reaction,
     required this.groupId,
+  });
+}
+
+//delete massage
+class DeleteMassageEvent extends ChatsEvent {
+  final String currentUserId;
+  final String contactUID;
+  final String messageId;
+  final String messageType;
+  final bool isGroupChat;
+  final bool deleteForEveryone;
+
+  DeleteMassageEvent({
+    required this.currentUserId,
+    required this.contactUID,
+    required this.messageId,
+    required this.messageType,
+    required this.isGroupChat,
+    required this.deleteForEveryone,
   });
 }

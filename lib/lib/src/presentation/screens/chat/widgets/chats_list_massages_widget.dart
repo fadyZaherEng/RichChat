@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_chat_reactions/flutter_chat_reactions.dart';
-import 'package:flutter_chat_reactions/model/menu_item.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
-import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
@@ -15,7 +13,6 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/utils/show_r
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/my_massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/receiver_massage_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_date_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/hero_dialog_route.dart';
 
@@ -28,6 +25,11 @@ class ChatsListMassagesWidget extends StatefulWidget {
   final void Function(String, Massage) onEmojiSelected;
   final void Function(String, Massage) onContextMenuSelected;
   final void Function(Massage) showEmojiKeyword;
+  final void Function({
+    required Massage message,
+    required String currentUserId,
+    required bool isSenderOrAdmin,
+  }) deleteMessage;
   final String groupId;
   final void Function() setMassageReplyNull;
 
@@ -43,6 +45,7 @@ class ChatsListMassagesWidget extends StatefulWidget {
     required this.showEmojiKeyword,
     required this.groupId,
     required this.setMassageReplyNull,
+    required this.deleteMessage,
   });
 
   @override
@@ -94,22 +97,25 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
             }
             if (snapshot.hasData) {
               final massages = snapshot.data!;
-              return GroupedListView<dynamic, DateTime>(
+              return GroupedListView<Massage, DateTime>(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
                 reverse: true,
                 elements: massages,
                 controller: widget.massagesScrollController,
-                groupBy: (massage) => DateTime(massage.timeSent.year,
-                    massage.timeSent.month, massage.timeSent.day),
-                groupHeaderBuilder: (massage) => buildDateWidget(
+                groupBy: (Massage massage) => DateTime(
+                  massage.timeSent.year,
+                  massage.timeSent.month,
+                  massage.timeSent.day,
+                ),
+                groupHeaderBuilder: (Massage massage) => buildDateWidget(
                   context: context,
                   dateTime: massage.timeSent,
                 ),
                 useStickyGroupSeparators: true,
                 floatingHeader: true,
                 order: GroupedListOrder.DESC,
-                itemBuilder: (context, massage) {
+                itemBuilder: (BuildContext context, Massage massage) {
                   // //add list view scroll to bottom
                   // WidgetsBinding.instance.addPostFrameCallback((_) {
                   //   widget.massagesScrollController.animateTo(
@@ -118,10 +124,8 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                   //     curve: Curves.easeInOut,
                   //   );
                   // });
+
                   //set massage as seen in fireStore
-                  double myMassagePadding = massage.reactions.isEmpty ? 8 : 20;
-                  double otherMassagePadding =
-                      massage.reactions.isEmpty ? 8 : 25;
                   if (widget.groupId.isNotEmpty) {
                     BlocProvider.of<ChatsBloc>(context).setMassageAsSeen(
                       senderId: widget.currentUser.uId,
@@ -143,39 +147,41 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                     }
                   }
                   bool isMe = massage.senderId == widget.currentUser.uId;
-                  return Stack(
-                    children: [
-                      GestureDetector(
-                        onLongPress: () async {
-                          //TODO: By Myself
-                          // _showReactionDialog(isMe, massage, context);
-                          //TODO: By Package
-                          //using by package flutter_chat_reaction
-                          _showReactionDialogByPackage(isMe, massage, context);
-                        },
-                        child: MessageWidget(
-                            message: massage,
-                            isMe: isMe,
-                            isGroupChat: widget.groupId.isNotEmpty,
-                            onRightSwipe: () {
-                              print("onRightSwipe${massage.massage}");
-                              final massageReply = MassageReply(
-                                massage: massage.massage,
-                                senderName: massage.senderName,
-                                senderId: massage.senderId,
-                                senderImage: massage.senderImage,
-                                massageType: massage.massageType,
-                                isMe: isMe,
-                              );
-                              // _bloc.setMassageReply(massageReply);
-                              widget.onRightSwipe(massageReply);
-                            },
-                            setMassageReplyNull: () {
-                              widget.setMassageReplyNull();
-                            }),
-                      ),
-                    ],
-                  );
+                  //check if massage delete by current user
+                  final deletedByCurrentUser =
+                      massage.isDeletedBy.contains(widget.currentUser.uId);
+
+                  return deletedByCurrentUser
+                      ? const SizedBox.shrink()
+                      : GestureDetector(
+                          onLongPress: () async {
+                            //TODO: By Myself
+                            // _showReactionDialog(isMe, massage, context);
+                            //TODO: By Package
+                            //using by package flutter_chat_reaction
+                            _showReactionDialogByPackage(
+                                isMe, massage, context);
+                          },
+                          child: MessageWidget(
+                              message: massage,
+                              isMe: isMe,
+                              isGroupChat: widget.groupId.isNotEmpty,
+                              onRightSwipe: () {
+                                final massageReply = MassageReply(
+                                  massage: massage.massage,
+                                  senderName: massage.senderName,
+                                  senderId: massage.senderId,
+                                  senderImage: massage.senderImage,
+                                  massageType: massage.massageType,
+                                  isMe: isMe,
+                                );
+                                // _bloc.setMassageReply(massageReply);
+                                widget.onRightSwipe(massageReply);
+                              },
+                              setMassageReplyNull: () {
+                                widget.setMassageReplyNull();
+                              }),
+                        );
                 },
                 itemComparator: (massage1, massage2) =>
                     massage1.timeSent.compareTo(massage2.timeSent),
@@ -188,6 +194,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
     );
   }
 
+  //reactions dialog
   void _showReactionDialog(bool isMe, massage, BuildContext context) {
     showReactionsDialog(
       context: context,

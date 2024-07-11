@@ -64,3 +64,13 @@ class SendReactionsToMassageError extends ChatsState {
   final String message;
   SendReactionsToMassageError({required this.message});
 }
+//delete massage
+class DeleteMassageLoading extends ChatsState {}
+class DeleteMassageSuccess extends ChatsState {
+  final String massage;
+  DeleteMassageSuccess({required this.massage});
+}
+class DeleteMassageError extends ChatsState {
+  final String message;
+  DeleteMassageError({required this.message});
+}
