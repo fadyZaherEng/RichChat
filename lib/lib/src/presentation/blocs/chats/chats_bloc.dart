@@ -34,7 +34,17 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     on<SelectReactionEvent>(_onSelectReactionEven);
     on<DeleteMassageEvent>(_onDeleteMassageEvent);
   }
+  //search query
+  String _searchQuery = '';
 
+  // getters
+  String get searchQuery => _searchQuery;
+
+
+  void setSearchQuery(String value) {
+    _searchQuery = value;
+    emit(SearchQueryState());
+  }
   //replay message
   MassageReply? _massageReply;
 
@@ -854,6 +864,23 @@ class ChatsBloc extends Bloc<ChatsEvent, ChatsState> {
     await firebaseStorage
         .ref('chatFiles/$messageType/$currentUserId/$contactUID/$messageId.jpg')
         .delete();
+  }
+
+  // stream the last message collection
+  Stream<QuerySnapshot> getLastMessageStream({
+    required String userId,
+    required String groupId,
+  }) {
+    return groupId.isNotEmpty
+        ? FirebaseSingleTon.db
+        .collection(Constants.groups)
+        .where("membersUIDS", arrayContains: userId)
+        .snapshots()
+        : FirebaseSingleTon.db
+        .collection(Constants.users)
+        .doc(userId)
+        .collection(Constants.chats)
+        .snapshots();
   }
 
 }

@@ -8,7 +8,7 @@ import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/my_chats/widgets/my_chats_user_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/widgets/last_massage_chat_widget.dart';
 
 class PrivateGroupScreen extends BaseStatefulWidget {
   const PrivateGroupScreen({super.key});

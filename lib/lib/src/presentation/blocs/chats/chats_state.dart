@@ -74,3 +74,4 @@ class DeleteMassageError extends ChatsState {
   final String message;
   DeleteMassageError({required this.message});
 }
+class SearchQueryState extends ChatsState{}
