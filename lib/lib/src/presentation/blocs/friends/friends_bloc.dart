@@ -106,16 +106,19 @@ class FriendsBloc extends Bloc<FriendsEvent, FriendsState> {
       GetFriends event, Emitter<FriendsState> emit) async {
     emit(GetFriendsLoading());
     try {
-      String currentUserId = FirebaseSingleTon.auth.currentUser!.uid;
+      List<UserModel> friends = [];
       //get all friends of current user from firebase
       DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
           .collection(Constants.users)
-          .doc(currentUserId)
+          .doc(event.uid)
           .get();
       List<dynamic> friendUIds = documentSnapshot.get("friendsUIds");
 
-      List<UserModel> friends = [];
       for (String friendUId in friendUIds) {
+        // if groupMembersUIDs list is not empty and contains the friendUID we skip this friend
+        if (event.groupMembersUIDs.isNotEmpty && event.groupMembersUIDs.contains(friendUId)) {
+          continue;
+        }
         DocumentSnapshot documentSnapshot = await FirebaseSingleTon.db
             .collection(Constants.users)
             .doc(friendUId)

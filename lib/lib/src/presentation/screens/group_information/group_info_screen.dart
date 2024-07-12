@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/utils/show_add_member_bottom_sheet.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/add_members_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/widgets/exit_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/info_card_details_widget.dart';
@@ -57,6 +58,10 @@ class _GroupInformationScreenState extends State<GroupInformationScreen> {
                     isAdmin: isAdmin,
                     onTap: () {
                       //show bottom sheet to add members
+                      showAddMembersBottomSheet(
+                        context: context,
+                        groupMembersUIDs: _bloc.group.membersUIDS,
+                      );
                     },
                   ),
                   const SizedBox(height: 10),
@@ -66,7 +71,9 @@ class _GroupInformationScreenState extends State<GroupInformationScreen> {
                             GroupMembersCardWidget(
                                 isAdmin: isAdmin, bloc: _bloc),
                             const SizedBox(height: 10),
-                            const ExitWidget(),
+                            ExitGroupCardWidget(
+                              uid: uid,
+                            ),
                           ],
                         )
                       : const SizedBox.shrink(),

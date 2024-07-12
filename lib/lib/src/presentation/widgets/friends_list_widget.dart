@@ -14,11 +14,13 @@ import 'package:rich_chat_copilot/lib/src/presentation/widgets/friend_widget.dar
 class FriendsListWidget extends StatefulWidget {
   final FriendViewType friendViewType;
   final String groupId;
+  final List<String> groupMembersUIDs;
 
   const FriendsListWidget({
     super.key,
     required this.friendViewType,
-    required this.groupId,
+     this.groupId='',
+    this.groupMembersUIDs = const [],
   });
 
   @override
@@ -32,10 +34,14 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
 
   @override
   void initState() {
+    final uid = FirebaseSingleTon.auth.currentUser!.uid;
     super.initState();
     switch (widget.friendViewType) {
       case FriendViewType.friend:
-        _bloc.add(GetFriends());
+        _bloc.add(GetFriends(
+          uid: uid,
+          groupMembersUIDs: widget.groupMembersUIDs,
+        ));
         break;
       // case FriendViewType.groupView:
       //   // _bloc.add(GetGroups());
@@ -46,7 +52,10 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
           groupId: widget.groupId,
         ));
       default:
-        _bloc.add(GetFriends());
+        _bloc.add(GetFriends(
+          uid: uid,
+          groupMembersUIDs: widget.groupMembersUIDs,
+        ));
         break;
     }
     // friends.add(UserModel(
@@ -108,73 +117,6 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
                     ));
                   },
                 );
-                //   ListTile(
-                //   contentPadding: EdgeInsets.zero,
-                //   onTap: () {
-                //     Navigator.pushNamed(context, Routes.profileScreen,
-                //         arguments: {"userId": friends[index].uId});
-                //   },
-                //   leading: UserImageWidget(
-                //     image: friends[index].image,
-                //     width: 50,
-                //     height: 50,
-                //   ),
-                //   title: Text(
-                //     friends[index].name,
-                //     style: GoogleFonts.openSans(
-                //       fontSize: 16,
-                //       fontWeight: FontWeight.bold,
-                //       color: ColorSchemes.black,
-                //     ),
-                //   ),
-                //   subtitle: Text(
-                //     friends[index].aboutMe,
-                //     style: GoogleFonts.openSans(
-                //       fontSize: 14,
-                //       fontWeight: FontWeight.w400,
-                //       color: ColorSchemes.black,
-                //     ),
-                //   ),
-                //   trailing: ElevatedButton(
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: Theme.of(context).cardColor,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(10.0),
-                //       ),
-                //     ),
-                //     onPressed: () {
-                //       if (widget.friendViewType ==
-                //           FriendViewType.friendRequest) {
-                //         //TODO: accept request
-                //         _bloc.add(AcceptFriendRequestEvent(
-                //             friendId: friends[index].uId));
-                //       } else if (widget.friendViewType ==
-                //           FriendViewType.friend) {
-                //         //ToDO navigate to chat screen
-                //         Navigator.pushNamed(
-                //             context, Routes.chatWithFriendScreen,
-                //             arguments: {
-                //               "friendId": friends[index].uId,
-                //               "friendName": friends[index].name,
-                //               "friendImage": friends[index].image,
-                //               "groupId": ""
-                //             });
-                //       }else {
-                //         //check the checkbox
-                //       }
-                //     },
-                //     child: Text(
-                //       widget.friendViewType == FriendViewType.friend
-                //           ? S.of(context).chat.toUpperCase()
-                //           : S.of(context).accept.toUpperCase(),
-                //       style: GoogleFonts.openSans(
-                //         fontSize: 14,
-                //         fontWeight: FontWeight.bold,
-                //         color: Theme.of(context).colorScheme.primary,
-                //       ),
-                //     ),
-                //   ),
-                // );
               },
             );
     });

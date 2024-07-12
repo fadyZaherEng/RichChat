@@ -11,6 +11,7 @@ import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/group/group.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
 import 'package:uuid/uuid.dart';
 
 part 'group_event.dart';
@@ -431,5 +432,34 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     } else {
       return false;
     }
+  }
+
+  // exit group
+  Future<void> exitGroup({
+    required String uid,
+  }) async {
+    // check if the user is the admin of the group
+    bool isAdmin = _group.adminsUIDS.contains(uid);
+
+    await FirebaseSingleTon.db
+        .collection(Constants.groups)
+        .doc(_group.groupID)
+        .update({
+      "membersUIDS": FieldValue.arrayRemove([uid]),
+      "adminsUIDS":
+      isAdmin ? FieldValue.arrayRemove([uid]) : _group.adminsUIDS,
+    });
+
+    // remove the user from group members list
+    _groupMembersList.removeWhere((element) => element.uId == uid);
+    // remove the user from group members uid
+    _group.membersUIDS.remove(uid);
+    if (isAdmin) {
+      // remove the user from group admins list
+      _groupAdminsList.removeWhere((element) => element.uId == uid);
+      // remove the user from group admins uid
+      _group.adminsUIDS.remove(uid);
+    }
+    emit(ExitGroupSuccessState());
   }
 }

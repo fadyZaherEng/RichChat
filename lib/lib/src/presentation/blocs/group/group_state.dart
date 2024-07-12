@@ -27,3 +27,4 @@ final class SendRequestToJoinGroupSuccessState extends GroupState{}
 final class SendRequestToJoinGroupErrorState extends GroupState{}
 final class AcceptRequestToJoinGroupSuccessState extends GroupState{}
 final class AcceptRequestToJoinGroupErrorState extends GroupState{}
+final class ExitGroupSuccessState extends GroupState{}

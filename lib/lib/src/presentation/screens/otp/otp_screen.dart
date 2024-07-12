@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
@@ -13,11 +12,10 @@ import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_language_use_case.dart';
-import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/set_user_use_case.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/blocs/login/log_in_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/otp/widgets/otp_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends BaseStatefulWidget {
   final String phoneNumber;
@@ -42,6 +40,8 @@ class _OtpScreenState extends BaseState<OtpScreen> {
   bool isArabic = false;
   bool _isLoading = false;
 
+  LogInBloc get _bloc => BlocProvider.of<LogInBloc>(context);
+
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -50,99 +50,116 @@ class _OtpScreenState extends BaseState<OtpScreen> {
 
   @override
   Widget baseBuild(BuildContext context) {
-    return Scaffold(
-      body: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarColor: Theme.of(context).colorScheme.primary.withOpacity(0.03),
-        ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 50),
-                Text(
-                  S.of(context).verification,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontSize: 30, color: ColorSchemes.black),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  S.of(context).enterThe6Digit,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: ColorSchemes.black),
-                ),
-                const SizedBox(height: 15),
-                Text(
-                  isArabic
-                      ? "${S.of(context).sentTo} \u200E${widget.phoneNumber}"
-                      : "${S.of(context).sentTo} \u200F${widget.phoneNumber}",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(color: ColorSchemes.black),
-                ),
-                const SizedBox(height: 30),
-                OtpWidget(
-                  length: 6,
-                  textEditingController: _otpController,
-                  onCompleted: (pin) {
-                    setState(() {
-                      _otpCode = pin;
-                      _isLoading = true;
-                    });
-                    _verifyCode(context);
-                  },
-                ),
-                const SizedBox(height: 30),
-                Visibility(
-                  visible: _isLoading,
-                  child: Container(
-                    height: 30,
-                    width: 30,
-                    margin: const EdgeInsets.all(10),
-                    alignment: Alignment.center,
-                    child:  CircularProgressIndicator(
-                      color: Theme.of(context).colorScheme.primary,
+    return BlocConsumer<LogInBloc, LogInState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        return Scaffold(
+          body: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              statusBarColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.03),
+            ),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    Text(
+                      S.of(context).verification,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontSize: 30, color: ColorSchemes.black),
                     ),
-                  ),
-                ),
-                Visibility(
-                    visible: !_isLoading,
-                    child: Column(
-                      children: [
-                        Text(
-                          S.of(context).didReceiveTheCode,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(color: ColorSchemes.black),
+                    const SizedBox(height: 15),
+                    Text(
+                      S.of(context).enterThe6Digit,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: ColorSchemes.black),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      isArabic
+                          ? "${S.of(context).sentTo} \u200E${widget.phoneNumber}"
+                          : "${S.of(context).sentTo} \u200F${widget.phoneNumber}",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: ColorSchemes.black),
+                    ),
+                    const SizedBox(height: 30),
+                    OtpWidget(
+                      length: 6,
+                      textEditingController: _otpController,
+                      onCompleted: (pin) {
+                        setState(() {
+                          _otpCode = pin;
+                          _isLoading = true;
+                        });
+                        _verifyCode(context);
+                      },
+                    ),
+                    const SizedBox(height: 30),
+                    Visibility(
+                      visible: _isLoading,
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        margin: const EdgeInsets.all(10),
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        const SizedBox(height: 15),
-                        InkWell(
-                          onTap: () {
-                            //to do resend code
-                          },
-                          child: Text(
-                            S.of(context).resendCode,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(color: Theme.of(context).colorScheme.primary),
-                          ),
-                        )
-                      ],
-                    ))
-              ],
+                      ),
+                    ),
+                    Visibility(
+                        visible: !_isLoading,
+                        child: Column(
+                          children: [
+                            Text(
+                              S.of(context).didReceiveTheCode,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(color: ColorSchemes.black),
+                            ),
+                            const SizedBox(height: 15),
+                            InkWell(
+                              onTap: () {
+                                //to do resend code
+                                _bloc.add(
+                                  LogInOnLogInEvent(
+                                    widget.phoneNumber,
+                                    context,
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                S.of(context).resendCode,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary),
+                              ),
+                            )
+                          ],
+                        ))
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -154,9 +171,9 @@ class _OtpScreenState extends BaseState<OtpScreen> {
     await FirebaseAuth.instance
         .signInWithCredential(credential)
         .then((value) async {
-       _uId = value.user!.uid;
-       //check if user exists in firestore
-       if (await _checkUserExists()) {
+      _uId = value.user!.uid;
+      //check if user exists in firestore
+      if (await _checkUserExists()) {
         // get user info
         await _getUserInfo();
         //save user info
@@ -173,12 +190,11 @@ class _OtpScreenState extends BaseState<OtpScreen> {
             "userId": _uId,
           },
         );
-       }
+      }
       setState(() {
         _isLoading = false;
       });
     }).catchError((onError) {
-      print("FFFFFFFFFFFFFFFFFFFFFFFFFF$onError");
       CustomSnackBarWidget.show(
           context: context,
           message: S.of(context).OTPSMSNotValid,
@@ -209,8 +225,8 @@ class _OtpScreenState extends BaseState<OtpScreen> {
   Future _saveUserInfoInSharedPreferences(UserModel user) async {
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // if (!prefs.containsKey(Constants.user)) {
-      SetUserUseCase(injector())(user);
-      // prefs.setString(Constants.user, jsonEncode(user.toJson()));
+    SetUserUseCase(injector())(user);
+    // prefs.setString(Constants.user, jsonEncode(user.toJson()));
     // } else {
     //   // _user = UserModel.fromJson(jsonDecode(prefs.getString(Constants.user)!));
     //   _user=GetUserUseCase(injector())();
