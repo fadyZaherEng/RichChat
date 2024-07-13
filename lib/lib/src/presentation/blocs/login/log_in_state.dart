@@ -27,3 +27,19 @@ class LogInCodeSentState extends LogInState{
   LogInCodeSentState({required this.verificationId});
 }
 class LogInFinishState extends LogInState{}
+class LogInTimerState extends LogInState{
+  final int time;
+  LogInTimerState({required this.time});
+}
+class LogInResentCodeSentLoadingState extends LogInState{}
+class LogInResentCodeSentSuccessState extends LogInState{}
+class LogInResentCodeSentErrorState extends LogInState{
+  final String message;
+  LogInResentCodeSentErrorState({required this.message});
+}
+class LogInVerifyCodeLoadingState extends LogInState{}
+class LogInVerifyCodeSuccessState extends LogInState{}
+class LogInVerifyCodeErrorState extends LogInState{
+  final String message;
+  LogInVerifyCodeErrorState({required this.message});
+}

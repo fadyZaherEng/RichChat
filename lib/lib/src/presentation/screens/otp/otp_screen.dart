@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
@@ -35,10 +36,9 @@ class _OtpScreenState extends BaseState<OtpScreen> {
   final TextEditingController _otpController = TextEditingController();
   FirebaseFirestore db = FirebaseFirestore.instance;
   String _otpCode = '';
-  String _uId = '';
   UserModel _user = UserModel();
   bool isArabic = false;
-  bool _isLoading = false;
+  String _uId = '';
 
   LogInBloc get _bloc => BlocProvider.of<LogInBloc>(context);
 
@@ -100,59 +100,59 @@ class _OtpScreenState extends BaseState<OtpScreen> {
                       onCompleted: (pin) {
                         setState(() {
                           _otpCode = pin;
-                          _isLoading = true;
                         });
-                        _verifyCode(context);
+                        _verifyCode(
+                          verificationId: widget.verificationCode,
+                          otpCode: _otpCode,
+                          context: context,
+                        );
                       },
                     ),
-                    const SizedBox(height: 30),
-                    Visibility(
-                      visible: _isLoading,
-                      child: Container(
-                        height: 30,
-                        width: 30,
-                        margin: const EdgeInsets.all(10),
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                      ),
-                    ),
-                    Visibility(
-                        visible: !_isLoading,
-                        child: Column(
-                          children: [
-                            Text(
-                              S.of(context).didReceiveTheCode,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: ColorSchemes.black),
+                    _bloc.isLoading
+                        ? const CircularProgressIndicator()
+                        : const SizedBox.shrink(),
+                    _bloc.isSuccessful
+                        ? Container(
+                            height: 30,
+                            width: 30,
+                            decoration: const BoxDecoration(
+                              color: Colors.green,
+                              shape: BoxShape.circle,
                             ),
-                            const SizedBox(height: 15),
-                            InkWell(
-                              onTap: () {
-                                //to do resend code
-                                _bloc.add(
-                                  LogInOnLogInEvent(
-                                    widget.phoneNumber,
-                                    context,
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                S.of(context).resendCode,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary),
+                            child: const Icon(
+                              Icons.done,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                    _bloc.isLoading
+                        ? const SizedBox.shrink()
+                        : Text(
+                            S.of(context).didReceiveTheCode,
+                            style: GoogleFonts.openSans(fontSize: 16),
+                          ),
+                    const SizedBox(height: 10),
+                    _bloc.isLoading
+                        ? const SizedBox.shrink()
+                        : TextButton(
+                            onPressed: _bloc.secondsRemaing == 0
+                                ? () {
+                                    // reset the code to send again
+                                    _bloc.resendCode(
+                                      context: context,
+                                      phone: widget.phoneNumber,
+                                    );
+                                  }
+                                : null,
+                            child: Text(
+                              S.of(context).resendCode,
+                              style: GoogleFonts.openSans(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
                               ),
-                            )
-                          ],
-                        ))
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -163,49 +163,40 @@ class _OtpScreenState extends BaseState<OtpScreen> {
     );
   }
 
-  void _verifyCode(BuildContext context) async {
-    final credential = PhoneAuthProvider.credential(
-      verificationId: widget.verificationCode,
-      smsCode: _otpCode,
+  void _verifyCode({
+    required String verificationId,
+    required String otpCode,
+    required BuildContext context,
+  }) async {
+    _bloc.verifyOTPCode(
+      verificationId: verificationId,
+      otpCode: otpCode,
+      context: context,
+      onSuccess: ({
+        required String userId,
+      }) async {
+        _uId = userId;
+        //check if user exists in firestore
+        if (await _checkUserExists()) {
+          // get user info
+          await _getUserInfo();
+          //save user info
+          await _saveUserInfoInSharedPreferences(_user);
+          //navigate to home
+          Navigator.pushReplacementNamed(context, Routes.mainScreen);
+        } else {
+          //if user not exists navigate to user info
+          Navigator.pushNamed(
+            context,
+            Routes.userInfoScreen,
+            arguments: {
+              "phoneNumber": widget.phoneNumber,
+              "userId": _uId,
+            },
+          );
+        }
+      },
     );
-    await FirebaseAuth.instance
-        .signInWithCredential(credential)
-        .then((value) async {
-      _uId = value.user!.uid;
-      //check if user exists in firestore
-      if (await _checkUserExists()) {
-        // get user info
-        await _getUserInfo();
-        //save user info
-        await _saveUserInfoInSharedPreferences(_user);
-        //navigate to home
-        Navigator.pushReplacementNamed(context, Routes.mainScreen);
-      } else {
-        //if user not exists navigate to user info
-        Navigator.pushNamed(
-          context,
-          Routes.userInfoScreen,
-          arguments: {
-            "phoneNumber": widget.phoneNumber,
-            "userId": _uId,
-          },
-        );
-      }
-      setState(() {
-        _isLoading = false;
-      });
-    }).catchError((onError) {
-      CustomSnackBarWidget.show(
-          context: context,
-          message: S.of(context).OTPSMSNotValid,
-          path: ImagePaths.icCancel,
-          backgroundColor: ColorSchemes.red);
-      Future.delayed(const Duration(milliseconds: 800), () {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    });
   }
 
   Future<bool> _checkUserExists() async {
