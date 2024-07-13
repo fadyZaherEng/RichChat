@@ -137,7 +137,6 @@ class LogInBloc extends Bloc<LogInEvent, LogInState> {
       // allow user to resend code only if timer is not running and resend token exists
       _isLoading = true;
       emit(LogInResentCodeSentLoadingState());
-
       await FirebaseSingleTon.auth.verifyPhoneNumber(
         phoneNumber: phone,
         verificationCompleted: (PhoneAuthCredential credential) async {

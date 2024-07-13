@@ -126,6 +126,18 @@ class _OtpScreenState extends BaseState<OtpScreen> {
                             ),
                           )
                         : const SizedBox.shrink(),
+                    _bloc.secondsRemaing == 0
+                        ? const SizedBox.shrink()
+                        : Text(
+                            "${_bloc.secondsRemaing} Seconds Remaining",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyLarge
+                                ?.copyWith(color: ColorSchemes.black),
+                          ),
+                    _bloc.secondsRemaing == 0
+                        ? const SizedBox.shrink()
+                        : const SizedBox(height: 20),
                     _bloc.isLoading
                         ? const SizedBox.shrink()
                         : Text(
