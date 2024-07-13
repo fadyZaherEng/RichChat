@@ -18,3 +18,7 @@ class UnfriendEvent extends ProfileEvent {
   final String friendId;
   UnfriendEvent(this.friendId);
 }
+class ShowImageEvent extends ProfileEvent {
+  final File file;
+  ShowImageEvent(this.file);
+}

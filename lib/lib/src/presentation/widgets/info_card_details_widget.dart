@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,12 +22,16 @@ class InfoCardDetailsWidget extends StatelessWidget {
   final GroupBloc? bloc;
   final bool? isAdmin;
   final UserModel? userModel;
+  final File? fileImage;
+  final Function() onTapUpdateProfile;
 
   const InfoCardDetailsWidget({
     super.key,
      this.bloc,
      this.isAdmin,
      this.userModel,
+     this.fileImage,
+    required this.onTapUpdateProfile,
   });
 
   @override
@@ -52,9 +58,10 @@ class InfoCardDetailsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 InkWell(
-                  onTap: () {},
+                  onTap: onTapUpdateProfile,
                   child: UserImageWidget(
                     image: profileImage,
+                    fileImage: fileImage,
                     width: 80,
                     height: 80,
                     isBorder: false,

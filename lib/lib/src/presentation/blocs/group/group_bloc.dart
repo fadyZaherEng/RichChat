@@ -12,6 +12,7 @@ import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/group/group.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/blocs/user_info/user_info_bloc.dart';
 import 'package:uuid/uuid.dart';
 
 part 'group_event.dart';
@@ -22,6 +23,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   GroupBloc() : super(GroupInitial()) {
     on<SendRequestToJoinGroupEvent>(_onSendRequestToJoinGroupEvent);
     on<AcceptRequestToJoinGroupEvent>(_onAcceptRequestToJoinGroupEvent);
+    on<ShowImageEvent>(_onShowImageEvent);
   }
 
   bool _isLoading = false;
@@ -446,8 +448,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
         .doc(_group.groupID)
         .update({
       "membersUIDS": FieldValue.arrayRemove([uid]),
-      "adminsUIDS":
-      isAdmin ? FieldValue.arrayRemove([uid]) : _group.adminsUIDS,
+      "adminsUIDS": isAdmin ? FieldValue.arrayRemove([uid]) : _group.adminsUIDS,
     });
 
     // remove the user from group members list
@@ -461,5 +462,10 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
       _group.adminsUIDS.remove(uid);
     }
     emit(ExitGroupSuccessState());
+  }
+
+  FutureOr<void> _onShowImageEvent(
+      ShowImageEvent event, Emitter<GroupState> emit) {
+    emit(ShowImagesState(event.image));
   }
 }

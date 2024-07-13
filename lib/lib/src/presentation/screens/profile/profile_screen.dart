@@ -1,14 +1,23 @@
+import 'dart:io';
+
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/permission_service_handler.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_action_dialog.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/show_bottom_sheet_upload_media.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
@@ -40,6 +49,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
   bool isDarkMode = false;
 
   ProfileBloc get _bloc => BlocProvider.of<ProfileBloc>(context);
+  File? _updatedFile;
 
   @override
   void initState() {
@@ -114,6 +124,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             path: ImagePaths.icCancel,
             backgroundColor: ColorSchemes.red,
           );
+        } else if (state is ShowImageState) {
+          _updatedFile = state.imageUrl;
+          print("image url: ${state.imageUrl.path}");
         }
       },
       builder: (context, state) {
@@ -154,7 +167,13 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        InfoCardDetailsWidget(userModel: _otherUser),
+                        InfoCardDetailsWidget(
+                          userModel: _otherUser,
+                          fileImage: _updatedFile,
+                          onTapUpdateProfile: () {
+                            _openMediaBottomSheet(context);
+                          },
+                        ),
                         const SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
@@ -208,7 +227,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
     );
   }
 
-  // get the saved theme mode
   void getThemeMode() async {
     // get the saved theme mode
     final savedThemeMode = await AdaptiveTheme.getThemeMode();
@@ -306,21 +324,22 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             ),
             title: Text(S.of(context).changeTheme),
             trailing: Switch(
-                value: isDarkMode,
-                onChanged: (value) {
-                  // set the isDarkMode to the value
-                  setState(() {
-                    isDarkMode = value;
-                  });
-                  // check if the value is true
-                  if (value) {
-                    // set the theme mode to dark
-                    AdaptiveTheme.of(context).setDark();
-                  } else {
-                    // set the theme mode to light
-                    AdaptiveTheme.of(context).setLight();
-                  }
-                }),
+              value: isDarkMode,
+              onChanged: (value) {
+                // set the isDarkMode to the value
+                setState(() {
+                  isDarkMode = value;
+                });
+                // check if the value is true
+                if (value) {
+                  // set the theme mode to dark
+                  AdaptiveTheme.of(context).setDark();
+                } else {
+                  // set the theme mode to light
+                  AdaptiveTheme.of(context).setLight();
+                }
+              },
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -332,9 +351,12 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             setState(() {
               isArabic = value;
             });
-            Future.delayed(const Duration(milliseconds: 300), () {
-              RestartWidget.restartApp(context);
-            });
+            Future.delayed(
+              const Duration(milliseconds: 300),
+              () {
+                RestartWidget.restartApp(context);
+              },
+            );
           },
           title: S.of(context).language,
         ),
@@ -358,6 +380,193 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                 ),
               ),
       ],
+    );
+  }
+
+  //select image
+  void _openMediaBottomSheet(BuildContext context) async {
+    await showBottomSheetUploadMedia(
+      context: context,
+      onTapCamera: () async {
+        _navigateBackEvent();
+        if (await PermissionServiceHandler().handleServicePermission(
+            setting: PermissionServiceHandler.getCameraPermission())) {
+          _getImage(ImageSource.camera);
+        } else {
+          _showActionDialog(
+            icon: ImagePaths.icCancel,
+            onPrimaryAction: () {
+              _navigateBackEvent();
+              openAppSettings().then(
+                (value) async {
+                  if (await PermissionServiceHandler().handleServicePermission(
+                      setting: PermissionServiceHandler.getCameraPermission())) {
+                    // _getImage(ImageSource.camera);
+                  }
+                },
+              );
+            },
+            onSecondaryAction: () {
+              _navigateBackEvent();
+            },
+            primaryText: S.of(context).ok,
+            secondaryText: S.of(context).cancel,
+            text: S.of(context).youShouldHaveCameraPermission,
+          );
+        }
+      },
+      onTapGallery: () async {
+        _navigateBackEvent();
+        Permission permission = PermissionServiceHandler.getGalleryPermission(
+          true,
+          androidDeviceInfo:
+              Platform.isAndroid ? await DeviceInfoPlugin().androidInfo : null,
+        );
+        if (await PermissionServiceHandler()
+            .handleServicePermission(setting: permission)) {
+          _getImage(ImageSource.gallery);
+        } else {
+          _showActionDialog(
+            icon: ImagePaths.icCancel,
+            onPrimaryAction: () {
+              _navigateBackEvent();
+              openAppSettings().then((value) async {
+                if (await PermissionServiceHandler()
+                    .handleServicePermission(setting: permission)) {}
+              });
+            },
+            onSecondaryAction: () {
+              _navigateBackEvent();
+            },
+            primaryText: S.of(context).ok,
+            secondaryText: S.of(context).cancel,
+            text: S.of(context).youShouldHaveGalleryPermission,
+          );
+        }
+      },
+      onTapVideo: () {},
+    );
+  }
+
+  void _navigateBackEvent() {
+    Navigator.pop(context);
+  }
+
+  Future<XFile?> compressFile(File file) async {
+    final filePath = file.absolute.path;
+    final lastIndex = filePath.lastIndexOf(RegExp(r'.png|.jp'));
+    final splitted = filePath.substring(0, (lastIndex));
+    final outPath = "${splitted}_out${filePath.substring(lastIndex)}";
+
+    if (lastIndex == filePath.lastIndexOf(RegExp(r'.png'))) {
+      final compressedImage = await FlutterImageCompress.compressAndGetFile(
+          filePath, outPath,
+          minWidth: 1000,
+          minHeight: 1000,
+          quality: 50,
+          format: CompressFormat.png);
+      return compressedImage;
+    } else {
+      final compressedImage = await FlutterImageCompress.compressAndGetFile(
+        filePath,
+        outPath,
+        minWidth: 1000,
+        minHeight: 1000,
+        quality: 50,
+      );
+      return compressedImage;
+    }
+  }
+
+  Future<void> _getImage(
+    ImageSource img,
+  ) async {
+    showLoading();
+    final XFile? pickedFile;
+    if (img == ImageSource.gallery) {
+      final picker = ImagePicker();
+      pickedFile = await picker.pickImage(source: img);
+      if (pickedFile == null) {
+        return;
+      }
+      _cropperImage(File(pickedFile.path));
+    } else {
+      final ImagePicker picker = ImagePicker();
+      pickedFile = await picker.pickImage(source: img);
+      if (pickedFile == null) {
+        return;
+      }
+      XFile? compressedImage = await compressFile(File(pickedFile.path));
+      if (compressedImage == null) {
+        return;
+      }
+      _cropperImage(File(compressedImage.path));
+    }
+  }
+
+  Future _cropperImage(File imagePicker) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: imagePicker.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9,
+      ],
+      compressQuality: 100,
+      cropStyle: CropStyle.rectangle,
+      maxWidth: 1080,
+      maxHeight: 1080,
+      aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+      compressFormat: ImageCompressFormat.jpg,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Theme.of(context).colorScheme.primary,
+          toolbarWidgetColor: ColorSchemes.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false,
+        ),
+        IOSUiSettings(title: 'Cropper'),
+        WebUiSettings(
+          context: context,
+          presentStyle: CropperPresentStyle.dialog,
+          boundary: const CroppieBoundary(width: 520, height: 520),
+          viewPort:
+              const CroppieViewPort(width: 480, height: 480, type: 'circle'),
+          enableExif: true,
+          enableZoom: true,
+          showZoomer: true,
+        ),
+      ],
+    );
+    hideLoading();
+    if (croppedFile != null) {
+      _bloc.add(ShowImageEvent(File(croppedFile.path)));
+    }
+  }
+
+  void _showActionDialog({
+    required String icon,
+    required void Function() onPrimaryAction,
+    required void Function() onSecondaryAction,
+    required String primaryText,
+    required String secondaryText,
+    required String text,
+  }) async {
+    await showActionDialogWidget(
+      context: context,
+      text: text,
+      primaryText: primaryText,
+      primaryAction: () {
+        onPrimaryAction();
+      },
+      secondaryText: secondaryText,
+      secondaryAction: () {
+        onSecondaryAction();
+      },
+      icon: icon,
     );
   }
 }

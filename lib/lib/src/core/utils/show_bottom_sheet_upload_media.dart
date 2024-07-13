@@ -9,18 +9,19 @@ Future showBottomSheetUploadMedia({
   bool isVideo = false,
 }) async {
   return await showModalBottomSheet(
-      backgroundColor: Colors.transparent,
-      context: context,
-      enableDrag: false,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: UploadMediaWidget(
-              onTapCamera: onTapCamera,
-              onTapGallery: onTapGallery,
-              onTapVideo: onTapVideo,
-              isShowVideo: isVideo,
-            ),
-          ));
+    backgroundColor: Colors.transparent,
+    context: context,
+    enableDrag: false,
+    isScrollControlled: true,
+    builder: (context) => Padding(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: UploadMediaWidget(
+        onTapCamera: onTapCamera,
+        onTapGallery: onTapGallery,
+        onTapVideo: onTapVideo,
+        isShowVideo: isVideo,
+      ),
+    ),
+  );
 }

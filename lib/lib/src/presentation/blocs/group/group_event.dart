@@ -23,3 +23,9 @@ class AcceptRequestToJoinGroupEvent extends GroupEvent {
     required this.uid
   });
 }
+class ShowImageEvent extends GroupEvent {
+  final File image;
+  ShowImageEvent({
+    required this.image
+  });
+}

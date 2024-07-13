@@ -16,6 +16,7 @@ class AddMembers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         const Text(
           "2 Members",
@@ -36,6 +37,7 @@ class AddMembers extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   CircleAvatar(
+                    radius: 20,
                     child: IconButton(
                       icon: const Icon(Icons.person_add),
                       onPressed: onTap,
