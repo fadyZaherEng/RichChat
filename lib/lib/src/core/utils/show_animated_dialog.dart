@@ -30,22 +30,41 @@ void showAnimatedDialog({
                 textAlign: TextAlign.center,
               ),
               content: editable
-                  ? TextFormField(
-                      controller: controller,
-                      maxLength: content == Constants.changeName ? 20 : 500,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        hintText: hintText,
-                        counterText: '',
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
+                  ? ValueListenableBuilder(
+                      valueListenable: controller,
+                      builder: (context, value, child) {
+                        return SizedBox(
+                          height: value.text.length > 200
+                              ? 200
+                              : value.text.length > 150
+                                  ? 150
+                                  : value.text.length > 120
+                                      ? 100
+                                      : 80,
+                          child: TextFormField(
+                            controller: controller,
+                            // maxLength: content == Constants.changeName ? 20 : 500,
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'Enter $title',
+                              hintText: hintText,
+                              counterText: '',
+                              hintStyle: Theme.of(context).textTheme.bodySmall,
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            expands: true,
+                            maxLines: null,
+                            textAlign: TextAlign.start,
+                            onChanged: (value) {
+                              controller.text = value;
+                            },
+                          ),
+                        );
+                      },
                     )
-                  : Text(
-                      content,
-                      textAlign: TextAlign.center,
-                    ),
+                  : Text(content, textAlign: TextAlign.center),
               actions: [
                 TextButton(
                   onPressed: () {
