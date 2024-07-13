@@ -28,8 +28,14 @@ final class SendRequestToJoinGroupErrorState extends GroupState{}
 final class AcceptRequestToJoinGroupSuccessState extends GroupState{}
 final class AcceptRequestToJoinGroupErrorState extends GroupState{}
 final class ExitGroupSuccessState extends GroupState{}
+final class EditGroupNameSuccessState extends GroupState{}
+final class EditGroupDesSuccessState extends GroupState{}
 final class ShowImagesState extends GroupState{
   final File image;
 
   ShowImagesState(this.image);
+}
+final class SaveGroupImageSuccessInSharedPreferencesState extends GroupState{
+  final String image;
+  SaveGroupImageSuccessInSharedPreferencesState(this.image);
 }

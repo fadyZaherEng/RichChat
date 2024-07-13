@@ -24,6 +24,7 @@ import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_language_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/set_language_use_case.dart';
+import 'package:rich_chat_copilot/lib/src/domain/usecase/set_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/profile/profile_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/create_group/widgets/setting_list_tile_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_switch_widget.dart';
@@ -127,6 +128,10 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
         } else if (state is ShowImageState) {
           _updatedFile = state.imageUrl;
           print("image url: ${state.imageUrl.path}");
+        }else if(state is SaveGroupImageSuccessInSharedPreferencesState){
+          //TODO: implement save profile image in shared preferences
+          _currentUser=_currentUser.copyWith(image: state.image);
+          SetUserUseCase(injector())(_currentUser);
         }
       },
       builder: (context, state) {

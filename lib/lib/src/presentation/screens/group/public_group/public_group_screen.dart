@@ -111,7 +111,7 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                                   title: "Request To Join",
                                   content:
                                       "you need request to join this group,before you can chat with members of this group",
-                                  onActionTap: (value) {
+                                  onActionTap: (value,_) {
                                     //TODO: send request to join
                                     if (value) {
                                       _bloc.add(SendRequestToJoinGroupEvent(

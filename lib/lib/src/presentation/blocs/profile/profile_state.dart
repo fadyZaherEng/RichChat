@@ -40,3 +40,25 @@ final class ShowImageState extends ProfileState {
     required this.imageUrl,
   });
 }
+
+final class SaveGroupImageSuccessInSharedPreferencesState extends ProfileState {
+  final String image;
+  SaveGroupImageSuccessInSharedPreferencesState(this.image);
+}
+
+final class UpdateGroupNameSuccessState extends ProfileState {
+  final String name;
+  UpdateGroupNameSuccessState( this.name);
+}
+final class UpdateUserNameSuccessState extends ProfileState {
+  final String name;
+  UpdateUserNameSuccessState( this.name);
+}
+final class UpdateGroupDescriptionSuccessState extends ProfileState {
+  final String description;
+  UpdateGroupDescriptionSuccessState( this.description);
+}
+final class UpdateAboutMeSuccessState extends ProfileState {
+  final String aboutMe;
+  UpdateAboutMeSuccessState( this.aboutMe);
+}

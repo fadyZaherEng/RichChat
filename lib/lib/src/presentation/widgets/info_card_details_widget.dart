@@ -8,6 +8,7 @@ import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_action_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/show_animated_dialog.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
@@ -18,8 +19,8 @@ import 'package:rich_chat_copilot/lib/src/presentation/blocs/profile/profile_blo
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
-class InfoCardDetailsWidget extends StatelessWidget {
-  final GroupBloc? bloc;
+class InfoCardDetailsWidget extends StatefulWidget {
+  final GroupBloc? groupProvider;
   final bool? isAdmin;
   final UserModel? userModel;
   final File? fileImage;
@@ -27,161 +28,253 @@ class InfoCardDetailsWidget extends StatelessWidget {
 
   const InfoCardDetailsWidget({
     super.key,
-     this.bloc,
-     this.isAdmin,
-     this.userModel,
-     this.fileImage,
+    this.groupProvider,
+    this.isAdmin,
+    this.userModel,
+    this.fileImage,
     required this.onTapUpdateProfile,
   });
 
   @override
+  State<InfoCardDetailsWidget> createState() => _InfoCardDetailsWidgetState();
+}
+
+class _InfoCardDetailsWidgetState extends State<InfoCardDetailsWidget> {
+  ProfileBloc get _bloc => BlocProvider.of<ProfileBloc>(context);
+
+  @override
   Widget build(BuildContext context) {
     //get profile image
-    final profileImage =
-        userModel != null ? userModel!.image : bloc!.group.groupLogo;
+    final profileImage = widget.userModel != null
+        ? widget.userModel!.image
+        : widget.groupProvider!.group.groupLogo;
     //get profile name
-    final profileName =
-        userModel != null ? userModel!.name : bloc!.group.groupName;
+    final profileName = widget.userModel != null
+        ? widget.userModel!.name
+        : widget.groupProvider!.group.groupName;
     //get profile about me
-    final profileAboutMe =
-        userModel != null ? userModel!.aboutMe : bloc!.group.groupDescription;
+    final profileAboutMe = widget.userModel != null
+        ? widget.userModel!.aboutMe
+        : widget.groupProvider!.group.groupDescription;
     //get current user
     final currentUser = GetUserUseCase(injector())();
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    // get isGroup
+    final isGroup = widget.userModel != null ? false : true;
+
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        return Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                InkWell(
-                  onTap: onTapUpdateProfile,
-                  child: UserImageWidget(
-                    image: profileImage,
-                    fileImage: fileImage,
-                    width: 80,
-                    height: 80,
-                    isBorder: false,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    InkWell(
+                      onTap: widget.onTapUpdateProfile,
+                      child: UserImageWidget(
+                        image: profileImage,
+                        fileImage: widget.fileImage,
+                        width: 80,
+                        height: 80,
+                        isBorder: false,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              profileName,
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            _getEditWidget(
+                              title: 'Change Name',
+                              content: Constants.changeName,
+                              profileName: profileName,
+                              aboutMe: profileAboutMe,
+                              uid: currentUser.uId,
+                              isAdmin: widget.isAdmin,
+                              isGroup: isGroup,
+                            ),
+                          ],
+                        ),
+                        // display phone number
+                        widget.userModel != null &&
+                                currentUser.uId == widget.userModel!.uId
+                            ? Text(
+                                //get current user phone number
+                                currentUser.phoneNumber,
+                                style: GoogleFonts.openSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              )
+                            : const SizedBox.shrink(),
+                        const SizedBox(height: 5),
+                        widget.userModel != null
+                            ? ProfileStatusWidget(
+                                userModel: widget.userModel!,
+                                currentUser: currentUser,
+                              )
+                            : GroupStatusWidget(
+                                isAdmin: widget.isAdmin!,
+                                groupProvider: widget.groupProvider!,
+                              ),
+                        const SizedBox(height: 10),
+                      ],
+                    )
+                  ],
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                const Divider(
+                  color: Colors.grey,
+                  thickness: 1,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      profileName,
+                      widget.userModel != null
+                          ? S.of(context).aboutMe
+                          : 'Group Description',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    // display phone number
-                    userModel != null && currentUser.uId == userModel!.uId
-                        ? Text(
-                            //get current user phone number
-                            currentUser.phoneNumber,
-                            style: GoogleFonts.openSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    const SizedBox(height: 5),
-                    userModel != null
-                        ? ProfileStatusWidget(
-                            userModel: userModel!,
-                            currentUser: currentUser,
-                          )
-                        : GroupStatusWidget(
-                            isAdmin: isAdmin!,
-                            groupProvider: bloc!,
-                          ),
-
-                    const SizedBox(height: 10),
+                    _getEditWidget(
+                      title: 'Change Name',
+                      content: Constants.changeDes,
+                      profileName: profileName,
+                      aboutMe: profileAboutMe,
+                      uid: currentUser.uId,
+                      isAdmin: widget.isAdmin,
+                      isGroup: isGroup,
+                    ),
                   ],
-                )
+                ),
+                Text(
+                  profileAboutMe,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
-            const Divider(
-              color: Colors.grey,
-              thickness: 1,
-            ),
-            Text(userModel != null ? 'About Me' : 'Group Description',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                )),
-            Text(
-              profileAboutMe,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
-    // return Card(
-    //   elevation: 2,
-    //   child: Padding(
-    //     padding: const EdgeInsets.all(8.0),
-    //     child: Column(
-    //       children: [
-    //         Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             InkWell(
-    //               onTap: () {},
-    //               child: UserImageWidget(
-    //                 image: profileImage,
-    //                 width: 80,
-    //                 height: 80,
-    //                 isBorder: false,
-    //               ),
-    //             ),
-    //             const SizedBox(width: 10),
-    //             Column(
-    //               crossAxisAlignment: CrossAxisAlignment.end,
-    //               children: [
-    //                 Text(
-    //                   profileName,
-    //                   style: const TextStyle(
-    //                     fontSize: 18,
-    //                     fontWeight: FontWeight.bold,
-    //                   ),
-    //                 ),
-    //                 const SizedBox(height: 10),
-    //                 userModel!=null ? const SizedBox.shrink() :
-    //                 _buildGroupStatusWidget(context: context, isAdmin: isAdmin!, bloc: bloc!),
-    //               ],
-    //             )
-    //           ],
-    //         ),
-    //         const Divider(
-    //           color: Colors.grey,
-    //           thickness: 1,
-    //         ),
-    //         Text(
-    //         userModel!=null ? S.of(context).aboutMe:  S.of(context).groupDescription,
-    //           style: const TextStyle(
-    //             fontSize: 18,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //         Text(
-    //           profileAboutMe,
-    //           style: const TextStyle(
-    //             fontSize: 16,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
+  }
+
+  Widget _getEditWidget({
+    required String title,
+    required String content,
+    bool? isAdmin,
+    required bool isGroup,
+    required String profileName,
+    required String aboutMe,
+    required String uid,
+  }) {
+    if (isGroup) {
+      // check if user is admin
+      if (isAdmin!) {
+        return InkWell(
+          onTap: () {
+            showAnimatedDialog(
+              context: context,
+              title: title,
+              content: content,
+              textAction: "Change",
+              onActionTap: (value, updatedText) async {
+                if (value) {
+                  if (content == Constants.changeName) {
+                    final name = await _bloc.updateName(
+                      isGroup: isGroup,
+                      id: isGroup ? widget.groupProvider!.group.groupID : uid,
+                      newName: updatedText,
+                      oldName: profileName,
+                    );
+                    if (isGroup) {
+                      if (name == 'Invalid name.') return;
+                      widget.groupProvider!.setGroupName(name);
+                    }
+                  } else {
+                    final desc = await _bloc.updateStatus(
+                      isGroup: isGroup,
+                      id: isGroup ? widget.groupProvider!.group.groupID : uid,
+                      newDesc: updatedText,
+                      oldDesc: aboutMe,
+                    );
+                    if (isGroup) {
+                      if (desc == 'Invalid description.') return;
+                      widget.groupProvider!.setGroupDescription(desc);
+                    }
+                  }
+                }
+              },
+              editable: true,
+              hintText: content == Constants.changeName ? profileName : aboutMe,
+            );
+          },
+          child: const Icon(Icons.edit_rounded),
+        );
+      } else {
+        return const SizedBox();
+      }
+    } else {
+      if (widget.userModel != null && widget.userModel!.uId != uid) {
+        return const SizedBox();
+      }
+
+      return InkWell(
+        onTap: () {
+          showAnimatedDialog(
+            context: context,
+            title: title,
+            content: content,
+            textAction: "Change",
+            onActionTap: (value, updatedText) {
+              if (value) {
+                if (content == Constants.changeName) {
+                  _bloc.updateName(
+                    isGroup: isGroup,
+                    id: isGroup ? widget.groupProvider!.group.groupID : uid,
+                    newName: updatedText,
+                    oldName: profileName,
+                  );
+                } else {
+                  _bloc.updateStatus(
+                    isGroup: isGroup,
+                    id: isGroup ? widget.groupProvider!.group.groupID : uid,
+                    newDesc: updatedText,
+                    oldDesc: aboutMe,
+                  );
+                }
+              }
+            },
+            editable: true,
+            hintText: content == Constants.changeName ? profileName : aboutMe,
+          );
+        },
+        child: const Icon(Icons.edit_rounded),
+      );
+    }
   }
 }
 
@@ -211,7 +304,7 @@ class GroupStatusWidget extends StatelessWidget {
                     content:
                         'Are you sure you want to change the group type to ${groupProvider.group.isPrivate ? 'Public' : 'Private'}?',
                     textAction: 'Change',
-                    onActionTap: (value) {
+                    onActionTap: (value, _) {
                       if (value) {
                         // change group type
                         groupProvider.changeGroupType();

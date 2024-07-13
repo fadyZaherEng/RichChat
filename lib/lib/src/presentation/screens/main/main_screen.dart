@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,12 +79,28 @@ class _MainScreenState extends BaseState<MainScreen>
                 InkWell(
                   onTap: () {
                     //navigate to user profile
-                    Navigator.pushNamed(context, Routes.profileScreen,
-                        arguments: {
-                          "userId": _user.uId,
-                        });
+                    Navigator.pushNamed(
+                      context,
+                      Routes.profileScreen,
+                      arguments: {
+                        "userId": _user.uId,
+                      },
+                    );
                   },
-                  child: UserImageWidget(image: _user.image),
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: FirebaseSingleTon.db
+                        .collection("users")
+                        .doc(_user.uId)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      //get user image
+                      if (!snapshot.hasData) {
+                        return const SizedBox();
+                      }
+                      String image = snapshot.data!["image"];
+                      return UserImageWidget(image: image);
+                    }
+                  ),
                 ),
               ],
             ),
@@ -133,8 +150,7 @@ class _MainScreenState extends BaseState<MainScreen>
       floatingActionButton: _selectedIndex == 1
           ? FloatingActionButton(
               onPressed: () {
-                context.read<GroupBloc>().clearGroupData()
-                    .whenComplete(() {
+                context.read<GroupBloc>().clearGroupData().whenComplete(() {
                   Navigator.pushNamed(context, Routes.createGroupScreen);
                 });
               },

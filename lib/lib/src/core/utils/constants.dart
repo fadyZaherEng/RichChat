@@ -30,4 +30,6 @@ class Constants {
   static const String isSeen = "isSeen";
   static const String reactions = "reactions";
   static const String timeSent = "timeSent";
+  static const String changeName = "changeName";
+  static const String changeDes = "changeDes";
 }

@@ -71,7 +71,7 @@ class _GroupMembersCardWidgetState extends State<GroupMembersCardWidget> {
                               content:
                                   "Are you sure you want to remove ${member.name} from this group?",
                               textAction: "Remove",
-                              onActionTap: (value) {
+                              onActionTap: (value,_) {
                                 if (value) {
                                   //remove member from group
                                   widget.bloc

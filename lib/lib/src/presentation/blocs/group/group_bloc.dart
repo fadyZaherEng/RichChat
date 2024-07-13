@@ -54,19 +54,24 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     awaitingApprovalUIDS: [],
   );
 
+  // set group name
+  void setGroupName(String groupName) {
+    _group.groupName = groupName;
+    emit(EditGroupNameSuccessState());
+  }
+
+  // set group description
+  void setGroupDescription(String groupDescription) {
+    _group.groupDescription = groupDescription;
+    emit(EditGroupDesSuccessState());
+  }
+
   final List<UserModel> _groupMembersList = [];
   final List<UserModel> _groupAdminsList = [];
 
   //getter
   bool get iSLoading => _isLoading;
 
-  // bool get editSettings => _editSettings;
-  //
-  // bool get approveNewMembers => _approveNewMembers;
-  //
-  // bool get requestToJoin => _requestToJoin;
-  //
-  // bool get lockMassages => _lockMassages;
   Future<void> updateGroupDataInFirestore() async {
     try {
       await FirebaseSingleTon.db
@@ -130,7 +135,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     emit(GroupModelState());
   }
 
-  //groupMembersList
+//groupMembersList
   void addMemberToGroup({required UserModel groupMember}) {
     _groupMembersList.add(groupMember);
     _group.membersUIDS.add(groupMember.uId);
@@ -139,7 +144,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     updateGroupDataInFirestore();
   }
 
-  //groupAdminsList
+//groupAdminsList
   void addMemberToAdmin({required UserModel groupAdmin}) {
     _groupAdminsList.add(groupAdmin);
     _group.adminsUIDS.add(groupAdmin.uId);
@@ -148,7 +153,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     updateGroupDataInFirestore();
   }
 
-  //remove member from group
+//remove member from group
   void removeMemberFromGroup({required UserModel user}) {
     _groupMembersList.remove(user);
     _groupAdminsList.remove(user);
@@ -158,7 +163,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     updateGroupDataInFirestore();
   }
 
-  //remove member from admins
+//remove member from admins
   void removeAdminFromAdmins({required UserModel user}) {
     _groupAdminsList.remove(user);
     _group.adminsUIDS.remove(user.uId);
@@ -167,7 +172,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     updateGroupDataInFirestore();
   }
 
-  // clear Group members
+// clear Group members
   Future clearGroupData() async {
     _groupMembersList.clear();
     _groupAdminsList.clear();
@@ -195,17 +200,17 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     emit(ClearGroupMembersListState());
   }
 
-  //get group members uids
+//get group members uids
   List<String> getGroupMembersUIDS() {
     return _groupMembersList.map((e) => e.uId).toList();
   }
 
-  //get group admins uids
+//get group admins uids
   List<String> getGroupAdminsUIDS() {
     return _groupAdminsList.map((e) => e.uId).toList();
   }
 
-  //create group
+//create group
   Future<void> createGroup({
     required Group newGroup,
     required File? image,
@@ -252,7 +257,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
   }
 
-  //get stream of all private groups that contains given userId
+//get stream of all private groups that contains given userId
   Stream<List<Group>> getAllPrivateGroupsStream({
     required String userId,
   }) {
@@ -292,7 +297,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     );
   }
 
-  //stream users data from firestore
+//stream users data from firestore
   Stream<List<DocumentSnapshot>> streamGroupMembersData({
     required List<String> membersUIDS,
   }) {
@@ -323,7 +328,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     // );
   }
 
-  //get list of group members data from firestore with uids
+//get list of group members data from firestore with uids
   Future<List<UserModel>> getGroupMembersDataFromFirestore(
       {required bool isAdmin}) async {
     List<UserModel> groupMembersList = [];
@@ -338,7 +343,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     return groupMembersList;
   }
 
-  //update group members list
+//update group members list
   Future<void> updateGroupMembersList() async {
     _groupMembersList.clear();
     _groupMembersList
@@ -346,7 +351,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     emit(GroupMembersListUpdateSuccessState());
   }
 
-  //update group admins list
+//update group admins list
   Future<void> updateGroupAdminsList() async {
     _groupAdminsList.clear();
     _groupAdminsList
@@ -354,14 +359,14 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     emit(GroupAdminsListUpdateSuccessState());
   }
 
-  //changeGroupType
+//changeGroupType
   void changeGroupType() {
     _group.isPrivate = !_group.isPrivate;
     emit(ChangeGroupType());
     updateGroupDataInFirestore();
   }
 
-  //send request to join group
+//send request to join group
   Future<void> sendRequestToJoinGroup({
     required String groupId,
     required String groupName,
@@ -382,7 +387,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
   }
 
-  //accept request to join group
+//accept request to join group
   Future<void> acceptRequestToJoinGroup({
     required String groupId,
     required String uid,
@@ -422,7 +427,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     );
   }
 
-  // check if is sender or admin
+// check if is sender or admin
   bool isSenderOrAdmin({
     required Massage message,
     required String uid,
@@ -436,7 +441,7 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     }
   }
 
-  // exit group
+// exit group
   Future<void> exitGroup({
     required String uid,
   }) async {
@@ -465,7 +470,29 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   }
 
   FutureOr<void> _onShowImageEvent(
-      ShowImageEvent event, Emitter<GroupState> emit) {
-    emit(ShowImagesState(event.image));
+      ShowImageEvent event, Emitter<GroupState> emit) async {
+    String imageUrl = "";
+    if (event.image != null) {
+      imageUrl = await saveImageToStorage(
+          event.image, "groupsImages/${event.groupId}");
+      await _updateGroupImage(
+        event.groupId,
+        imageUrl,
+      );
+      emit(ShowImagesState(event.image));
+      emit(SaveGroupImageSuccessInSharedPreferencesState(imageUrl));
+    }
+  }
+
+//update group image
+  Future<void> _updateGroupImage(
+    String id,
+    String imageUrl,
+  ) async {
+    await FirebaseSingleTon.db.collection(Constants.groups).doc(id).update(
+      {
+        "groupLogo": imageUrl,
+      },
+    );
   }
 }

@@ -41,6 +41,9 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
         if (state is ShowImagesState) {
           _updatedFile = state.image;
           print("image url: ${state.image.path}");
+        } else if (state is SaveGroupImageSuccessInSharedPreferencesState) {
+          //TODO: implement save profile image in shared preferences
+          hideLoading();
         }
       },
       builder: (context, state) {
@@ -67,7 +70,7 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   InfoCardDetailsWidget(
-                    bloc: _bloc,
+                    groupProvider: _bloc,
                     isAdmin: isAdmin,
                     fileImage: _updatedFile,
                     onTapUpdateProfile: () {
@@ -211,7 +214,6 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
   Future<void> _getImage(
     ImageSource img,
   ) async {
-    // showLoading();
     final XFile? pickedFile;
     if (img == ImageSource.gallery) {
       final picker = ImagePicker();
@@ -271,9 +273,12 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
         ),
       ],
     );
-    hideLoading();
     if (croppedFile != null) {
-      _bloc.add(ShowImageEvent(image: File(croppedFile.path)));
+      showLoading();
+      _bloc.add(ShowImageEvent(
+        image: File(croppedFile.path),
+        groupId: _bloc.group.groupID,
+      ));
     }
   }
 

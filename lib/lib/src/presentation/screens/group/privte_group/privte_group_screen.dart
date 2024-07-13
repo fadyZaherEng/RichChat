@@ -5,7 +5,6 @@ import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
-import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/group/group_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/last_massage_chat_widget.dart';
@@ -19,15 +18,9 @@ class PrivateGroupScreen extends BaseStatefulWidget {
 
 class _PrivateGroupScreenState extends BaseState<PrivateGroupScreen> {
   final _searchController = TextEditingController();
-  UserModel _currentUser = UserModel();
 
   GroupBloc get _bloc => BlocProvider.of<GroupBloc>(context);
 
-  @override
-  void initState() {
-    super.initState();
-    _currentUser = GetUserUseCase(injector())();
-  }
 
   @override
   Widget baseBuild(BuildContext context) {

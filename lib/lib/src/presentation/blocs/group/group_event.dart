@@ -25,7 +25,9 @@ class AcceptRequestToJoinGroupEvent extends GroupEvent {
 }
 class ShowImageEvent extends GroupEvent {
   final File image;
+  final String groupId;
   ShowImageEvent({
-    required this.image
+    required this.image,
+    required this.groupId,
   });
 }
