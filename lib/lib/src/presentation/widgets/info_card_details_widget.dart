@@ -77,7 +77,10 @@ class _InfoCardDetailsWidgetState extends State<InfoCardDetailsWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     InkWell(
-                      onTap: widget.onTapUpdateProfile,
+                      onTap: widget.userModel != null &&
+                              widget.userModel!.uId != currentUser.uId
+                          ? null
+                          : widget.onTapUpdateProfile,
                       child: UserImageWidget(
                         image: profileImage,
                         fileImage: widget.fileImage,
