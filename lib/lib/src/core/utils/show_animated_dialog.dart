@@ -30,7 +30,7 @@ void showAnimatedDialog({
                 textAlign: TextAlign.center,
               ),
               content: editable
-                  ? TextField(
+                  ? TextFormField(
                       controller: controller,
                       maxLength: content == Constants.changeName ? 20 : 500,
                       decoration: InputDecoration(

@@ -29,6 +29,7 @@ final class AcceptRequestToJoinGroupSuccessState extends GroupState{}
 final class AcceptRequestToJoinGroupErrorState extends GroupState{}
 final class ExitGroupSuccessState extends GroupState{}
 final class EditGroupNameSuccessState extends GroupState{}
+final class EditGroupImageSuccessState extends GroupState{}
 final class EditGroupDesSuccessState extends GroupState{}
 final class ShowImagesState extends GroupState{
   final File image;

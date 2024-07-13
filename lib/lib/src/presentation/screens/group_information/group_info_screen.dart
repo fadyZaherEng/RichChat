@@ -41,8 +41,6 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
         if (state is ShowImagesState) {
           _updatedFile = state.image;
           print("image url: ${state.image.path}");
-        } else if (state is SaveGroupImageSuccessInSharedPreferencesState) {
-          //TODO: implement save profile image in shared preferences
           hideLoading();
         }
       },
