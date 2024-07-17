@@ -41,9 +41,9 @@ class NotificationServices {
 
     if (androidImplementation != null) {
       await androidImplementation.createNotificationChannel(
-          NotificationChennels.highInportanceChannel);
+          NotificationChannels.highInportanceChannel);
       await androidImplementation
-          .createNotificationChannel(NotificationChennels.lowInportanceChannel);
+          .createNotificationChannel(NotificationChannels.lowInportanceChannel);
     }
   }
 
@@ -72,8 +72,8 @@ class NotificationServices {
   }
 
   static void onDidReceiveBackgroundNotificationResponse(
-      NotificationResponse notificationRespons) {
-    log('BackgroundPayload : $notificationRespons');
+      NotificationResponse notificationResponse) {
+    log('BackgroundPayload : $notificationResponse');
   }
 
   static displayNotification(RemoteMessage message) {
@@ -110,11 +110,11 @@ class NotificationServices {
   static String findChannelName(String channelId) {
     switch (channelId) {
       case 'high_importance_channel':
-        return NotificationChennels.highInportanceChannel.name;
+        return NotificationChannels.highInportanceChannel.name;
       case 'low_importance_channel':
-        return NotificationChennels.lowInportanceChannel.name;
+        return NotificationChannels.lowInportanceChannel.name;
       default:
-        return NotificationChennels.highInportanceChannel.name;
+        return NotificationChannels.highInportanceChannel.name;
     }
   }
 }

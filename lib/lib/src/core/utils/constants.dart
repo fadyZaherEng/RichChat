@@ -32,6 +32,7 @@ class Constants {
   static const String timeSent = "timeSent";
   static const String changeName = "changeName";
   static const String changeDes = "changeDes";
+
   // notification
   static const String notificationType = 'notificationType';
   static const String groupChatNotification = 'groupChatNotification';
