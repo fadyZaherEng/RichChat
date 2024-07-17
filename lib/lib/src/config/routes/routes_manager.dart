@@ -6,7 +6,6 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/firends_requests/
 import 'package:rich_chat_copilot/lib/src/presentation/screens/friends/friends_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/geoup_settings/group_settings_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/group_information/group_info_screen.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/home/home_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/login/login_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/main/main_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/otp/otp_screen.dart';
@@ -18,7 +17,6 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/user_information/
 class Routes {
   static const String splash = "/";
   static const String logInScreen = "/logInScreen";
-  static const String homeScreen = "/homeScreen";
   static const String settingsScreen = "/settingsScreen";
   static const String mainScreen = "/mainScreen";
   static const String chatScreen = "/chatScreen";
@@ -49,8 +47,6 @@ class RoutesManager {
         ));
       case Routes.logInScreen:
         return _materialRoute(const LogInScreen());
-      case Routes.homeScreen:
-        return _materialRoute(const HomeScreen());
       case Routes.settingsScreen:
         return _materialRoute(const SettingsScreen());
       case Routes.mainScreen:
