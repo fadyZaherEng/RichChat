@@ -6,6 +6,8 @@ plugins {
     // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    // Add the dependency for the Google services Gradle plugin
+    id("com.google.gms.google-services") version "4.4.1" apply false
 }
 
 def localProperties = new Properties()
@@ -72,7 +74,7 @@ flutter {
 dependencies {
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.0.0'
     implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
-
+    implementation("com.google.firebase:firebase-messaging")
     // Add the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-auth")

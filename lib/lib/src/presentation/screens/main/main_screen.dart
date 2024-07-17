@@ -15,6 +15,12 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/group/group_scree
 import 'package:rich_chat_copilot/lib/src/presentation/screens/my_chats/my_chats_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/people/globe_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
+import 'dart:developer';
+import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:rich_chat_copilot/lib/src/core/utils/notification_services.dart';
 
 class MainScreen extends BaseStatefulWidget {
   const MainScreen({super.key});
@@ -37,10 +43,16 @@ class _MainScreenState extends BaseState<MainScreen>
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    initPlatformState();
+    requestNotificationPermissions();
+    NotificationServices.createNotificationChannelAndInitialize();
+    initCloudMessaging();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _user = GetUserUseCase(injector())();
   }
+  bool _appBadgeSupported = false;
 
   @override
   void didPopNext() {
@@ -159,7 +171,235 @@ class _MainScreenState extends BaseState<MainScreen>
           : null,
     );
   }
+  void initPlatformState() async {
+    bool appBadgeSupported = false;
+    try {
+      bool res = await FlutterAppBadger.isAppBadgeSupported();
+      if (res) {
+        appBadgeSupported = true;
+      } else {
+        appBadgeSupported = false;
+      }
+    } on PlatformException {
+      log('Failed');
+    }
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    setState(() {
+      _appBadgeSupported = appBadgeSupported;
+    });
+    // remove app badge if supported
+    if (_appBadgeSupported) {
+      FlutterAppBadger.removeBadge();
+    }
+  }
 
+  // request notification permissions
+  void requestNotificationPermissions() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    if (Platform.isIOS) {
+      await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true,
+      );
+    }
+    NotificationSettings notificationSettings =
+    await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  // initialize cloud messaging
+  void initCloudMessaging() async {
+    // make sure widget is initialized before initializing cloud messaging
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 1. generate a new token
+      await generateNewToken();
+      // 2. initialize firebase messaging
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        if (message.notification != null) {
+          // update app badge
+          if (_appBadgeSupported) {
+            FlutterAppBadger.updateBadgeCount(1);
+          }
+          NotificationServices.displayNotification(message);
+        }
+      });
+      // 3. setup onMessage handler
+      setupInteractedMessage();
+    });
+  }
+
+  // generate a new token
+  Future<void> generateNewToken() async {
+    final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    String? token = await firebaseMessaging.getToken();
+    log('Token: $token');
+    // save token to firestore
+    FirebaseSingleTon.db
+        .collection("users")
+        .doc(FirebaseSingleTon.auth.currentUser!.uid)
+        .update({
+      "token": token,
+    });
+  }
+  // It is assumed that all messages contain a data field with the key 'type'
+  Future<void> setupInteractedMessage() async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+    await FirebaseMessaging.instance.getInitialMessage();
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage != null) {
+      _handleMessage(initialMessage);
+    }
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen(_handleMessage);
+  }
+
+  void _handleMessage(RemoteMessage message) {
+    _navigationController(context: context, message: message);
+  }
+
+  _navigationController({
+    required BuildContext context,
+    required RemoteMessage message,
+  }) {
+    //if (context == null) return;
+
+    // switch (message.data[Constants.notificationType]) {
+    //   case Constants.chatNotification:
+    //   // navigate to chat screen here
+    //     Navigator.pushNamed(
+    //       context,
+    //       Constants.chatScreen,
+    //       arguments: {
+    //         Constants.contactUID: message.data[Constants.contactUID],
+    //         Constants.contactName: message.data[Constants.contactName],
+    //         Constants.contactImage: message.data[Constants.contactImage],
+    //         Constants.groupId: '',
+    //       },
+    //     );
+    //     break;
+    //   case Constants.friendRequestNotification:
+    //   // navigate to friend requests screen
+    //     Navigator.pushNamed(
+    //       context,
+    //       Constants.friendRequestsScreen,
+    //     );
+    //     break;
+    //   case Constants.requestReplyNotification:
+    //   // navigate to friend requests screen
+    //   // navigate to friends screen
+    //     Navigator.pushNamed(
+    //       context,
+    //       Constants.friendsScreen,
+    //     );
+    //     break;
+    //   case Constants.groupRequestNotification:
+    //   // navigate to friend requests screen
+    //     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+    //       return FriendRequestScreen(
+    //         groupId: message.data[Constants.groupId],
+    //       );
+    //     }));
+    //     break;
+    //
+    //   case Constants.groupChatNotification:
+    //   // parse the JSON string to a map
+    //     Map<String, dynamic> jsonMap =
+    //     jsonDecode(message.data[Constants.groupModel]);
+    //     // transform the map to a simple GroupModel object
+    //     final Map<String, dynamic> flatGroupModelMap =
+    //     flattenGroupModelMap(jsonMap);
+    //
+    //     final groupModel = GroupModel.fromMap(flatGroupModelMap);
+    //     log('JSON: $jsonMap');
+    //     log('Flat Map: $flatGroupModelMap');
+    //     log('Group Model: $groupModel');
+    //     // navigate to group screen
+    //     context
+    //         .read<GroupProvider>()
+    //         .setGroupModel(groupModel: groupModel)
+    //         .whenComplete(() {
+    //       Navigator.pushNamed(
+    //         context,
+    //         Constants.chatScreen,
+    //         arguments: {
+    //           Constants.contactUID: groupModel.groupId,
+    //           Constants.contactName: groupModel.groupName,
+    //           Constants.contactImage: groupModel.groupImage,
+    //           Constants.groupId: groupModel.groupId,
+    //         },
+    //       );
+    //     });
+    //     break;
+    // case Constants.friendRequestNotification:
+    //   // navigate to friend requests screen
+    //         Navigator.pushNamed(
+    //           context,
+    //           Constants.friendRequestsScreen,
+    //         );
+    // break;
+    //   default:
+    //     print('No Notification');
+    // }
+  }
+
+  // Function to transform the complex structure into a simple map
+  Map<String, dynamic> flattenGroupModelMap(Map<String, dynamic> complexMap) {
+    Map<String, dynamic> flatMap = {};
+
+    complexMap['_fieldsProto'].forEach((key, value) {
+      switch (value['valueType']) {
+        case 'stringValue':
+          flatMap[key] = value['stringValue'];
+          break;
+        case 'booleanValue':
+          flatMap[key] = value['booleanValue'];
+          break;
+        case 'integerValue':
+          flatMap[key] = int.parse(value['integerValue']);
+          break;
+        case 'arrayValue':
+          flatMap[key] = value['arrayValue']['values']
+              .map<String>((item) => item['stringValue'] as String)
+              .toList();
+          break;
+      // Add other cases if necessary
+        default:
+        // Handle unknown types
+          flatMap[key] = null;
+      }
+    });
+
+    return flatMap;
+  }
   //TODO: implement updateUserOnlineStatus
   Future<void> updateUserOnlineStatus({
     required bool isOnline,
@@ -187,11 +427,12 @@ class _MainScreenState extends BaseState<MainScreen>
         break;
     }
   }
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
+
+
 }
