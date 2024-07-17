@@ -66,7 +66,7 @@ class NotificationServices {
       // convert payload to remoteMessage and handle interaction
       final message = RemoteMessage.fromMap(jsonDecode(payload));
       log('message: $message');
-      navigationControler(
+      navigationController(
           context: navigatorKey.currentState!.context, message: message);
     }
   }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
+import 'package:rich_chat_copilot/lib/src/core/navigation_controller.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
@@ -52,6 +53,7 @@ class _MainScreenState extends BaseState<MainScreen>
     WidgetsBinding.instance.addObserver(this);
     _user = GetUserUseCase(injector())();
   }
+
   bool _appBadgeSupported = false;
 
   @override
@@ -100,19 +102,18 @@ class _MainScreenState extends BaseState<MainScreen>
                     );
                   },
                   child: StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseSingleTon.db
-                        .collection("users")
-                        .doc(_user.uId)
-                        .snapshots(),
-                    builder: (context, snapshot) {
-                      //get user image
-                      if (!snapshot.hasData) {
-                        return const SizedBox();
-                      }
-                      String image = snapshot.data!["image"];
-                      return UserImageWidget(image: image);
-                    }
-                  ),
+                      stream: FirebaseSingleTon.db
+                          .collection("users")
+                          .doc(_user.uId)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        //get user image
+                        if (!snapshot.hasData) {
+                          return const SizedBox();
+                        }
+                        String image = snapshot.data!["image"];
+                        return UserImageWidget(image: image);
+                      }),
                 ),
               ],
             ),
@@ -171,6 +172,7 @@ class _MainScreenState extends BaseState<MainScreen>
           : null,
     );
   }
+
   void initPlatformState() async {
     bool appBadgeSupported = false;
     try {
@@ -211,7 +213,7 @@ class _MainScreenState extends BaseState<MainScreen>
       );
     }
     NotificationSettings notificationSettings =
-    await messaging.requestPermission(
+        await messaging.requestPermission(
       alert: true,
       announcement: true,
       badge: true,
@@ -266,12 +268,13 @@ class _MainScreenState extends BaseState<MainScreen>
       "token": token,
     });
   }
+
   // It is assumed that all messages contain a data field with the key 'type'
   Future<void> setupInteractedMessage() async {
     // Get any messages which caused the application to open from
     // a terminated state.
     RemoteMessage? initialMessage =
-    await FirebaseMessaging.instance.getInitialMessage();
+        await FirebaseMessaging.instance.getInitialMessage();
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
     if (initialMessage != null) {
@@ -283,123 +286,9 @@ class _MainScreenState extends BaseState<MainScreen>
   }
 
   void _handleMessage(RemoteMessage message) {
-    _navigationController(context: context, message: message);
+    navigationController(context: context, message: message);
   }
 
-  _navigationController({
-    required BuildContext context,
-    required RemoteMessage message,
-  }) {
-    //if (context == null) return;
-
-    // switch (message.data[Constants.notificationType]) {
-    //   case Constants.chatNotification:
-    //   // navigate to chat screen here
-    //     Navigator.pushNamed(
-    //       context,
-    //       Constants.chatScreen,
-    //       arguments: {
-    //         Constants.contactUID: message.data[Constants.contactUID],
-    //         Constants.contactName: message.data[Constants.contactName],
-    //         Constants.contactImage: message.data[Constants.contactImage],
-    //         Constants.groupId: '',
-    //       },
-    //     );
-    //     break;
-    //   case Constants.friendRequestNotification:
-    //   // navigate to friend requests screen
-    //     Navigator.pushNamed(
-    //       context,
-    //       Constants.friendRequestsScreen,
-    //     );
-    //     break;
-    //   case Constants.requestReplyNotification:
-    //   // navigate to friend requests screen
-    //   // navigate to friends screen
-    //     Navigator.pushNamed(
-    //       context,
-    //       Constants.friendsScreen,
-    //     );
-    //     break;
-    //   case Constants.groupRequestNotification:
-    //   // navigate to friend requests screen
-    //     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-    //       return FriendRequestScreen(
-    //         groupId: message.data[Constants.groupId],
-    //       );
-    //     }));
-    //     break;
-    //
-    //   case Constants.groupChatNotification:
-    //   // parse the JSON string to a map
-    //     Map<String, dynamic> jsonMap =
-    //     jsonDecode(message.data[Constants.groupModel]);
-    //     // transform the map to a simple GroupModel object
-    //     final Map<String, dynamic> flatGroupModelMap =
-    //     flattenGroupModelMap(jsonMap);
-    //
-    //     final groupModel = GroupModel.fromMap(flatGroupModelMap);
-    //     log('JSON: $jsonMap');
-    //     log('Flat Map: $flatGroupModelMap');
-    //     log('Group Model: $groupModel');
-    //     // navigate to group screen
-    //     context
-    //         .read<GroupProvider>()
-    //         .setGroupModel(groupModel: groupModel)
-    //         .whenComplete(() {
-    //       Navigator.pushNamed(
-    //         context,
-    //         Constants.chatScreen,
-    //         arguments: {
-    //           Constants.contactUID: groupModel.groupId,
-    //           Constants.contactName: groupModel.groupName,
-    //           Constants.contactImage: groupModel.groupImage,
-    //           Constants.groupId: groupModel.groupId,
-    //         },
-    //       );
-    //     });
-    //     break;
-    // case Constants.friendRequestNotification:
-    //   // navigate to friend requests screen
-    //         Navigator.pushNamed(
-    //           context,
-    //           Constants.friendRequestsScreen,
-    //         );
-    // break;
-    //   default:
-    //     print('No Notification');
-    // }
-  }
-
-  // Function to transform the complex structure into a simple map
-  Map<String, dynamic> flattenGroupModelMap(Map<String, dynamic> complexMap) {
-    Map<String, dynamic> flatMap = {};
-
-    complexMap['_fieldsProto'].forEach((key, value) {
-      switch (value['valueType']) {
-        case 'stringValue':
-          flatMap[key] = value['stringValue'];
-          break;
-        case 'booleanValue':
-          flatMap[key] = value['booleanValue'];
-          break;
-        case 'integerValue':
-          flatMap[key] = int.parse(value['integerValue']);
-          break;
-        case 'arrayValue':
-          flatMap[key] = value['arrayValue']['values']
-              .map<String>((item) => item['stringValue'] as String)
-              .toList();
-          break;
-      // Add other cases if necessary
-        default:
-        // Handle unknown types
-          flatMap[key] = null;
-      }
-    });
-
-    return flatMap;
-  }
   //TODO: implement updateUserOnlineStatus
   Future<void> updateUserOnlineStatus({
     required bool isOnline,
@@ -427,12 +316,11 @@ class _MainScreenState extends BaseState<MainScreen>
         break;
     }
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _pageController.dispose();
     super.dispose();
   }
-
-
 }
