@@ -152,7 +152,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
      if(!senderImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
-      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/flutterchatpro-7ee3f.appspot.com/o/defaultImages%2Fuser_icon.png?alt=media&token=6359ee38-6230-466f-b8d7-080347cea1dc';
+      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/richchatspro.appspot.com/o/defaultImages%2F1691584279028.jpg?alt=media&token=9adaeaa4-12fb-4937-b0f9-fa9c4e799fe4';
       senderImage = defaultImageUrl;
      }
 
@@ -225,7 +225,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
      if(!newMemberImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
-      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/flutterchatpro-7ee3f.appspot.com/o/defaultImages%2Fuser_icon.png?alt=media&token=6359ee38-6230-466f-b8d7-080347cea1dc';
+      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/richchatspro.appspot.com/o/defaultImages%2F1691584279028.jpg?alt=media&token=9adaeaa4-12fb-4937-b0f9-fa9c4e799fe4';
       newMemberImage = defaultImageUrl;
      }
 
@@ -292,7 +292,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
      if(!groupImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
-      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/flutterchatpro-7ee3f.appspot.com/o/defaultImages%2Fuser_icon.png?alt=media&token=6359ee38-6230-466f-b8d7-080347cea1dc';
+      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/richchatspro.appspot.com/o/defaultImages%2F1691584279028.jpg?alt=media&token=9adaeaa4-12fb-4937-b0f9-fa9c4e799fe4';
       groupImage = defaultImageUrl;
      }
 
@@ -359,7 +359,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
      if(!groupImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
-      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/flutterchatpro-7ee3f.appspot.com/o/defaultImages%2Fuser_icon.png?alt=media&token=6359ee38-6230-466f-b8d7-080347cea1dc';
+      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/richchatspro.appspot.com/o/defaultImages%2F1691584279028.jpg?alt=media&token=9adaeaa4-12fb-4937-b0f9-fa9c4e799fe4';
       groupImage = defaultImageUrl;
      }
 
@@ -403,7 +403,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
      if(!groupImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
-      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/flutterchatpro-7ee3f.appspot.com/o/defaultImages%2Fuser_icon.png?alt=media&token=6359ee38-6230-466f-b8d7-080347cea1dc';
+      const defaultImageUrl = 'https://firebasestorage.googleapis.com/v0/b/richchatspro.appspot.com/o/defaultImages%2F1691584279028.jpg?alt=media&token=9adaeaa4-12fb-4937-b0f9-fa9c4e799fe4';
       groupImage = defaultImageUrl;
      }
       const groupId = context.params.groupId;
