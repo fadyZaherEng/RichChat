@@ -163,6 +163,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               }
               if (snapshot.hasData) {
                 _otherUser = UserModel.fromJson(snapshot.data!.data()!);
+                final isMyProfile= FirebaseSingleTon.auth.currentUser!.uid == _otherUser.uId;
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -180,22 +181,26 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           },
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            S.of(context).settings,
-                            style: GoogleFonts.openSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                       isMyProfile? const SizedBox.shrink(): Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                S.of(context).settings,
+                                style: GoogleFonts.openSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 10),
+                            _buildAccountAndMediaAndNotificationSettings(),
+                            const SizedBox(height: 10),
+                            _buildHelpAndShareSettings(),
+                            const SizedBox(height: 10),
+                            _buildRestSettings(),
+                          ],
                         ),
-                        const SizedBox(height: 10),
-                        _buildAccountAndMediaAndNotificationSettings(),
-                        const SizedBox(height: 10),
-                        _buildHelpAndShareSettings(),
-                        const SizedBox(height: 10),
-                        _buildRestSettings(),
                       ],
                     ),
                   ),
