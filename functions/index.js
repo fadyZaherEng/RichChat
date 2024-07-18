@@ -147,7 +147,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
 
      const recipientData = recipientDoc.data();
 
-     // fech default image url if senderImage is empty
+     // fetch default image url if senderImage is empty
      let senderImage = messageData.senderImage;
      if(!senderImage) {
       // get the default image url from storage
@@ -220,7 +220,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
 
       const groupId = context.params.groupId;
       const groupName = afterData.groupName;
-      // fech default image url if senderImage is empty
+      // fetch default image url if senderImage is empty
      let newMemberImage = newMemberData.image;
      if(!newMemberImage) {
       // get the default image url from storage
@@ -287,7 +287,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
       
       const groupName = afterData.groupName; 
       const userToken = newGroupMemberData.token;
-      // fech default image url if senderImage is empty
+      // fetch default image url if senderImage is empty
      let groupImage = afterData.groupImage;
      if(!groupImage) {
       // get the default image url from storage
@@ -352,7 +352,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
         return null;
        }
 
-       // fech default image url if senderImage is empty
+       // fetch default image url if senderImage is empty
      const groupData = await db.collection('groups').doc(groupId).get();
      const groupName = groupData.data().groupName;
      let groupImage = groupData.data().groupImage;
@@ -415,7 +415,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
         return null;
        }
 
-        // fech group creator's data
+        // fetch group creator's data
      const creatorData = await db.collection('users').doc(creatorUID).get();
      const creatorName = creatorData.data().name;
      
