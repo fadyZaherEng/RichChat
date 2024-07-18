@@ -6,7 +6,9 @@
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-
+/*
+run this to deploy any changes -------------->  npm eslint index.js --fix
+*/
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { log } = require("firebase-functions/logger");
