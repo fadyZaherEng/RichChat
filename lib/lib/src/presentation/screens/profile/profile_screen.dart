@@ -34,6 +34,7 @@ import 'package:rich_chat_copilot/lib/src/presentation/widgets/build_app_bar_wid
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/custom_snack_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/restart_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class ProfileScreen extends BaseStatefulWidget {
   final String userId;
 
@@ -127,7 +128,6 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
           );
         } else if (state is ShowImageState) {
           _updatedFile = state.imageUrl;
-          print("image url: ${state.imageUrl.path}");
         } else if (state is SaveGroupImageSuccessInSharedPreferencesState) {
           //TODO: implement save profile image in shared preferences
           _currentUser = _currentUser.copyWith(image: state.image);
@@ -163,7 +163,8 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               }
               if (snapshot.hasData) {
                 _otherUser = UserModel.fromJson(snapshot.data!.data()!);
-                final isMyProfile= FirebaseSingleTon.auth.currentUser!.uid == _otherUser.uId;
+                final isMyProfile =
+                    FirebaseSingleTon.auth.currentUser!.uid == _otherUser.uId;
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -181,26 +182,28 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           },
                         ),
                         const SizedBox(height: 10),
-                       isMyProfile? const SizedBox.shrink(): Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                S.of(context).settings,
-                                style: GoogleFonts.openSans(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        isMyProfile
+                            ? const SizedBox.shrink()
+                            : Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      S.of(context).settings,
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildAccountAndMediaAndNotificationSettings(),
+                                  const SizedBox(height: 10),
+                                  _buildHelpAndShareSettings(),
+                                  const SizedBox(height: 10),
+                                  _buildRestSettings(),
+                                ],
                               ),
-                            ),
-                            const SizedBox(height: 10),
-                            _buildAccountAndMediaAndNotificationSettings(),
-                            const SizedBox(height: 10),
-                            _buildHelpAndShareSettings(),
-                            const SizedBox(height: 10),
-                            _buildRestSettings(),
-                          ],
-                        ),
                       ],
                     ),
                   ),
