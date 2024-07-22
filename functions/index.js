@@ -10,6 +10,7 @@
 ---------------------------------------------------------------------------------------------------------------
 */
 /*
+------------------------------------------------------------------------------------------------------------------
 -- to connect with function cloud steps:
    1->function cloud upgrade with visa
    2->run this in command ->npm install -g firebase-tools
@@ -19,12 +20,11 @@
    6->run this in command -> cd functions
    7->run this in command -> npm install firebase-admin@latest firebase-functions@latest
    8->run this in command -> firebase deploy this with any change in index.js
+            then run this to deploy any changes -------------->  npm eslint index.js --fix
    9->then in google cloud console apply Firebase Cloud Messaging API with enable
    10->install eslint package from plugin if exist
    11-> then write this code in index.js
-
 -----------------------------------------------------------------------------------------------------------------
-run this to deploy any changes -------------->  npm eslint index.js --fix
 */
 
 const functions = require("firebase-functions");
