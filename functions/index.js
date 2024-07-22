@@ -369,7 +369,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
        // fetch default image url if senderImage is empty
      const groupData = await db.collection('groups').doc(groupId).get();
      const groupName = groupData.data().groupName;
-     let groupImage = groupData.data().groupImage;
+     let groupImage = groupData.data().groupLogo;
      if(!groupImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();
@@ -413,7 +413,7 @@ exports.sendFriendRequestNotification = functions.firestore.document(
     .onCreate( async (snapshot, context) => {
       const groupData = snapshot.data();
       const creatorUID = groupData.creatorUID;
-      let groupImage = groupData.groupImage;
+      let groupImage = groupData.groupLogo;
      if(!groupImage) {
       // get the default image url from storage
       //const defaultImageUrl = await storageRef.child('defaultImages/user_icon.png').getDownloadURL();

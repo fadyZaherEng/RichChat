@@ -55,44 +55,32 @@ navigationController({
         );
       }));
       break;
-
     case Constants.groupChatNotification:
-      // parse the JSON string to a map
-      Map<String, dynamic> jsonMap =
-          jsonDecode(message.data["groupModel"]);
-      // transform the map to a simple GroupModel object
-      final Map<String, dynamic> flatGroupModelMap =
-          flattenGroupModelMap(jsonMap);
+        // parse the JSON string to a map
+        Map<String, dynamic> jsonMap = jsonDecode(message.data["groupModel"]);
+        // transform the map to a simple GroupModel object
+        final Map<String, dynamic> flatGroupModelMap =
+            flattenGroupModelMap(jsonMap);
 
-      Group group = Group.fromMap(flatGroupModelMap);
-      log('JSON: $jsonMap');
-      log('Flat Map: $flatGroupModelMap');
-      log('Group Model: $group');
-      // navigate to group screen
-      context
-          .read<GroupBloc>()
-          .setGroup(group: group)
-          .whenComplete(() {
-        //TODO: navigate to chat screen
-        Navigator.pushNamed(
-          context,
-          Routes.chatWithFriendScreen,
-          arguments: {
-            "friendId":group.groupID ,
-            "friendName": group.groupName,
-            "friendImage": group.groupLogo,
-            "groupId": group.groupID
-          },
-        );
-      });
+        Group group = Group.fromMap(flatGroupModelMap);
+        log('JSON: $jsonMap');
+        log('Flat Map: $flatGroupModelMap');
+        log('Group Model: $group');
+        // navigate to group screen
+        context.read<GroupBloc>().setGroup(group: group).whenComplete(() {
+          //TODO: navigate to chat screen
+          Navigator.pushNamed(
+            context,
+            Routes.chatWithFriendScreen,
+            arguments: {
+              "friendId": group.groupID,
+              "friendName": group.groupName,
+              "friendImage": group.groupLogo,
+              "groupId": group.groupID
+            },
+          );
+        });
       break;
-    // case Constants.friendRequestNotification:
-    //   // navigate to friend requests screen
-    //         Navigator.pushNamed(
-    //           context,
-    //           Constants.friendRequestsScreen,
-    //         );
-    // break;
     default:
       print('No Notification');
   }
