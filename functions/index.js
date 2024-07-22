@@ -6,10 +6,23 @@
  *
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
-
-
-
+ /*
+---------------------------------------------------------------------------------------------------------------
+*/
 /*
+-- to connect with function cloud steps:
+   1->function cloud upgrade with visa
+   2->run this in command ->npm install -g firebase-tools
+   3->install node.js
+   4->run this in command -> firebase init
+   5->select cloud functions then yes then existing project then project name change language of cloud functions -->javascript then yes then yes
+   6->run this in command -> cd functions
+   7->run this in command -> npm install firebase-admin@latest firebase-functions@latest
+   8->run this in command -> firebase deploy this with any change in index.js
+   9->then in google cloud console apply Firebase Cloud Messaging API with enable
+   10-> then write this code in index.js
+
+-----------------------------------------------------------------------------------------------------------------
 run this to deploy any changes -------------->  npm eslint index.js --fix
 */
 
