@@ -13,6 +13,19 @@
 # -- Handel Massage Seen
 # -- time ago
 # -- Reactions
+# -- Groups
+# -- Create Groups
+# -- request to join to Groups
+# -- add member or admin to Groups
+# -- remove member or admin from Groups
+# -- delete Group
+# -- Group Settings
+# -- Group Info
+# -- Group Members
+# -- Group Chats
+# -- Notifications
+# -- Show Notifications
+# -- FlutterAppBadger
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 # flutter_chat_pro

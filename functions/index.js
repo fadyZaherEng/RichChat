@@ -19,8 +19,9 @@
    5->select cloud functions then yes then existing project then project name change language of cloud functions -->javascript then yes then yes
    6->run this in command -> cd functions
    7->run this in command -> npm install firebase-admin@latest firebase-functions@latest
-   8->run this in command -> firebase deploy this with any change in index.js
-            then run this to deploy any changes -------------->  npm eslint index.js --fix
+   8->run this to deploy any changes -------------->  npm eslint index.js --fix until if happens error
+       then run this in command -> firebase deploy  -> this with any change in index.js
+
    9->then in google cloud console apply Firebase Cloud Messaging API with enable
    10->install eslint package from plugin if exist
    11-> then write this code in index.js

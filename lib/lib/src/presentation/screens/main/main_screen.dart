@@ -56,6 +56,87 @@ class _MainScreenState extends BaseState<MainScreen>
 
   bool _appBadgeSupported = false;
 
+  void initPlatformState() async {
+    bool appBadgeSupported = false;
+    try {
+      bool res = await FlutterAppBadger.isAppBadgeSupported();
+      if (res) {
+        appBadgeSupported = true;
+      } else {
+        appBadgeSupported = false;
+      }
+    } on PlatformException {
+      log('Failed');
+    }
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+    setState(() {
+      _appBadgeSupported = appBadgeSupported;
+    });
+    // remove app badge if supported
+    if (_appBadgeSupported) {
+      FlutterAppBadger.removeBadge();
+    }
+  }
+
+  // request notification permissions
+  void requestNotificationPermissions() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    if (Platform.isIOS) {
+      await messaging.requestPermission(
+        alert: true,
+        announcement: true,
+        badge: true,
+        carPlay: true,
+        criticalAlert: true,
+        provisional: true,
+        sound: true,
+      );
+    }
+    NotificationSettings notificationSettings =
+    await messaging.requestPermission(
+      alert: true,
+      announcement: true,
+      badge: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true,
+      sound: true,
+    );
+
+    if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (notificationSettings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  // initialize cloud messaging
+  void initCloudMessaging() async {
+    // make sure widget is initialized before initializing cloud messaging
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // 1. generate a new token
+      await generateNewToken();
+      // 2. initialize firebase messaging
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        if (message.notification != null) {
+          // update app badge
+          if (_appBadgeSupported) {
+            FlutterAppBadger.updateBadgeCount(1);
+          }
+          NotificationServices.displayNotification(message);
+        }
+      });
+      // 3. setup onMessage handler
+      setupInteractedMessage();
+    });
+  }
   @override
   void didPopNext() {
     super.didPopNext();
@@ -173,87 +254,6 @@ class _MainScreenState extends BaseState<MainScreen>
     );
   }
 
-  void initPlatformState() async {
-    bool appBadgeSupported = false;
-    try {
-      bool res = await FlutterAppBadger.isAppBadgeSupported();
-      if (res) {
-        appBadgeSupported = true;
-      } else {
-        appBadgeSupported = false;
-      }
-    } on PlatformException {
-      log('Failed');
-    }
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-    setState(() {
-      _appBadgeSupported = appBadgeSupported;
-    });
-    // remove app badge if supported
-    if (_appBadgeSupported) {
-      FlutterAppBadger.removeBadge();
-    }
-  }
-
-  // request notification permissions
-  void requestNotificationPermissions() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    if (Platform.isIOS) {
-      await messaging.requestPermission(
-        alert: true,
-        announcement: true,
-        badge: true,
-        carPlay: true,
-        criticalAlert: true,
-        provisional: true,
-        sound: true,
-      );
-    }
-    NotificationSettings notificationSettings =
-        await messaging.requestPermission(
-      alert: true,
-      announcement: true,
-      badge: true,
-      carPlay: true,
-      criticalAlert: true,
-      provisional: true,
-      sound: true,
-    );
-
-    if (notificationSettings.authorizationStatus ==
-        AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else if (notificationSettings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
-    } else {
-      print('User declined or has not accepted permission');
-    }
-  }
-
-  // initialize cloud messaging
-  void initCloudMessaging() async {
-    // make sure widget is initialized before initializing cloud messaging
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // 1. generate a new token
-      await generateNewToken();
-      // 2. initialize firebase messaging
-      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-        if (message.notification != null) {
-          // update app badge
-          if (_appBadgeSupported) {
-            FlutterAppBadger.updateBadgeCount(1);
-          }
-          NotificationServices.displayNotification(message);
-        }
-      });
-      // 3. setup onMessage handler
-      setupInteractedMessage();
-    });
-  }
 
   // generate a new token
   Future<void> generateNewToken() async {
@@ -305,6 +305,7 @@ class _MainScreenState extends BaseState<MainScreen>
     switch (state) {
       case AppLifecycleState.resumed:
         updateUserOnlineStatus(isOnline: true);
+           FlutterAppBadger.removeBadge();
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
