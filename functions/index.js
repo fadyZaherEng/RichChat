@@ -20,7 +20,8 @@
    7->run this in command -> npm install firebase-admin@latest firebase-functions@latest
    8->run this in command -> firebase deploy this with any change in index.js
    9->then in google cloud console apply Firebase Cloud Messaging API with enable
-   10-> then write this code in index.js
+   10->install eslint package from plugin if exist
+   11-> then write this code in index.js
 
 -----------------------------------------------------------------------------------------------------------------
 run this to deploy any changes -------------->  npm eslint index.js --fix
