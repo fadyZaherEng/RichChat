@@ -151,7 +151,7 @@ class _MainScreenState extends BaseState<MainScreen>
         backgroundColor: Theme.of(context).cardColor,
         elevation: 0,
         title: Text(
-          F.name,
+          F.title,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
