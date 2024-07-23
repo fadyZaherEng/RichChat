@@ -217,9 +217,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                       //show emoji keyword
                       _showEmojiPickerDialog(massage);
                     } else {
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        _navigateBackEvent();
-                      });
+                      // Future.delayed(const Duration(milliseconds: 500), () {
+                      //   _navigateBackEvent();
+                      // });
                       _bloc.add(SelectReactionEvent(
                         massageId: massage.messageId,
                         senderId: currentUser.uId,
@@ -230,13 +230,13 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                     }
                   },
                   onContextMenuSelected: (String contextMenu, Massage massage) {
-                    Future.delayed(
-                      const Duration(milliseconds: 500),
-                      () {
-                        _navigateBackEvent();
-                        _onContextMenuSelected(contextMenu, massage);
-                      },
-                    );
+                    // Future.delayed(
+                    //   const Duration(milliseconds: 500),
+                    //   () {
+                    //     _navigateBackEvent();
+                    //   },
+                    // );
+                    _onContextMenuSelected(contextMenu, massage);
                   },
                   deleteMessage: ({
                     required Massage message,
