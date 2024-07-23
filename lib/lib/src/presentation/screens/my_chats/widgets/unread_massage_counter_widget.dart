@@ -18,7 +18,7 @@ class UnReadMassageCounterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder<int>(
       stream: context.read<ChatsBloc>().getUnreadMassagesStream(
-          userId: uid, receiverId: receiverId, isGroup: false),
+          userId: uid, receiverId: receiverId, isGroup: isGroup),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const SizedBox();
