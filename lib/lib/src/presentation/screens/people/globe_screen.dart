@@ -109,52 +109,6 @@ class _GlobeScreenState extends BaseState<GlobeScreen> {
                           friendViewType: FriendViewType.allUsers,
                           groupId: "",
                         ),
-                        // ListTile(
-                        //   onTap: () {
-                        //     Navigator.pushNamed(
-                        //       context,
-                        //       Routes.profileScreen,
-                        //       arguments: {"userId": user.uId},
-                        //     );
-                        //   },
-                        //   leading: UserImageWidget(
-                        //     image: user.image,
-                        //     width: 50,
-                        //     height: 50,
-                        //   ),
-                        //   title: Text(user.name,
-                        //       style: Theme.of(context).textTheme.bodyLarge),
-                        //   subtitle: Text(user.aboutMe,
-                        //       style: Theme.of(context).textTheme.bodySmall),
-                        //   trailing: ElevatedButton(
-                        //     style: ElevatedButton.styleFrom(
-                        //       backgroundColor:
-                        //           Theme.of(context).colorScheme.primary,
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(10.0),
-                        //       ),
-                        //     ),
-                        //     onPressed: () {
-                        //       //ToDO navigate to chat screen
-                        //       Navigator.pushNamed(
-                        //           context, Routes.chatWithFriendScreen,
-                        //           arguments: {
-                        //             "friendId": user.uId,
-                        //             "friendName": user.name,
-                        //             "friendImage": user.image,
-                        //             "groupId": ""
-                        //           });
-                        //     },
-                        //     child: Text(
-                        //       S.of(context).chat.toUpperCase(),
-                        //       style: GoogleFonts.openSans(
-                        //         fontSize: 14,
-                        //         fontWeight: FontWeight.bold,
-                        //         color: Theme.of(context).cardColor,
-                        //       ),
-                        //     ),
-                        //   ),
-                        // ),
                       );
                     },
                   ),

@@ -40,3 +40,5 @@ final class SaveGroupImageSuccessInSharedPreferencesState extends GroupState{
   final String image;
   SaveGroupImageSuccessInSharedPreferencesState(this.image);
 }
+final class EmptyTempListsState extends GroupState{}
+final class UpdateGroupDataInFireStoreIfNeededState extends GroupState{}

@@ -19,7 +19,7 @@ class FriendsListWidget extends StatefulWidget {
   const FriendsListWidget({
     super.key,
     required this.friendViewType,
-     this.groupId='',
+    this.groupId = '',
     this.groupMembersUIDs = const [],
   });
 
@@ -62,58 +62,61 @@ class _FriendsListWidgetState extends State<FriendsListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FriendsBloc, FriendsState>(listener: (context, state) {
-      if (state is GetFriendsSuccess) {
-        friends = state.friends;
-      } else if (state is GetFriendsRequestsSuccess) {
-        friends = state.friendsRequests;
-      } else if (state is AcceptFriendRequestsSuccess) {
-        CustomSnackBarWidget.show(
-          context: context,
-          message: S.of(context).friendRequestAccepted,
-          path: ImagePaths.icSuccess,
-          backgroundColor: ColorSchemes.green,
-        );
-      }
-    }, builder: (context, state) {
-      return friends.isEmpty
-          ? Column(
-              children: [
-                const SizedBox(height: 50),
-                Center(
-                  child: Text(
-                    S.of(context).noFriendsYet,
-                    style: GoogleFonts.openSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: ColorSchemes.gray,
+    return BlocConsumer<FriendsBloc, FriendsState>(
+      listener: (context, state) {
+        if (state is GetFriendsSuccess) {
+          friends = state.friends;
+        } else if (state is GetFriendsRequestsSuccess) {
+          friends = state.friendsRequests;
+        } else if (state is AcceptFriendRequestsSuccess) {
+          CustomSnackBarWidget.show(
+            context: context,
+            message: S.of(context).friendRequestAccepted,
+            path: ImagePaths.icSuccess,
+            backgroundColor: ColorSchemes.green,
+          );
+        }
+      },
+      builder: (context, state) {
+        return friends.isEmpty
+            ? Column(
+                children: [
+                  const SizedBox(height: 50),
+                  Center(
+                    child: Text(
+                      S.of(context).noFriendsYet,
+                      style: GoogleFonts.openSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: ColorSchemes.gray,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )
-          : ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: friends.length,
-              padding: EdgeInsets.zero,
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 15);
-              },
-              itemBuilder: (BuildContext context, int index) {
-                return FriendWidget(
-                  friend: friends[index],
-                  friendViewType: widget.friendViewType,
-                  groupId: widget.groupId,
-                  onAcceptRequest: () {
-                    //TODO: accept request
-                    _bloc.add(AcceptFriendRequestEvent(
-                      friendId: friends[index].uId,
-                    ));
-                  },
-                );
-              },
-            );
-    });
+                ],
+              )
+            : ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: friends.length,
+                padding: EdgeInsets.zero,
+                separatorBuilder: (BuildContext context, int index) {
+                  return const SizedBox(height: 15);
+                },
+                itemBuilder: (BuildContext context, int index) {
+                  return FriendWidget(
+                    friend: friends[index],
+                    friendViewType: widget.friendViewType,
+                    groupId: widget.groupId,
+                    onAcceptRequest: () {
+                      //TODO: accept request
+                      _bloc.add(AcceptFriendRequestEvent(
+                        friendId: friends[index].uId,
+                      ));
+                    },
+                  );
+                },
+              );
+      },
+    );
   }
 }

@@ -18,33 +18,32 @@ class AddMembers extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          "2 Members",
-          style: TextStyle(
+        Text(
+          '${bloc.groupMembersList.length} members',
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
         ),
         !isAdmin
-            ? const SizedBox.shrink()
+            ? const SizedBox()
             : Row(
-                children: [
-                  const Text(
-                    "Add Members",
-                    style: TextStyle(
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  CircleAvatar(
-                    radius: 20,
-                    child: IconButton(
-                      icon: const Icon(Icons.person_add),
-                      onPressed: onTap,
-                    ),
-                  )
-                ],
-              )
+          children: [
+            const Text(
+              'Add Members',
+              style: TextStyle(
+                fontSize: 18,
+              ),
+            ),
+            const SizedBox(width: 10),
+            CircleAvatar(
+              child: IconButton(
+                onPressed: onTap,
+                icon: const Icon(Icons.person_add),
+              ),
+            )
+          ],
+        )
       ],
     );
   }

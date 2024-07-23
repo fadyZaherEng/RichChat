@@ -82,6 +82,7 @@ class _GroupInformationScreenState extends BaseState<GroupInformationScreen> {
                     bloc: _bloc,
                     isAdmin: isAdmin,
                     onTap: () {
+                      _bloc.setEmptyTemps();
                       //show bottom sheet to add members
                       showAddMembersBottomSheet(
                         context: context,
