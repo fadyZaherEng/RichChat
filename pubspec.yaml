@@ -52,6 +52,7 @@ dependencies:
   permission_handler: ^11.3.0
   path_provider: ^2.0.15
   app_settings: ^5.0.0
+  open_settings:
   signature: ^5.4.0
   json_serializable: ^6.7.1
   json_annotation: ^4.8.1
@@ -98,6 +99,8 @@ dependencies:
   flutter_sound_record: ^3.1.0
   #flutter_chat_reactions
   flutter_chat_reactions: ^0.1.0
+  # to show notification count in app icon
+  flutter_app_badger: ^1.5.0
 
 
 

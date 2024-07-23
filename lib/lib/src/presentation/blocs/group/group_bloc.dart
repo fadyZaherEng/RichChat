@@ -317,8 +317,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   }
 
 //get list of group members data from firestore with uids
-  Future<List<UserModel>> getGroupMembersDataFromFirestore(
-      {required bool isAdmin}) async {
+  Future<List<UserModel>> getGroupMembersDataFromFirestore({
+    required bool isAdmin,
+  }) async {
     List<UserModel> groupMembersList = [];
     List<String> membersUIDS = isAdmin ? _group.adminsUIDS : _group.membersUIDS;
     for (var uid in membersUIDS) {

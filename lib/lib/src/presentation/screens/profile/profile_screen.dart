@@ -8,6 +8,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:open_settings/open_settings.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
@@ -127,10 +128,9 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
           );
         } else if (state is ShowImageState) {
           _updatedFile = state.imageUrl;
-          print("image url: ${state.imageUrl.path}");
-        }else if(state is SaveGroupImageSuccessInSharedPreferencesState){
+        } else if (state is SaveGroupImageSuccessInSharedPreferencesState) {
           //TODO: implement save profile image in shared preferences
-          _currentUser=_currentUser.copyWith(image: state.image);
+          _currentUser = _currentUser.copyWith(image: state.image);
           SetUserUseCase(injector())(_currentUser);
         }
       },
@@ -163,6 +163,8 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               }
               if (snapshot.hasData) {
                 _otherUser = UserModel.fromJson(snapshot.data!.data()!);
+                final isMyProfile =
+                    FirebaseSingleTon.auth.currentUser!.uid == _otherUser.uId;
                 return SingleChildScrollView(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -180,22 +182,28 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
                           },
                         ),
                         const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
-                            S.of(context).settings,
-                            style: GoogleFonts.openSans(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _buildAccountAndMediaAndNotificationSettings(),
-                        const SizedBox(height: 10),
-                        _buildHelpAndShareSettings(),
-                        const SizedBox(height: 10),
-                        _buildRestSettings(),
+                        isMyProfile
+                            ? const SizedBox.shrink()
+                            : Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      S.of(context).settings,
+                                      style: GoogleFonts.openSans(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildAccountAndMediaAndNotificationSettings(),
+                                  const SizedBox(height: 10),
+                                  _buildHelpAndShareSettings(),
+                                  const SizedBox(height: 10),
+                                  _buildRestSettings(),
+                                ],
+                              ),
                       ],
                     ),
                   ),
@@ -275,6 +283,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             iconColor: Colors.red,
             onTap: () {
               // navigate to account settings
+              OpenSettings.openAppNotificationSetting();
             },
           ),
         ],
@@ -291,7 +300,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             icon: Icons.help,
             iconColor: Colors.yellow,
             onTap: () {
-              // navigate to account settings
+              // navigate to help settings
             },
           ),
           SettingListTileWidget(
@@ -299,7 +308,7 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
             icon: Icons.share,
             iconColor: Colors.blue,
             onTap: () {
-              // navigate to account settings
+              // navigate to share settings
             },
           ),
         ],
@@ -405,7 +414,8 @@ class _ProfileScreenState extends BaseState<ProfileScreen> {
               openAppSettings().then(
                 (value) async {
                   if (await PermissionServiceHandler().handleServicePermission(
-                      setting: PermissionServiceHandler.getCameraPermission())) {
+                      setting:
+                          PermissionServiceHandler.getCameraPermission())) {
                     // _getImage(ImageSource.camera);
                   }
                 },
