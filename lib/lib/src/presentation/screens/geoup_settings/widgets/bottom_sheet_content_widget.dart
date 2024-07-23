@@ -23,17 +23,19 @@ class BottomSheetContentWidget extends StatelessWidget {
             _buildTitleWidget(context),
             const SizedBox(height: 15),
             Expanded(
-                child: ListView.builder(
-                    itemCount: groupProvider.groupMembersList.length,
-                    itemBuilder: (context, index) {
-                      final friend = groupProvider.groupMembersList[index];
-                      return FriendWidget(
-                        friend: friend,
-                        friendViewType: FriendViewType.groupView,
-                        isAdminView: true,
-                        groupId: groupProvider.group.groupID,
-                      );
-                    })),
+              child: ListView.builder(
+                itemCount: groupProvider.groupMembersList.length,
+                itemBuilder: (context, index) {
+                  final friend = groupProvider.groupMembersList[index];
+                  return FriendWidget(
+                    friend: friend,
+                    friendViewType: FriendViewType.groupView,
+                    isAdminView: true,
+                    groupId: groupProvider.group.groupID,
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -57,7 +59,11 @@ class BottomSheetContentWidget extends StatelessWidget {
         Expanded(
           child: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              groupProvider
+                  .updateGroupDataInFireStoreIfNeeded()
+                  .whenComplete(() {
+                Navigator.pop(context);
+              });
             },
             icon: Text(
               S.of(context).done,

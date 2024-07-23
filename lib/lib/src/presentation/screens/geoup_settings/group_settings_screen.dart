@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
@@ -29,6 +32,20 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
           appBar: AppBar(
             title: Text(S.of(context).groupSettings),
             centerTitle: true,
+            leading: IconButton(
+              onPressed: () {
+                context
+                    .read<GroupBloc>()
+                    .removeTempLists(isAdmins: true)
+                    .whenComplete(
+                  () {
+                    Navigator.pop(context);
+                  },
+                );
+              },
+              icon: Icon(
+                  Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios),
+            ),
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -92,7 +109,7 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     child: SettingListTileWidget(
-                      title: "Group Admind",
+                      title: "Group Admins",
                       subtitle: _getGroupAdminNames(),
                       icon: Icons.admin_panel_settings,
                       iconColor: Colors.red,
@@ -101,6 +118,7 @@ class _GroupSettingsScreenState extends BaseState<GroupSettingsScreen> {
                         if (groupProvider.groupMembersList.isEmpty) {
                           return;
                         }
+                        groupProvider.setEmptyTemps();
                         //show bottom sheet to select admin
                         _showSelectAdminBottomSheet(context);
                       },

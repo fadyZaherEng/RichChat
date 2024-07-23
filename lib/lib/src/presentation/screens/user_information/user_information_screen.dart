@@ -62,11 +62,6 @@ class _UserInformationScreenState extends BaseState<UserInformationScreen> {
         isLoading = false;
         isSuccess = true;
         Navigator.pushReplacementNamed(context, Routes.mainScreen);
-        // Future.delayed(const Duration(milliseconds: 500), () {
-        //   setState(() {
-        //     isAnimated = false;
-        //   });
-        // });
       } else if (state is ErrorState) {
         isLoading = false;
         isSuccess = false;

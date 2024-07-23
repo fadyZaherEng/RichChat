@@ -133,12 +133,18 @@ class _SettingsScreenState extends BaseState<SettingsScreen> {
       primaryText: S.of(context).yes,
       secondaryText: S.of(context).no,
       primaryAction: () async {
+        // clear user token from firestore
+        await FirebaseSingleTon.db
+            .collection(Constants.users)
+            .doc(FirebaseSingleTon.auth.currentUser!.uid)
+            .update({
+          'token': '',
+        });
         //log out
         Navigator.pop(context);
         await FirebaseSingleTon.auth.signOut();
         Navigator.pushReplacementNamed(context, Routes.logInScreen);
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await (await SharedPreferences.getInstance()).clear();
       },
       secondaryAction: () {
         Navigator.pop(context);

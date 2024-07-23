@@ -26,8 +26,6 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     on<ShowImageEvent>(_onShowImageEvent);
   }
 
-  bool _isLoading = false;
-
   Group _group = Group(
     creatorUID: "",
     groupName: "",
@@ -52,6 +50,22 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
 
   final List<UserModel> _groupMembersList = [];
   final List<UserModel> _groupAdminsList = [];
+
+  bool _isLoading = false;
+
+  List<UserModel> _tempGroupMembersList = [];
+  List<UserModel> _tempGoupAdminsList = [];
+
+  List<String> _tempGroupMemberUIDs = [];
+  List<String> _tempGroupAdminUIDs = [];
+
+  List<UserModel> _tempRemovedAdminsList = [];
+  List<UserModel> _tempRemovedMembersList = [];
+
+  List<String> _tempRemovedMemberUIDs = [];
+  List<String> _tempRemovedAdminsUIDs = [];
+
+  bool _isSaved = false;
 
   //getter
   bool get iSLoading => _isLoading;
@@ -137,50 +151,141 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
     updateGroupDataInFirestore();
   }
 
+  // set the temp lists to empty
+  Future<void> setEmptyTemps() async {
+    _isSaved = false;
+    _tempGoupAdminsList = [];
+    _tempGroupMembersList = [];
+    _tempGroupMembersList = [];
+    _tempGroupMembersList = [];
+    _tempGroupMemberUIDs = [];
+    _tempGroupAdminUIDs = [];
+    _tempRemovedMemberUIDs = [];
+    _tempRemovedAdminsUIDs = [];
+    _tempRemovedMembersList = [];
+    _tempRemovedAdminsList = [];
+    emit(EmptyTempListsState());
+  }
+
+  // remove temp lists members from members list
+  Future<void> removeTempLists({
+    required bool isAdmins,
+  }) async {
+    if (_isSaved) return;
+    if (isAdmins) {
+      // check if the tem admins list is not empty
+      if (_tempGoupAdminsList.isNotEmpty) {
+        // remove the temp admins from the main list of admins
+        _groupAdminsList.removeWhere((admin) =>
+            _tempGoupAdminsList.any((tempAdmin) => tempAdmin.uId == admin.uId));
+        _group.adminsUIDS.removeWhere((adminUid) =>
+            _tempGroupAdminUIDs.any((tempUid) => tempUid == adminUid));
+        emit(EmptyTempListsState());
+      }
+
+      //check  if the tempRemoves list is not empty
+      if (_tempRemovedAdminsList.isNotEmpty) {
+        // add  the temp admins to the main list of admins
+        _groupAdminsList.addAll(_tempRemovedAdminsList);
+        _group.adminsUIDS.addAll(_tempRemovedAdminsUIDs);
+        emit(EmptyTempListsState());
+      }
+    } else {
+      // check if the tem members list is not empty
+      if (_tempGroupMembersList.isNotEmpty) {
+        // remove the temp members from the main list of members
+        _groupMembersList.removeWhere((member) => _tempGroupMembersList
+            .any((tempMember) => tempMember.uId == member.uId));
+        _group.membersUIDS.removeWhere((memberUid) =>
+            _tempGroupMemberUIDs.any((tempUid) => tempUid == memberUid));
+        emit(EmptyTempListsState());
+      }
+
+      //check if the tempRemoves list is not empty
+      if (_tempRemovedMembersList.isNotEmpty) {
+        // add the temp members to the main list of members
+        _groupMembersList.addAll(_tempRemovedMembersList);
+        _group.membersUIDS.addAll(_tempGroupMemberUIDs);
+        emit(EmptyTempListsState());
+      }
+    }
+  }
+
+  // check if there was a change in group members - if there was a member added or removed
+  Future<void> updateGroupDataInFireStoreIfNeeded() async {
+    _isSaved = true;
+    emit(UpdateGroupDataInFireStoreIfNeededState());
+    await updateGroupDataInFirestore();
+  }
+
   //group
   Future<void> setGroup({required Group group}) async {
     _group = group;
     emit(GroupModelState());
   }
 
-//groupMembersList
+  // add member to group
   void addMemberToGroup({required UserModel groupMember}) {
     _groupMembersList.add(groupMember);
     _group.membersUIDS.add(groupMember.uId);
+    // add data to temp lists
+    _tempGroupMembersList.add(groupMember);
+    _tempGroupMemberUIDs.add(groupMember.uId);
     emit(GroupMembersListState());
-    if (_group.groupID.isEmpty) return;
-    updateGroupDataInFirestore();
+
+    // return if groupID is empty - meaning we are creating a new group
+    // if (_group.groupID.isEmpty) return;
+    // updateGroupDataInFirestore();
   }
 
-//groupAdminsList
+  // add a member as an admin
   void addMemberToAdmin({required UserModel groupAdmin}) {
     _groupAdminsList.add(groupAdmin);
     _group.adminsUIDS.add(groupAdmin.uId);
+    //  add data to temp lists
+    _tempGoupAdminsList.add(groupAdmin);
+    _tempGroupAdminUIDs.add(groupAdmin.uId);
     emit(GroupAdminsListState());
-    if (_group.groupID.isEmpty) return;
-    updateGroupDataInFirestore();
+
+    // // return if groupID is empty - meaning we are creating a new group
+    // if (_group.groupID.isEmpty) return;
+    // updateGroupDataInFirestore();
   }
 
-//remove member from group
-  void removeMemberFromGroup({required UserModel user}) {
-    _groupMembersList.remove(user);
-    _groupAdminsList.remove(user);
-    _group.membersUIDS.remove(user.uId); //TODO: check this code
+  //remove member from group
+  void removeMemberFromGroup({required UserModel groupMember}) {
+    _groupMembersList.remove(groupMember);
+    _groupAdminsList.remove(groupMember);
+    _group.membersUIDS.remove(groupMember.uId); //TODO: check this code
+    // remove from temp lists
+    _tempGroupMembersList.remove(groupMember);
+    _tempGroupAdminUIDs.remove(groupMember.uId);
+
+    // add  this member to the list of removed members
+    _tempRemovedMembersList.add(groupMember);
+    _tempRemovedMemberUIDs.add(groupMember.uId);
+
     emit(RemoveMemberFromGroupListState());
     if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
-//remove member from admins
-  void removeAdminFromAdmins({required UserModel user}) {
-    _groupAdminsList.remove(user);
-    _group.adminsUIDS.remove(user.uId);
+  //remove member from admins
+  void removeAdminFromAdmins({required UserModel groupAdmin}) {
+    _groupAdminsList.remove(groupAdmin);
+    _group.adminsUIDS.remove(groupAdmin.uId);
+
+    // remove from temp lists
+    _tempGroupAdminUIDs.remove(groupAdmin.uId);
+    // add the removed admins to temp removed lists
+    _tempRemovedAdminsList.add(groupAdmin);
+    _tempRemovedAdminsUIDs.add(groupAdmin.uId);
     emit(RemoveMemberFromAdminListState());
     if (_group.groupID.isEmpty) return;
     updateGroupDataInFirestore();
   }
 
-// clear Group members
+  // clear Group members
   Future clearGroupData() async {
     _groupMembersList.clear();
     _groupAdminsList.clear();
@@ -480,7 +585,9 @@ class GroupBloc extends Bloc<GroupEvent, GroupState> {
   ) async {
     setGroupImage(imageUrl);
     await FirebaseSingleTon.db.collection(Constants.groups).doc(id).update(
-      {"groupLogo": imageUrl},
+      {
+        "groupLogo": imageUrl,
+      },
     );
   }
 }

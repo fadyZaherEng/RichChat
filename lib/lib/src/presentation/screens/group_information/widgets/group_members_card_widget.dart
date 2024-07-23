@@ -74,8 +74,7 @@ class _GroupMembersCardWidgetState extends State<GroupMembersCardWidget> {
                               onActionTap: (value,_) {
                                 if (value) {
                                   //remove member from group
-                                  widget.bloc
-                                      .removeMemberFromGroup(user: member);
+                                  widget.bloc.removeMemberFromGroup(groupMember: member);
                                   setState(() {});
                                 }
                               },

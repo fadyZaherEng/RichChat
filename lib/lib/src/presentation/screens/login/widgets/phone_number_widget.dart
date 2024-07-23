@@ -130,7 +130,7 @@ class _PhoneNumberWidgetState extends State<PhoneNumberWidget> {
                 color: ColorSchemes.green,
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
+              child:  const Icon(
                 Icons.done,
                 color: ColorSchemes.white,
                 size: 25,

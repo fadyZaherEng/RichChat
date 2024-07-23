@@ -175,17 +175,15 @@ class _FriendWidgetState extends State<FriendWidget> {
                       //TODO: check the checkbox
                       if (widget.isAdminView != null && widget.isAdminView!) {
                         if (value != null && value) {
-                          _groupBloc.addMemberToAdmin(
-                              groupAdmin: widget.friend);
+                          _groupBloc.addMemberToAdmin(groupAdmin: widget.friend);
                         } else {
-                          _groupBloc.removeAdminFromAdmins(user: widget.friend);
+                          _groupBloc.removeAdminFromAdmins(groupAdmin: widget.friend);
                         }
                       } else {
                         if (value != null && value) {
-                          _groupBloc.addMemberToGroup(
-                              groupMember: widget.friend);
+                          _groupBloc.addMemberToGroup(groupMember: widget.friend);
                         } else {
-                          _groupBloc.removeMemberFromGroup(user: widget.friend);
+                          _groupBloc.removeMemberFromGroup(groupMember: widget.friend);
                         }
                       }
                     },
