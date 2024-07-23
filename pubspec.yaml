@@ -100,7 +100,8 @@ dependencies:
   #flutter_chat_reactions
   flutter_chat_reactions: ^0.1.0
   # to show notification count in app icon
-  flutter_app_badger: ^1.5.0
+#  flutter_app_badger:
+  flutter_flavorizr:
 
 
 

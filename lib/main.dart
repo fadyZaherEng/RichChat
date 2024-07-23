@@ -31,7 +31,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() async {
+Future<void>  main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);

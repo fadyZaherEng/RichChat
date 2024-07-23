@@ -23,6 +23,44 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127177945549:android:a16e524b223409553f1484",
+        "android_client_info": {
+          "package_name": "com.sprinteye.cityeye.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC-r_4F_0xwJwmUl0vckTDRxwG2db2WhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127177945549:android:75e1f26c9d1e3e893f1484",
+        "android_client_info": {
+          "package_name": "com.sprinteye.cityeye.app.development"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC-r_4F_0xwJwmUl0vckTDRxwG2db2WhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"

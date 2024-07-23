@@ -1,0 +1,19 @@
+flavors:
+  development:
+    app:
+      name: "City Eye Dev"
+
+    android:
+      applicationId: "com.sprinteye.cityeye.app.development"
+    ios:
+      bundleId: "com.sprinteye.cityeye.app.development"
+
+  production:
+    app:
+      name: "City Eye"
+
+    android:
+      applicationId: "com.sprinteye.cityeye.app"
+    ios:
+      bundleId: "com.sprinteye.cityeye.app"
+

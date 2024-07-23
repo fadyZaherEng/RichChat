@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rich_chat_copilot/flavors.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
@@ -20,7 +21,7 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
+// import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/notification_services.dart';
 
 class MainScreen extends BaseStatefulWidget {
@@ -59,7 +60,7 @@ class _MainScreenState extends BaseState<MainScreen>
   void initPlatformState() async {
     bool appBadgeSupported = false;
     try {
-      bool res = await FlutterAppBadger.isAppBadgeSupported();
+      bool res =false;// await FlutterAppBadger.isAppBadgeSupported();
       if (res) {
         appBadgeSupported = true;
       } else {
@@ -77,7 +78,7 @@ class _MainScreenState extends BaseState<MainScreen>
     });
     // remove app badge if supported
     if (_appBadgeSupported) {
-      FlutterAppBadger.removeBadge();
+      // FlutterAppBadger.removeBadge();
     }
   }
 
@@ -128,7 +129,7 @@ class _MainScreenState extends BaseState<MainScreen>
         if (message.notification != null) {
           // update app badge
           if (_appBadgeSupported) {
-            FlutterAppBadger.updateBadgeCount(1);
+            // FlutterAppBadger.updateBadgeCount(1);
           }
           NotificationServices.displayNotification(message);
         }
@@ -150,7 +151,7 @@ class _MainScreenState extends BaseState<MainScreen>
         backgroundColor: Theme.of(context).cardColor,
         elevation: 0,
         title: Text(
-          S.of(context).appTitle,
+          F.name,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         centerTitle: false,
@@ -305,7 +306,7 @@ class _MainScreenState extends BaseState<MainScreen>
     switch (state) {
       case AppLifecycleState.resumed:
         updateUserOnlineStatus(isOnline: true);
-           FlutterAppBadger.removeBadge();
+           // FlutterAppBadger.removeBadge();
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
