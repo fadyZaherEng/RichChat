@@ -78,7 +78,7 @@ class _InfoCardDetailsWidgetState extends State<InfoCardDetailsWidget> {
                   children: [
                     InkWell(
                       onTap: widget.userModel != null &&
-                              widget.userModel!.uId != currentUser.uId
+                          widget.userModel!.uId != currentUser.uId
                           ? null
                           : widget.onTapUpdateProfile,
                       child: UserImageWidget(
@@ -119,26 +119,26 @@ class _InfoCardDetailsWidgetState extends State<InfoCardDetailsWidget> {
                         ),
                         // display phone number
                         widget.userModel != null &&
-                                currentUser.uId == widget.userModel!.uId
+                            currentUser.uId == widget.userModel!.uId
                             ? Text(
-                                //get current user phone number
-                                currentUser.phoneNumber,
-                                style: GoogleFonts.openSans(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              )
+                          //get current user phone number
+                          currentUser.phoneNumber,
+                          style: GoogleFonts.openSans(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
                             : const SizedBox.shrink(),
                         const SizedBox(height: 5),
                         widget.userModel != null
                             ? ProfileStatusWidget(
-                                userModel: widget.userModel!,
-                                currentUser: currentUser,
-                              )
+                          userModel: widget.userModel!,
+                          currentUser: currentUser,
+                        )
                             : GroupStatusWidget(
-                                isAdmin: widget.isAdmin!,
-                                groupProvider: widget.groupProvider!,
-                              ),
+                          isAdmin: widget.isAdmin!,
+                          groupProvider: widget.groupProvider!,
+                        ),
                         const SizedBox(height: 10),
                       ],
                     )
@@ -300,21 +300,21 @@ class GroupStatusWidget extends StatelessWidget {
           onTap: !isAdmin
               ? null
               : () {
-                  // show dialog to change group type
-                  showAnimatedDialog(
-                    context: context,
-                    title: 'Change Group Type',
-                    content:
-                        'Are you sure you want to change the group type to ${groupProvider.group.isPrivate ? 'Public' : 'Private'}?',
-                    textAction: 'Change',
-                    onActionTap: (value, _) {
-                      if (value) {
-                        // change group type
-                        groupProvider.changeGroupType();
-                      }
-                    },
-                  );
-                },
+            // show dialog to change group type
+            showAnimatedDialog(
+              context: context,
+              title: 'Change Group Type',
+              content:
+              'Are you sure you want to change the group type to ${groupProvider.group.isPrivate ? 'Public' : 'Private'}?',
+              textAction: 'Change',
+              onActionTap: (value, _) {
+                if (value) {
+                  // change group type
+                  groupProvider.changeGroupType();
+                }
+              },
+            );
+          },
           child: Container(
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
@@ -456,15 +456,15 @@ class _ProfileStatusWidgetState extends State<ProfileStatusWidget> {
       builder: (context, state) {
         return Row(
           children: [
-            FriendRequestButton(
-              currentUser: widget.currentUser,
-              userModel: widget.userModel,
-            ),
-            const SizedBox(height: 10),
             FriendsButton(
               currentUser: widget.currentUser,
               userModel: widget.userModel,
               bloc: _bloc,
+            ),
+            const SizedBox(height: 10),
+            FriendRequestButton(
+              currentUser: widget.currentUser,
+              userModel: widget.userModel,
             ),
           ],
         );
@@ -493,16 +493,32 @@ class FriendRequestButton extends StatelessWidget {
   Widget _buildFriendRequestButton(BuildContext context) {
     if (currentUser.uId == userModel.uId &&
         userModel.friendsRequestsUIds.isNotEmpty) {
-      return MyElevatedButton(
-        onPressed: () {
-          //TODO: navigate to friend requests screen
-          Navigator.pushNamed(context, Routes.friendRequestScreen);
-        },
-        label: 'Requests',
-        width: MediaQuery.of(context).size.width * 0.4,
-        backgroundColor: Theme.of(context).cardColor,
-        textColor: Theme.of(context).colorScheme.primary,
+      return Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: CircleAvatar(
+          backgroundColor: Colors.orangeAccent,
+          child: IconButton(
+            onPressed: () {
+              // navigate to friend requests screen
+              Navigator.pushNamed(context, Routes.friendRequestScreen);
+            },
+            icon: const Icon(
+              Icons.person_add,
+              color: Colors.black,
+            ),
+          ),
+        ),
       );
+      // return MyElevatedButton(
+      //   onPressed: () {
+      //     //TODO: navigate to friend requests screen
+      //     Navigator.pushNamed(context, Routes.friendRequestScreen);
+      //   },
+      //   label: 'Requests',
+      //   width: MediaQuery.of(context).size.width * 0.4,
+      //   backgroundColor: Theme.of(context).cardColor,
+      //   textColor: Theme.of(context).colorScheme.primary,
+      // );
     } else {
       // not in our profile
       return const SizedBox.shrink();
