@@ -678,29 +678,28 @@ class MyElevatedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget buildElevatedButton() {
-      return SizedBox(
-        //width: width,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            elevation: 5,
-            backgroundColor: backgroundColor,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-          ),
-          onPressed: onPressed,
-          child: Text(
-            label.toUpperCase(),
-            style: GoogleFonts.openSans(
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+    return buildElevatedButton();
+  }
+  Widget buildElevatedButton() {
+    return SizedBox(
+      //width: width,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          elevation: 5,
+          backgroundColor: backgroundColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
           ),
         ),
-      );
-    }
-
-    return buildElevatedButton();
+        onPressed: onPressed,
+        child: Text(
+          label.toUpperCase(),
+          style: GoogleFonts.openSans(
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      ),
+    );
   }
 }
