@@ -25,6 +25,18 @@
 # -- Group Chats
 # -- Notifications
 # -- Show Notifications
+# -- OTP Verification
+# -- User Profile
+# -- User Profile Edit
+# -- User Profile Show
+# -- Send Friend Request
+# -- Accept Friend Request
+# -- Cancel Friend Request
+# -- Remove Friend
+# -- Show Friends
+# -- Show Chats
+# -- Show Groups
+# -- Show Notifications
 # -- FlutterAppBadger
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
