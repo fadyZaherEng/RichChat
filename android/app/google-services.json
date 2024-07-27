@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "127177945549",
+    "project_id": "richchatspro",
+    "storage_bucket": "richchatspro.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:127177945549:android:3161c863f5c88fbc3f1484",
+        "android_client_info": {
+          "package_name": "com.example.rich_chat_copilot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDC-r_4F_0xwJwmUl0vckTDRxwG2db2WhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

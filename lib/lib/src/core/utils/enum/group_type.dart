@@ -1,0 +1,4 @@
+enum GroupType {
+  private,
+  public,
+}

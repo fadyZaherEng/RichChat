@@ -40,7 +40,7 @@ abstract class BaseState<W extends BaseStatefulWidget> extends State<W>
         color: widget.materialColor,
         child: Stack(
           fit: StackFit.expand,
-          children: [baseBuild(context), loadingManagerWidget()],
+          children: [baseBuild(context), loadingManagerWidget(context)],
         ));
   }
 

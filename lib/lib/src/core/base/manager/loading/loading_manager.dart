@@ -23,9 +23,9 @@ mixin LoadingManager {
     }
   }
 
-  Widget loadingManagerWidget() {
+  Widget loadingManagerWidget(BuildContext context) {
     if (isLoading) {
-      return customLoadingWidget();
+      return customLoadingWidget(context);
     } else if (isLoadingWithMessage) {
       return customLoadingMessageWidget(message);
     } else {
@@ -34,7 +34,7 @@ mixin LoadingManager {
   }
 
   /// use this method if you want to change the default loading login_widget
-  Widget customLoadingWidget() {
+  Widget customLoadingWidget(BuildContext context) {
     return InkWell(
       onTap: null,
       child: SizedBox(
@@ -42,7 +42,7 @@ mixin LoadingManager {
         height: double.infinity,
         child: Center(
             child: LoadingAnimationWidget.threeArchedCircle(
-          color: ColorSchemes.primary,
+          color: Theme.of(context).colorScheme.primary,
           size: 50,
         )),
       ),

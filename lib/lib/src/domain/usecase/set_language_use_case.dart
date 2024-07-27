@@ -11,3 +11,4 @@ class SetLanguageUseCase {
         SharedPreferenceKeys.language, language);
   }
 }
+

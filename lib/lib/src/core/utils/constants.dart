@@ -13,4 +13,31 @@ class Constants {
   static const String low = "low";
   static const String min = "min";
   static const String defaultPriority = "default";
+  static const String en = "en";
+  static const String ar = "ar";
+  static const String light = "light";
+  static const String dark = "dark";
+  static const String users = "users";
+  static const String user = "user";
+  static const String phoneNumber = "phoneNumber";
+  static const String uId = "uId";
+  static const String messages = "messages";
+  static const String chats = "chats";
+  static const String groups = "groups";
+  static const String reply = "Reply";
+  static const String copy = "Copy";
+  static const String delete = "Delete";
+  static const String isSeen = "isSeen";
+  static const String reactions = "reactions";
+  static const String timeSent = "timeSent";
+  static const String changeName = "changeName";
+  static const String changeDes = "changeDes";
+
+  // notification
+  static const String notificationType = 'notificationType';
+  static const String groupChatNotification = 'groupChatNotification';
+  static const String chatNotification = 'chatNotification';
+  static const String friendRequestNotification = 'friendRequestNotification';
+  static const String requestReplyNotification = 'requestReplyNotification';
+  static const String groupRequestNotification = 'groupRequestNotification';
 }
