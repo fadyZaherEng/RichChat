@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/config/routes/routes_manager.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/audio_wave_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/show_audio_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/show_video_widget.dart';
 import 'package:skeletons/skeletons.dart';
@@ -85,7 +86,9 @@ class DisplayMassageTypeWidget extends StatelessWidget {
         return isReplying
             ? Icon(Icons.audiotrack,
             color: Theme.of(context).colorScheme.secondary)
-            : ShowAudioWidget(
+            :
+        AudioWaveWidget(path: massage);
+        ShowAudioWidget(
           audioPath: massage,
           textDurationColor: color,
           viewOnly: viewOnly,
