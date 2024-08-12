@@ -10,6 +10,7 @@ import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
+import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/skeleton/chats_skeleton.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/utils/show_reactions_dialog.dart';
@@ -22,7 +23,7 @@ import 'package:skeletons/skeletons.dart';
 class ChatsListMassagesWidget extends StatefulWidget {
   final Stream<List<Massage>> massagesStream;
   final ScrollController massagesScrollController;
-  final User currentUser;
+  final UserModel currentUser;
   final void Function(MassageReply massageReply) onRightSwipe;
   final void Function(String, Massage) onEmojiSelected;
   final void Function(String, Massage) onContextMenuSelected;
@@ -113,7 +114,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                 itemBuilder: (BuildContext context, Massage massage) {
                   //set massage as seen in fireStore
                   BlocProvider.of<ChatsBloc>(context).setMassageAsSeen(
-                    senderId: widget.currentUser.uid,
+                    senderId: widget.currentUser.uId,
                     massageId: massage.messageId,
                     isGroupChat: widget.compoundId.toString().isNotEmpty,
                     receiverId: widget.subscriberId.toString(),
@@ -122,10 +123,10 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                     isSeenByList: massage.isSeenBy,
                   );
                   bool isMe =
-                      massage.senderId == widget.currentUser.uid;
+                      massage.senderId == widget.currentUser.uId;
                   //check if massage delete by current user
                   final deletedByCurrentUser = massage.isDeletedBy
-                          .contains(widget.currentUser.uid) ||
+                          .contains(widget.currentUser.uId) ||
                       massage.isDeletedBy.contains(-1);
 
                   return deletedByCurrentUser
@@ -154,7 +155,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
                           child: MessageWidget(
                             message: massage,
                             isMe: isMe,
-                            uid: int.parse(widget.currentUser.uid),
+                            uid: int.parse(widget.currentUser.uId),
                             onRightSwipe: () {
                               final massageReply = MassageReply(
                                 massage: massage.massage,
@@ -193,7 +194,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
       context: context,
       massage: massage,
       isMe: isMe,
-      currentUserId: int.parse(widget.currentUser.uid),
+      currentUserId: int.parse(widget.currentUser.uId),
       onContextMenuSelected: (emoji, massage) {
         widget.onContextMenuSelected(emoji, massage);
       },
@@ -220,7 +221,7 @@ class _ChatsListMassagesWidgetState extends State<ChatsListMassagesWidget> {
               ? MyMassageWidget(
                   massage: massage,
                   isReplying: massage.repliedTo.isNotEmpty,
-                  uid: int.parse(widget.currentUser.uid),
+                  uid: int.parse(widget.currentUser.uId),
                   setMassageReplyNull: () {
                     widget.setMassageReplyNull();
                   },

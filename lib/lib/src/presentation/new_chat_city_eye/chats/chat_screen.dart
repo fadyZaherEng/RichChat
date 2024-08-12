@@ -23,14 +23,29 @@ import 'package:rich_chat_copilot/lib/src/core/utils/show_bottom_sheet_upload_me
 import 'package:rich_chat_copilot/lib/src/di/data_layer_injector.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
+import 'package:rich_chat_copilot/lib/src/domain/entities/login/user.dart';
+import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/utils/show_delete_bottom_sheet.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/bottom_chat_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/chat_app_bar.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/chats_list_massages_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/chat_app_bar_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/group_chat_app_bar.dart';
 
 class ChatScreen extends BaseStatefulWidget {
-  const ChatScreen({super.key});
+  final String friendId;
+  final String friendName;
+  final String friendImage;
+  final String groupId;
+
+  const ChatScreen({
+    super.key,
+    required this.friendId,
+    required this.friendName,
+    required this.friendImage,
+    required this.groupId,
+  });
 
   @override
   BaseState<ChatScreen> baseCreateState() => _ChatScreenState();
@@ -41,25 +56,88 @@ class ChatScreen extends BaseStatefulWidget {
 //3-add massage key to replay massage to scroll
 
 class _ChatScreenState extends BaseState<ChatScreen> {
+  bool _isGroupChat = false;
   final TextEditingController _massageController = TextEditingController();
   final ScrollController _massagesScrollController = ScrollController();
   final FocusNode _massageFocusNode = FocusNode();
 
   ChatsBloc get _bloc => BlocProvider.of<ChatsBloc>(context);
-  User _currentUser = const User();
+  UserModel currentUser = UserModel();
 
   //sounds and send button
   bool _isShowSendButton = false;
 
   //emoji picker
   bool _isShowEmojiPicker = false;
-  UserUnit _userUnit = const UserUnit();
+
+  void _hideEmojiContainer() {
+    _isShowEmojiPicker = false;
+    _isShowSendButton = false;
+    if (_massageController.text.isNotEmpty) {
+      _isShowSendButton = true;
+    }
+    setState(() {});
+  }
+
+  void _showEmojiContainer() {
+    setState(() {
+      _isShowEmojiPicker = true;
+      _isShowSendButton = true;
+    });
+  }
+
+  void _showKeyWord() {
+    _massageFocusNode.requestFocus();
+  }
+
+  void _hideKeyWord() {
+    _massageFocusNode.unfocus();
+  }
+
+  void _toggleEmojiKeyWordContainer() {
+    if (_isShowEmojiPicker) {
+      _showKeyWord();
+      _hideEmojiContainer();
+    } else {
+      _hideKeyWord();
+      _showEmojiContainer();
+    }
+  }
+
+  //show emoji container
+  void _showEmojiPickerDialog(Massage massage) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 300,
+          child: EmojiPicker(
+            onEmojiSelected: (category, Emoji emoji) {
+              _navigateBackEvent();
+              //add emoji to message
+              _bloc.add(SelectReactionEvent(
+                massageId: massage.messageId,
+                senderId: currentUser.uId,
+                receiverId: widget.friendId,
+                reaction: emoji.emoji,
+                groupId: widget.groupId.isNotEmpty,
+              ));
+              Future.delayed(const Duration(milliseconds: 300), () {
+                _navigateBackEvent();
+              });
+            },
+          ),
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    _currentUser = GetUserInformationUseCase(injector())();
-    _userUnit = GetUserUnitUseCase(injector())();
+    currentUser = GetUserUseCase(injector())();
+    _isGroupChat = widget.groupId.isNotEmpty;
+    // _scrollToBottom();
   }
 
   @override
@@ -73,30 +151,27 @@ class _ChatScreenState extends BaseState<ChatScreen> {
           _isShowSendButton = false;
         }
         if (state is SendTextMessageError) {
-          showSnackBar(
-            context: context,
-            message: state.message,
-            color: ColorSchemes.snackBarError,
-            icon: ImagePaths.error,
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
           );
           _isShowSendButton = false;
         } else if (state is SelectImageState) {
           _cropperImage(state.file);
-        }else if(state is SendFileMessageLoading) {
-            // showLoading();
-          }else if (state is SendFileMessageSuccess) {
+        } else if (state is SendFileMessageSuccess) {
           _massageController.clear();
           _bloc.setMassageReply(null);
           _massageFocusNode.requestFocus();
-          // hideLoading();
         } else if (state is SendFileMessageError) {
-          showSnackBar(
-            context: context,
-            message: state.message,
-            color: ColorSchemes.snackBarError,
-            icon: ImagePaths.error,
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
           );
-          // hideLoading();
+        } else if (state is SelectVideoFromGalleryState) {
+          _sendFileMassage(
+            massageType: MassageType.video,
+            filePath: state.file.path,
+          );
+        } else if (state is SelectImageState) {
+          _cropperImage(state.file);
         } else if (state is SelectVideoFromGalleryState) {
           _sendFileMassage(
             massageType: MassageType.video,
@@ -105,11 +180,8 @@ class _ChatScreenState extends BaseState<ChatScreen> {
         } else if (state is DeleteMassageSuccess) {
           hideLoading();
         } else if (state is DeleteMassageError) {
-          showSnackBar(
-            context: context,
-            message: state.message,
-            color: ColorSchemes.snackBarError,
-            icon: ImagePaths.error,
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
           );
           hideLoading();
         } else if (state is DeleteMassageLoading) {
@@ -132,29 +204,23 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 10),
-                        ChatAppBar(
-                          compoundName: _userUnit.compoundName,
-                          compoundLogo: _userUnit.compoundLogo,
-                          subscriberName: _currentUser.displayName.toString(),
-                          onTapImageProfile: (image) {},
-                          onTapBackArrow: () {
-                            _navigateBackEvent();
-                          },
-                        ),
+                        _isGroupChat
+                            ? GroupChatAppBar(groupID: widget.groupId)
+                            : ChatAppBarWidget(friendId: widget.friendId),
                         Expanded(
                           child: ChatsListMassagesWidget(
                             massagesStream: _bloc.getMessagesStream(
-                              subscriberId: _userUnit.subscriberId,
-                              compoundId: _userUnit.compoundId,
+                              receiverId: widget.friendId,
+                              userId: currentUser.uId,
+                              isGroup: widget.groupId,
                             ),
                             setMassageReplyNull: () {
                               _scrollToBottom();
                               _bloc.setMassageReply(null);
                             },
-                            subscriberId: _userUnit.subscriberId,
-                            compoundId: _userUnit.compoundId,
+                            subscriberId: int.parse(widget.friendId),
+                            compoundId: int.parse(widget.groupId),
                             massagesScrollController: _massagesScrollController,
-                            currentUser: _currentUser,
                             onRightSwipe: (MassageReply massageReply) {
                               _bloc.setMassageReply(massageReply);
                             },
@@ -165,6 +231,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                 _showEmojiPickerDialog(massage);
                               });
                             },
+                            currentUser: currentUser,
                             onEmojiSelected: (String emoji, Massage massage) {
                               if (emoji == '➕') {
                                 // Future.delayed(const Duration(milliseconds: 500), () {
@@ -177,13 +244,20 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                                     const Duration(milliseconds: 500), () {
                                   _navigateBackEvent();
                                 });
+                                // _bloc.add(SelectReactionEvent(
+                                //   massageId: massage.messageId,
+                                //   senderId: _currentUser.userInformation.id
+                                //       .toString(),
+                                //   reaction: emoji,
+                                //   compoundId: _userUnit.compoundId,
+                                //   subscriberId: _userUnit.subscriberId,
+                                // ));
                                 _bloc.add(SelectReactionEvent(
                                   massageId: massage.messageId,
-                                  senderId: _currentUser.userInformation.id
-                                      .toString(),
+                                  senderId: currentUser.uId,
+                                  receiverId: widget.friendId,
                                   reaction: emoji,
-                                  compoundId: _userUnit.compoundId,
-                                  subscriberId: _userUnit.subscriberId,
+                                  groupId: widget.groupId.isNotEmpty,
                                 ));
                               }
                             },
@@ -237,14 +311,17 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                           },
                           onSendTextPressed: () {
                             _scrollToBottom();
+                            //TODO: send message
                             if (_massageController.text.isNotEmpty) {
                               _bloc.add(SendTextMessageEvent(
-                                sender: _currentUser,
-                                receiverId: _userUnit.compoundId,
+                                sender: currentUser,
+                                receiverId: widget.friendId,
+                                receiverName: widget.friendName,
+                                receiverImage: widget.friendImage,
                                 message: _massageController.text,
                                 massageType: MassageType.text,
-                                subscriberId: _userUnit.subscriberId,
-                                compoundId: _userUnit.compoundId,
+                                groupId: widget.groupId,
+                                context: context,
                               ));
                             }
                           },
@@ -282,68 +359,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
       0,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
-    );
-  }
-
-  void _hideEmojiContainer() {
-    _isShowEmojiPicker = false;
-    _isShowSendButton = false;
-    if (_massageController.text.isNotEmpty) {
-      _isShowSendButton = true;
-    }
-    setState(() {});
-  }
-
-  void _showEmojiContainer() {
-    setState(() {
-      _isShowEmojiPicker = true;
-      _isShowSendButton = true;
-    });
-  }
-
-  void _showKeyWord() {
-    _massageFocusNode.requestFocus();
-  }
-
-  void _hideKeyWord() {
-    _massageFocusNode.unfocus();
-  }
-
-  void _toggleEmojiKeyWordContainer() {
-    if (_isShowEmojiPicker) {
-      _showKeyWord();
-      _hideEmojiContainer();
-    } else {
-      _hideKeyWord();
-      _showEmojiContainer();
-    }
-  }
-
-  //show emoji container
-  void _showEmojiPickerDialog(Massage massage) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 300,
-          child: EmojiPicker(
-            onEmojiSelected: (category, Emoji emoji) {
-              _navigateBackEvent();
-              //add emoji to message
-              _bloc.add(SelectReactionEvent(
-                massageId: massage.messageId,
-                senderId: _currentUser.userInformation.id.toString(),
-                reaction: emoji.emoji,
-                compoundId: _userUnit.compoundId,
-                subscriberId: _userUnit.subscriberId,
-              ));
-              Future.delayed(const Duration(milliseconds: 300), () {
-                _navigateBackEvent();
-              });
-            },
-          ),
-        );
-      },
     );
   }
 
@@ -555,15 +570,27 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     required MassageType massageType,
     required String filePath,
   }) {
+    // _bloc.add(
+    //   SendFileMessageEvent(
+    //     sender: _currentUser,
+    //     file: File(filePath),
+    //     massageType: massageType,
+    //     compoundId: _userUnit.compoundId,
+    //     compoundImage: _userUnit.compoundLogo,
+    //     compoundName: _userUnit.compoundName,
+    //     subscriberId: _userUnit.subscriberId,
+    //   ),
+    // );
     _bloc.add(
       SendFileMessageEvent(
-        sender: _currentUser,
+        sender: currentUser,
+        receiverId: widget.friendId,
+        receiverName: widget.friendName,
+        receiverImage: widget.friendImage,
         file: File(filePath),
         massageType: massageType,
-        compoundId: _userUnit.compoundId,
-        compoundImage: _userUnit.compoundLogo,
-        compoundName: _userUnit.compoundName,
-        subscriberId: _userUnit.subscriberId,
+        groupId: widget.groupId,
+        context: context,
       ),
     );
   }
@@ -579,7 +606,7 @@ class _ChatScreenState extends BaseState<ChatScreen> {
   }) {
     switch (contextMenu) {
       case Constants.delete:
-        if (massage.senderId == _currentUser.uid) {
+        if (massage.senderId == currentUser.uId) {
           showDeleteBottomSheet(
               isSender: true,
               context: context,
@@ -587,14 +614,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
               onDelete: ({
                 required bool deleteForEveryoneOrNot,
               }) {
-                _bloc.add(DeleteMassageEvent(
-                  messageId: massage.messageId,
-                  messageType: massage.massageType.name,
-                  deleteForEveryone: deleteForEveryoneOrNot,
-                  compoundId: _userUnit.compoundId,
-                  subscriberId: _userUnit.subscriberId,
-                  currentUserId: _currentUser.userInformation.id,
-                ));
+                // _bloc.add(DeleteMassageEvent(
+                //   messageId: massage.messageId,
+                //   messageType: massage.massageType.name,
+                //   deleteForEveryone: deleteForEveryoneOrNot,
+                //   compoundId: _userUnit.compoundId,
+                //   subscriberId: _userUnit.subscriberId,
+                //   currentUserId: _currentUser.userInformation.id,
+                // ));
               });
         } else {
           showDeleteBottomSheet(
@@ -604,14 +631,14 @@ class _ChatScreenState extends BaseState<ChatScreen> {
               onDelete: ({
                 required bool deleteForEveryoneOrNot,
               }) {
-                _bloc.add(DeleteMassageEvent(
-                  messageId: massage.messageId,
-                  messageType: massage.massageType.name,
-                  deleteForEveryone: deleteForEveryoneOrNot,
-                  compoundId: _userUnit.compoundId,
-                  subscriberId: _userUnit.subscriberId,
-                  currentUserId: _currentUser.userInformation.id,
-                ));
+                // _bloc.add(DeleteMassageEvent(
+                //   messageId: massage.messageId,
+                //   messageType: massage.massageType.name,
+                //   deleteForEveryone: deleteForEveryoneOrNot,
+                //   compoundId: _userUnit.compoundId,
+                //   subscriberId: _userUnit.subscriberId,
+                //   currentUserId: _currentUser.userInformation.id,
+                // ));
               });
         }
         break;
