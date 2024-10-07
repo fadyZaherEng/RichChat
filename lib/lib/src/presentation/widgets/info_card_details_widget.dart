@@ -607,7 +607,7 @@ class FriendsButton extends StatelessWidget {
                   //TODO: navigate to chat screen
                   Navigator.pushNamed(
                     context,
-                    Routes.chatWithFriendScreen,
+                    Routes.chatWithFriendGeneralScreen,
                     arguments: {
                       "friendId": userModel.uId,
                       "friendName": userModel.name,

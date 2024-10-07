@@ -13,9 +13,7 @@ class DisplayMassageTypeWidget extends StatelessWidget {
   final Color color;
   final TextOverflow? textOverflow;
   final bool isReplying;
-  final bool viewOnly;
   final int? maxLines;
-  final BuildContext context;
 
   const DisplayMassageTypeWidget({
     super.key,
@@ -24,17 +22,15 @@ class DisplayMassageTypeWidget extends StatelessWidget {
     required this.color,
     this.maxLines,
     this.textOverflow,
-    required this.context,
     required this.isReplying,
-    required this.viewOnly,
   });
 
   @override
   Widget build(BuildContext context) {
-    return getMassageTypeWidget();
+    return getMassageTypeWidget(context);
   }
 
-  Widget getMassageTypeWidget() {
+  Widget getMassageTypeWidget(BuildContext context) {
     switch (massageType) {
       case MassageType.text:
         return Text(
@@ -80,7 +76,6 @@ class DisplayMassageTypeWidget extends StatelessWidget {
               },
             );
           },
-          isViewOnly: viewOnly,
         );
       case MassageType.audio:
         return isReplying
@@ -91,7 +86,6 @@ class DisplayMassageTypeWidget extends StatelessWidget {
         ShowAudioWidget(
           audioPath: massage,
           textDurationColor: color,
-          viewOnly: viewOnly,
         );
       case MassageType.file:
         return CachedNetworkImage(imageUrl: massage);

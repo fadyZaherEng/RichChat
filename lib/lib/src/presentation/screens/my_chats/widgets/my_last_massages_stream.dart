@@ -62,7 +62,7 @@ class MyChatsStream extends StatelessWidget {
                     //TODO: navigate to chat screen
                     Navigator.pushNamed(
                       context,
-                      Routes.chatWithFriendScreen,
+                      Routes.chatWithFriendGeneralScreen,
                       arguments: {
                         "friendId": chats.receiverId,
                         "friendName": chats.receiverName,

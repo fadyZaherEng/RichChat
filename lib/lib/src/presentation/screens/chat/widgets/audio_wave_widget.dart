@@ -59,10 +59,10 @@ class _AudioWaveWidgetState extends State<AudioWaveWidget> {
               setState(() {});
               return;
             }
-            // await controller.extractWaveformData(
-            //   path: widget.path,
-            //   noOfSamples: 100,
-            // );
+            await controller.extractWaveformData(
+              path: widget.path,
+              noOfSamples: 100,
+            );
             await controller.startPlayer(
                 finishMode: FinishMode.loop);
             // await controller.pausePlayer();                                     // Pause audio player

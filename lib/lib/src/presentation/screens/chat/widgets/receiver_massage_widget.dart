@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
+import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_type_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_preview_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/widgets/user_image_widget.dart';
 
 class ReceiverMassageWidget extends StatelessWidget {
@@ -83,23 +85,25 @@ class ReceiverMassageWidget extends StatelessWidget {
                               children: [
                                 if (isReplying) ...[
                                   MassageReplyPreviewWidget(
-                                    massage: massage,
-                                    viewOnly: viewOnly,
+                                    massageReply: MassageReply(
+                                      isMe: false,
+                                      senderId: massage.senderId.toString(),
+                                      senderName: massage.senderName,
+                                      massage: massage.repliedMessage,
+                                      massageType: massage.repliedMessageType,
+                                      senderImage: massage.senderImage,
+                                    ),
                                     setReplyMessageWithNull: () {
                                       setMassageReplyNull();
                                     },
+                                    isShowCloseButton: false,
                                   )
                                 ],
                                 DisplayMassageTypeWidget(
                                   massageType: massage.massageType,
                                   massage: massage.massage,
-                                  color: Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
-                                  context: context,
+                                  color: Colors.black,
                                   isReplying: false,
-                                  viewOnly: viewOnly,
                                 ),
                                 Text(
                                   DateFormat("hh:mm a")
@@ -119,22 +123,25 @@ class ReceiverMassageWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Positioned(
+                //     bottom: 0,
+                //     left: 50,
+                //     child: //TODO: Add Package StackedReactions
+                //         StackedReactions(
+                //       reactions: massageReactions,
+                //     )
+                //TODO: Add My StackedReactionsWidget
                 Positioned(
-                    bottom: 0,
-                    left: 50,
-                    child: //TODO: Add Package StackedReactions
-                        StackedReactions(
-                      reactions: massageReactions,
-                    )
-                    //TODO: Add My StackedReactionsWidget
-                    //  StackedReactionsWidget(
-                    //                 massage: massage,
-                    //                 size: 20,
-                    //                 onPressed: () {
-                    //                   //show bottom sheet with list of people reactions with massage
-                    //                 },
-                    //               ),
-                    )
+                  bottom: 5,
+                  left: 30,
+                  child: StackedReactionsWidget(
+                    massage: massage,
+                    size: 22,
+                    onPressed: () {
+                      //Todo: show bottom sheet with list of people reactions with massage
+                    },
+                  ),
+                ),
               ],
             ),
           ],

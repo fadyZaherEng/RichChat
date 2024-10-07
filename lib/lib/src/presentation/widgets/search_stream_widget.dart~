@@ -71,7 +71,7 @@ class _SearchStreamWidgetState extends State<SearchStreamWidget> {
                       //TODO: navigate to chat screen
                       Navigator.pushNamed(
                         context,
-                        Routes.chatWithFriendGeneralScreen,
+                        Routes.chatWithFriendScreen,
                         arguments: {
                           "friendId": chat.receiverId,
                           "friendName": chat.receiverName,

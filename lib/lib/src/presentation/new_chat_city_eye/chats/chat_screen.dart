@@ -3,7 +3,6 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +13,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/base/widget/base_stateful_widget.dart';
-import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/constants.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/permission_service_handler.dart';
@@ -28,18 +26,17 @@ import 'package:rich_chat_copilot/lib/src/domain/usecase/get_user_use_case.dart'
 import 'package:rich_chat_copilot/lib/src/presentation/blocs/chats/chats_bloc.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/utils/show_delete_bottom_sheet.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/bottom_chat_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/chat_app_bar.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/chats_list_massages_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/chat_app_bar_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/group_chat_app_bar.dart';
 
-class ChatScreen extends BaseStatefulWidget {
+class ChatCityEyeScreen extends BaseStatefulWidget {
   final String friendId;
   final String friendName;
   final String friendImage;
   final String groupId;
 
-  const ChatScreen({
+  const ChatCityEyeScreen({
     super.key,
     required this.friendId,
     required this.friendName,
@@ -48,14 +45,14 @@ class ChatScreen extends BaseStatefulWidget {
   });
 
   @override
-  BaseState<ChatScreen> baseCreateState() => _ChatScreenState();
+  BaseState<ChatCityEyeScreen> baseCreateState() => _ChatScreenState();
 }
 //there are some bugs
 //1-scroll to bottom  is fixed
 //2-voice wave
 //3-add massage key to replay massage to scroll
 
-class _ChatScreenState extends BaseState<ChatScreen> {
+class _ChatScreenState extends BaseState<ChatCityEyeScreen> {
   bool _isGroupChat = false;
   final TextEditingController _massageController = TextEditingController();
   final ScrollController _massagesScrollController = ScrollController();
