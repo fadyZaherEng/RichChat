@@ -42,51 +42,51 @@ class DisplayMassageTypeWidget extends StatelessWidget {
         return isReplying
             ? const Icon(Icons.image)
             : SizedBox(
-          height: 200,
-          width: 200,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: CachedNetworkImage(
-              imageUrl: massage,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const Center(
-                child: SkeletonLine(
-                  style: SkeletonLineStyle(
-                    height: 200,
-                    width: 200,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                height: 200,
+                width: 200,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: CachedNetworkImage(
+                    imageUrl: massage,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => const Center(
+                      child: SkeletonLine(
+                        style: SkeletonLineStyle(
+                          height: 200,
+                          width: 200,
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
-        );
+              );
       case MassageType.video:
         return isReplying
             ? const Icon(Icons.video_collection)
             : ShowVideoWidget(
-          videoPath: massage,
-          color: color,
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              Routes.fullVideoScreen,
-              arguments: {
-                'videoPath': massage,
-              },
-            );
-          },
-        );
+                videoPath: massage,
+                color: color,
+                onTap: () {
+                  Navigator.pushNamed(
+                    context,
+                    Routes.fullVideoScreen,
+                    arguments: {
+                      'videoPath': massage,
+                    },
+                  );
+                },
+              );
       case MassageType.audio:
         return isReplying
             ? Icon(Icons.audiotrack,
-            color: Theme.of(context).colorScheme.secondary)
+                color: Theme.of(context).colorScheme.secondary)
             :
-        AudioWaveWidget(path: massage);
-        ShowAudioWidget(
-          audioPath: massage,
-          textDurationColor: color,
-        );
+            // AudioWaveWidget(path: massage);
+            ShowAudioWidget(
+                audioPath: massage,
+                textDurationColor: color,
+              );
       case MassageType.file:
         return CachedNetworkImage(imageUrl: massage);
       default:
