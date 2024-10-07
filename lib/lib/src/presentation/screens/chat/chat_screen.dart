@@ -136,7 +136,6 @@ class _ChatScreenState extends BaseState<ChatScreen> {
     _isGroupChat = widget.groupId.isNotEmpty;
     // _scrollToBottom();
   }
-
   @override
   Widget baseBuild(BuildContext context) {
     print(widget.groupId);

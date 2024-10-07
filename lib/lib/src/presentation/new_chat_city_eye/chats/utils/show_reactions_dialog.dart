@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/reactions_dialog_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/reactions_dialog_widget.dart';
 
 void showReactionsDialog({
   required BuildContext context,
   required Massage massage,
   required bool isMe,
-  required String groupId,
-  required void Function(String, Massage) onContextMenuSelected,
-  required void Function(String, Massage) onEmojiSelected,
+  required int currentUserId,
+  required void Function(String,Massage) onContextMenuSelected,
+  required void Function(String,Massage) onEmojiSelected,
   required void Function() setMassageReplyNull,
-}) {
-  showDialog(
+})  async {
+  return showDialog(
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) => Dialog(
@@ -19,19 +19,19 @@ void showReactionsDialog({
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16),
       child: Padding(
-        padding:
-            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
         child: ReactionsDialogWidget(
           message: massage,
           isMe: isMe,
-          groupId: groupId,
-          onContextMenuSelected: (contextMenu, massage) {
-            onContextMenuSelected(contextMenu, massage);
+          onContextMenuSelected: (contextMenu,massage) {
+            onContextMenuSelected(contextMenu,massage);
           },
-          onEmojiSelected: (emoji, massage) {
-            onEmojiSelected(emoji, massage);
+          onEmojiSelected: (emoji,massage) {
+            onEmojiSelected(emoji,massage);
           },
           setMassageReplyNull: setMassageReplyNull,
+          currentUserId: currentUserId,
         ),
       ),
     ),

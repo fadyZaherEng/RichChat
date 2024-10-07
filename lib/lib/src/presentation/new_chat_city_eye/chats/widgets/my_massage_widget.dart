@@ -1,45 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
-import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_type_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_preview_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/display_massage_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/massage_reply_preview_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/stacked_reactions_widget.dart';
 
 class MyMassageWidget extends StatelessWidget {
   final Massage massage;
   final bool isReplying;
-  final bool isGroupChat;
-  final bool viewOnly;
+  final int uid;
   final void Function() setMassageReplyNull;
 
   const MyMassageWidget({
     super.key,
     required this.massage,
     required this.isReplying,
-    required this.isGroupChat,
-    this.viewOnly = false,
     required this.setMassageReplyNull,
+    required this.uid,
   });
-
-  bool massageSeen() {
-    final uid = FirebaseSingleTon.auth.currentUser!.uid;
-    bool seen = false;
-    if (isGroupChat) {
-      List<String> isSeenBy = massage.isSeenBy;
-      if (isSeenBy.contains(uid)) {
-        //remove our id then check again
-        isSeenBy.remove(uid);
-      }
-      seen = isSeenBy.isNotEmpty;
-    } else {
-      seen = massage.isSeen;
-    }
-    return seen;
-  }
-
   @override
   Widget build(BuildContext context) {
     final padding = massage.reactions.isNotEmpty
@@ -52,9 +33,12 @@ class MyMassageWidget extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.7,
-          minWidth: MediaQuery.of(context).size.width * 0.15,
+          minWidth: massageReactions.length > 2
+              ? MediaQuery.of(context).size.width * 0.3
+              : MediaQuery.of(context).size.width * 0.15,
         ),
         child: Stack(
+          alignment: Alignment.centerRight,
           children: [
             Padding(
               padding: padding,
@@ -67,7 +51,7 @@ class MyMassageWidget extends StatelessWidget {
                     bottomLeft: Radius.circular(15),
                   ),
                 ),
-                color: Colors.deepPurple,
+                color:Colors.purple .withOpacity(0.8),
                 child: Stack(
                   children: [
                     Padding(
@@ -97,23 +81,26 @@ class MyMassageWidget extends StatelessWidget {
                             DisplayMassageTypeWidget(
                               massageType: massage.massageType,
                               massage: massage.massage,
-                              color: Colors.white,
+                              color: ColorSchemes.white,
                               isReplying: false,
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  DateFormat("hh:mm a")
-                                      .format(massage.timeSent),
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 10),
-                                ),
+                                    DateFormat("hh:mm a")
+                                        .format(massage.timeSent),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                          color: ColorSchemes.gray,
+                                        )),
                                 const SizedBox(width: 4),
                                 Icon(
-                                  massageSeen() ? Icons.done_all : Icons.done,
+                                  _isMassageSeen() ? Icons.done_all : Icons.done,
                                   color: massage.isSeen
-                                      ? Theme.of(context).colorScheme.primary
+                                      ? Colors.purple
                                       : Colors.white38,
                                   size: 15,
                                 ),
@@ -153,4 +140,15 @@ class MyMassageWidget extends StatelessWidget {
       ),
     );
   }
+  bool _isMassageSeen() {
+    bool seen = false;
+    List<String> isSeenBy = massage.isSeenBy;
+    if (isSeenBy.contains(uid)) {
+      //remove our id then check again
+      isSeenBy.remove(uid);
+    }
+    seen = isSeenBy.isNotEmpty;
+    return seen;
+  }
+
 }

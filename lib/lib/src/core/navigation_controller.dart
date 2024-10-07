@@ -23,7 +23,7 @@ navigationController({
       //TODO: navigate to chat screen
       Navigator.pushNamed(
         context,
-        Routes.chatWithFriendScreen,
+        Routes.chatWithFriendGeneralScreen,
         arguments: {
           "friendId": message.data["receiverId"],
           "friendName": message.data["receiverName"],
@@ -71,7 +71,7 @@ navigationController({
           //TODO: navigate to chat screen
           Navigator.pushNamed(
             context,
-            Routes.chatWithFriendScreen,
+            Routes.chatWithFriendGeneralScreen,
             arguments: {
               "friendId": group.groupID,
               "friendName": group.groupName,

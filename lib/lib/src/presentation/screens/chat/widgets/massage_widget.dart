@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/my_massage_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/receiver_massage_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/swipe_to_widget.dart';
 
 class MessageWidget extends StatelessWidget {

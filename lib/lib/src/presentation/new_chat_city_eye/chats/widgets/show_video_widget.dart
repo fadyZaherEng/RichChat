@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/resources/image_paths.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:video_player/video_player.dart';
@@ -9,7 +10,6 @@ import 'package:video_player/video_player.dart';
 class ShowVideoWidget extends StatefulWidget {
   final String videoPath;
   final Color color;
-  final bool isViewOnly;
   final void Function() onTap;
 
   const ShowVideoWidget({
@@ -17,7 +17,6 @@ class ShowVideoWidget extends StatefulWidget {
     required this.videoPath,
     required this.color,
     required this.onTap,
-    this.isViewOnly = false,
   }) : super(key: key);
 
   @override
@@ -58,21 +57,23 @@ class _ShowVideoWidgetState extends State<ShowVideoWidget> {
                 height: 150,
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: ColorSchemes.black,
                   borderRadius: BorderRadius.circular(15.0),
                 ),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    isLoading
-                        ? Center(
-                            child: SkeletonLine(
-                                style: SkeletonLineStyle(
-                            height: 150,
-                            width: MediaQuery.of(context).size.width,
-                            borderRadius: BorderRadius.circular(15.0),
-                          )))
-                        : VideoPlayer(videoController),
+                    isLoading?
+                     Center(
+                      child: SkeletonLine(
+                        style: SkeletonLineStyle(
+                          height: 150,
+                          width: MediaQuery.of(context).size.width,
+                          borderRadius: BorderRadius.circular(15.0),
+                        )
+                      )
+                    ):
+                    VideoPlayer(videoController),
                     Positioned(
                       bottom: 0,
                       left: 0,
@@ -86,7 +87,7 @@ class _ShowVideoWidgetState extends State<ShowVideoWidget> {
                                 videoController,
                                 allowScrubbing: true,
                                 colors: const VideoProgressColors(
-                                  playedColor: Colors.black,
+                                  playedColor: ColorSchemes.black,
                                 ),
                               ),
                             ),

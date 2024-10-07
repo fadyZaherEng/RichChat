@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
@@ -21,7 +22,6 @@ class StackedReactionsWidget extends StatefulWidget {
 class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
   @override
   Widget build(BuildContext context) {
-    //get reaction from list
     final massageReaction =
         widget.massage.reactions.map((e) => e.split("=")[1]).toList();
     final reactionShow = massageReaction.length > 4
@@ -32,13 +32,18 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
     return GestureDetector(
       onTap: widget.onPressed,
       child: Stack(
-        children: _getAllReactions(reactionShow, remainingReactionsLength),
+        children: _getAllReactions(
+          reactions: reactionShow,
+          remainingReactionsLength: remainingReactionsLength,
+        ),
       ),
     );
   }
 
-  List<Widget> _getAllReactions(
-      List<String> reactions, int remainingReactionsLength) {
+  List<Widget> _getAllReactions({
+    required List<String> reactions,
+    required int remainingReactionsLength,
+  }) {
     return reactions
         .asMap()
         .map(
@@ -61,7 +66,7 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
                                 borderRadius: BorderRadius.circular(25),
                               ),
                               elevation: 5,
-                              color: Colors.white,
+                              color: ColorSchemes.white,
                               clipBehavior: Clip.hardEdge,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -74,7 +79,7 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
                                       '+$remainingReactionsLength',
                                       style: const TextStyle(
                                         fontSize: 12,
-                                        color: Colors.black,
+                                        color: ColorSchemes.black,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),

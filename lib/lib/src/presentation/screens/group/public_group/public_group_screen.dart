@@ -80,7 +80,7 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                                     .whenComplete(() {
                                   Navigator.pushNamed(
                                     context,
-                                    Routes.chatWithFriendScreen,
+                                    Routes.chatWithFriendGeneralScreen,
                                     arguments: {
                                       "friendId": groupModel.groupID,
                                       "friendName": groupModel.groupName,
@@ -130,7 +130,7 @@ class _PublicGroupScreenState extends BaseState<PublicGroupScreen> {
                                   .whenComplete(() {
                                 Navigator.pushNamed(
                                   context,
-                                  Routes.chatWithFriendScreen,
+                                  Routes.chatWithFriendGeneralScreen,
                                   arguments: {
                                     "friendId": groupModel.groupID,
                                     "friendName": groupModel.groupName,

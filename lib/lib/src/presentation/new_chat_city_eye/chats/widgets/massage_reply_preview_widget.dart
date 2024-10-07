@@ -1,10 +1,13 @@
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:rich_chat_copilot/generated/l10n.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_type_widget.dart';
-import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_to_show_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/display_massage_type_widget.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/widgets/massage_to_show_widget.dart';
+
 class MassageReplyPreviewWidget extends StatelessWidget {
   final MassageReply? massageReply;
   final Massage? massage;
@@ -22,32 +25,27 @@ class MassageReplyPreviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final type =
-    massageReply != null ? massageReply!.massageType : massage!.massageType;
+        massageReply != null ? massageReply!.massageType : massage!.massageType;
 
     final padding = massageReply != null
         ? const EdgeInsets.all(10)
         : const EdgeInsets.only(top: 5, right: 5, bottom: 5);
-    final decorationColor = massageReply != null
-        ? Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.1)
-        : Theme.of(context).primaryColorDark.withOpacity(0.2);
-
 
     return IntrinsicHeight(
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
-          color: decorationColor,
-
-          border:const Border(
+          color:Colors.blue,
+          border:Border(
             top: BorderSide(color: Colors.purple, width: 1),
             left: BorderSide(color: Colors.purple, width: 1),
             right: BorderSide(color: Colors.purple, width: 1),
           ),
           borderRadius: massageReply != null
               ? const BorderRadius.only(
-              topLeft: Radius.circular(20), topRight: Radius.circular(20))
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))
               : const BorderRadius.only(
-              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,9 +54,9 @@ class MassageReplyPreviewWidget extends StatelessWidget {
           children: [
             Container(
               width: 5,
-              decoration: const BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.only(
+              decoration:  BoxDecoration(
+                color: ColorSchemes.iconBackGround,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
                 ),
@@ -68,7 +66,7 @@ class MassageReplyPreviewWidget extends StatelessWidget {
             _namedAndTypeWidget(type: type, context: context),
             const Spacer(),
             if(isShowCloseButton)
-              _closedButtonWidget(context),
+            _closedButtonWidget(context),
           ],
         ),
       ),
@@ -79,49 +77,40 @@ class MassageReplyPreviewWidget extends StatelessWidget {
     if (massageReply != null) {
       bool isMe = massageReply!.isMe;
       return Text(
-          isMe ? "You" : massageReply!.senderName,
-        style: GoogleFonts.openSans(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
-          //fontSize: 12,
-        ),
+        isMe ? S.of(context).you : massageReply!.senderName,
+        style: Theme.of(context).textTheme.bodyMedium
       );
     } else {
       return Text(
         massage!.repliedTo,
-        style: GoogleFonts.openSans(
-          fontWeight: FontWeight.bold,
-          color: Colors.blue,
-          //fontSize: 12,
-        ),
+        style: Theme.of(context).textTheme.bodyMedium,
       );
     }
   }
+
   Widget _closedButtonWidget(BuildContext context) {
     return InkWell(
       onTap: () {
         //TODO: set reply to null
         setReplyMessageWithNull();
       },
-      child:  Container(
-    padding: const EdgeInsets.all(2),
-    decoration: BoxDecoration(
-    color: Colors.green,
-    borderRadius: BorderRadius.circular(25),
-    border: Border.all(
-    color: Colors.purple,
-    width: 1,
-    ),
-    ),
-    child: const Icon(
-    Icons.close,
-    size: 18,
-    ),
-    ),
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: ColorSchemes.iconBackGround,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: Colors.purple,
+            width: 1,
+          ),
+        ),
+        child: const Icon(
+          Icons.close,
+          size: 18,
+        ),
+      ),
     );
   }
-
-
 
   Widget _namedAndTypeWidget({
     required MassageType type,
@@ -136,21 +125,19 @@ class MassageReplyPreviewWidget extends StatelessWidget {
           const SizedBox(height: 5),
           massageReply != null
               ? MassageToShowWidget(
-            massage: massageReply!.massage,
-            massageType: type,
-          )
+                  massage: massageReply!.massage,
+                  massageType: type,
+                  )
               : DisplayMassageTypeWidget(
-            massage: massage!.massage,
+                  massage: massage!.massage,
                   isReplying: true,
-            massageType: type,
-            textOverflow: TextOverflow.ellipsis,
-            maxLines: 1,
-            color: Colors.white,
-          ),
+                  massageType: type,
+                  textOverflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  color: ColorSchemes.white,
+                 ),
         ],
       ),
     );
   }
 }
-
-
