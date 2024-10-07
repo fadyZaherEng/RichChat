@@ -64,17 +64,15 @@ class _ShowVideoWidgetState extends State<ShowVideoWidget> {
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    isLoading?
-                     Center(
-                      child: SkeletonLine(
-                        style: SkeletonLineStyle(
-                          height: 150,
-                          width: MediaQuery.of(context).size.width,
-                          borderRadius: BorderRadius.circular(15.0),
-                        )
-                      )
-                    ):
-                    VideoPlayer(videoController),
+                    isLoading
+                        ? Center(
+                            child: SkeletonLine(
+                                style: SkeletonLineStyle(
+                            height: 150,
+                            width: MediaQuery.of(context).size.width,
+                            borderRadius: BorderRadius.circular(15.0),
+                          )))
+                        : VideoPlayer(videoController),
                     Positioned(
                       bottom: 0,
                       left: 0,

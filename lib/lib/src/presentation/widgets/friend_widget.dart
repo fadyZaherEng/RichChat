@@ -93,7 +93,7 @@ class _FriendWidgetState extends State<FriendWidget> {
       //ToDO navigate to chat screen
       Navigator.pushNamed(
         context,
-        Routes.chatWithFriendScreen,
+        Routes.chatWithFriendGeneralScreen,
         arguments: {
           "friendId": widget.friend.uId,
           "friendName": widget.friend.name,

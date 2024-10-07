@@ -44,7 +44,7 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
       filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+          padding: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -54,16 +54,16 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
                 child: Material(
                   color: Colors.transparent,
                   child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    margin: const EdgeInsets.symmetric(vertical: 2),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
-                      boxShadow: [
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.grey.shade400,
+                          color:Colors.purpleAccent,
                           spreadRadius: 1,
                           blurRadius: 2,
-                          offset: const Offset(0, 1),
+                          offset: Offset(0, 1),
                         ),
                       ],
                     ),
@@ -100,7 +100,13 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     reaction,
-                                    style: const TextStyle(fontSize: 20),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -206,7 +212,7 @@ class _ReactionsDialogWidgetState extends State<ReactionsDialogWidget> {
                                             : contextMenu == Constants.copy
                                                 ? Icons.copy
                                                 : Icons.delete,
-                                        color: Colors.black,
+                                        color: Colors.purple,
                                       ),
                                     )
                                   ],

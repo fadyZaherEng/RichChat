@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rich_chat_copilot/lib/src/config/theme/color_schemes.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
 
 class StackedReactionsWidget extends StatefulWidget {
@@ -23,8 +24,8 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
     //get reaction from list
     final massageReaction =
         widget.massage.reactions.map((e) => e.split("=")[1]).toList();
-    final reactionShow = massageReaction.length > 5
-        ? massageReaction.sublist(0, 5)
+    final reactionShow = massageReaction.length > 4
+        ? massageReaction.sublist(0, 4)
         : massageReaction;
     final remainingReactionsLength =
         massageReaction.length - reactionShow.length;
@@ -44,33 +45,17 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
           (index, reaction) {
             return MapEntry(
               index,
-              index == reactions.length - 1
+              index == reactions.length - 1 && remainingReactionsLength > 0
                   ? Stack(
                       children: [
-                        Container(
-                          margin: EdgeInsets.only(left: index * 18),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              boxShadow:  [
-                                BoxShadow(
-                                  color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black12,
-                                  spreadRadius: 1,
-                                  blurRadius: 2,
-                                  offset: const Offset(0, 1),
-                                )
-                              ]),
-                          child: ClipOval(
-                            child: Text(
-                              reaction,
-                              style: TextStyle(fontSize: widget.size),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                        _buildReaction(
+                          index: index,
+                          reaction: reaction,
+                          reactionLengthIsOne: reactions.length == 1,
                         ),
                         if (remainingReactionsLength > 0) ...[
                           Container(
                             margin: EdgeInsets.only(left: index * 22),
-                            padding: const EdgeInsets.only(bottom: 2),
                             child: Card(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25),
@@ -80,15 +65,17 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
                               clipBehavior: Clip.hardEdge,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 2.0, horizontal: 1),
+                                    horizontal: 4, vertical: 4),
                                 child: ClipOval(
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 2.0, horizontal: 1),
+                                        horizontal: 1),
                                     child: Text(
                                       '+$remainingReactionsLength',
                                       style: const TextStyle(
-                                          fontSize: 12, color: Colors.black),
+                                        fontSize: 12,
+                                        color: Colors.black,
+                                      ),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -99,30 +86,46 @@ class _StackedReactionsWidgetState extends State<StackedReactionsWidget> {
                         ]
                       ],
                     )
-                  : Container(
-                      margin: EdgeInsets.only(left: index * 18),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          boxShadow:  [
-                            BoxShadow(
-                              color:Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black12,
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: const Offset(0, 1),
-                            )
-                          ]),
-                      child: ClipOval(
-                        child: Text(
-                          reaction,
-                          style: TextStyle(fontSize: widget.size),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+                  : _buildReaction(
+                      index: index,
+                      reaction: reaction,
+                      reactionLengthIsOne: reactions.length == 1,
                     ),
             );
           },
         )
         .values
         .toList();
+  }
+
+  Widget _buildReaction({
+    required int index,
+    required String reaction,
+    required bool reactionLengthIsOne,
+  }) {
+    return Container(
+      margin: EdgeInsets.only(left: index * 18),
+      padding: reactionLengthIsOne
+          ? const EdgeInsets.symmetric(horizontal: 5)
+          : const EdgeInsets.all(0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        boxShadow: const [
+          BoxShadow(
+            color: ColorSchemes.lightGray,
+            spreadRadius: 1,
+            blurRadius: 2,
+            offset: Offset(0, 1),
+          )
+        ],
+      ),
+      child: ClipOval(
+        child: Text(
+          reaction,
+          style: TextStyle(fontSize: widget.size),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

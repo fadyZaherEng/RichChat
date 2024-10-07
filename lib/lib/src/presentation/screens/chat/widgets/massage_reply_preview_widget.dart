@@ -9,15 +9,15 @@ import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/mass
 class MassageReplyPreviewWidget extends StatelessWidget {
   final MassageReply? massageReply;
   final Massage? massage;
-  final bool viewOnly;
+  final bool isShowCloseButton;
   final void Function() setReplyMessageWithNull;
 
   const MassageReplyPreviewWidget({
     super.key,
     this.massageReply,
     this.massage,
+    required this.isShowCloseButton,
     required this.setReplyMessageWithNull,
-    this.viewOnly = false,
   });
 
   @override
@@ -28,18 +28,25 @@ class MassageReplyPreviewWidget extends StatelessWidget {
     final padding = massageReply != null
         ? const EdgeInsets.all(10)
         : const EdgeInsets.only(top: 5, right: 5, bottom: 5);
-
     final decorationColor = massageReply != null
         ? Theme.of(context).textTheme.titleLarge!.color!.withOpacity(0.1)
         : Theme.of(context).primaryColorDark.withOpacity(0.2);
+
     return IntrinsicHeight(
       child: Container(
         padding: padding,
         decoration: BoxDecoration(
           color: decorationColor,
+          border: const Border(
+            top: BorderSide(color: Colors.purple, width: 1),
+            left: BorderSide(color: Colors.purple, width: 1),
+            right: BorderSide(color: Colors.purple, width: 1),
+          ),
           borderRadius: massageReply != null
-              ? BorderRadius.circular(20)
-              : BorderRadius.circular(10),
+              ? const BorderRadius.only(
+                  topLeft: Radius.circular(20), topRight: Radius.circular(20))
+              : const BorderRadius.only(
+                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,18 +66,18 @@ class MassageReplyPreviewWidget extends StatelessWidget {
             const SizedBox(width: 8),
             _namedAndTypeWidget(type: type, context: context),
             const Spacer(),
-            _closedButtonWidget(context),
+            if (isShowCloseButton) _closedButtonWidget(context),
           ],
         ),
       ),
     );
   }
 
-  Widget getTitle() {
+  Widget _getTitle(context) {
     if (massageReply != null) {
       bool isMe = massageReply!.isMe;
       return Text(
-        isMe ? 'You' : massageReply!.senderName,
+        isMe ? "You" : massageReply!.senderName,
         style: GoogleFonts.openSans(
           fontWeight: FontWeight.bold,
           color: Colors.blue,
@@ -98,20 +105,13 @@ class MassageReplyPreviewWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .color!
-                .withOpacity(0.02),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .color!
-                  .withOpacity(0.5),
-              width: 1,
-            )),
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: Colors.purple,
+            width: 1,
+          ),
+        ),
         child: const Icon(
           Icons.close,
           size: 18,
@@ -129,23 +129,20 @@ class MassageReplyPreviewWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          getTitle(),
+          _getTitle(context),
           const SizedBox(height: 5),
           massageReply != null
               ? MassageToShowWidget(
                   massage: massageReply!.massage,
                   massageType: type,
-                  context: context,
                 )
               : DisplayMassageTypeWidget(
                   massage: massage!.massage,
                   isReplying: true,
-                  context: context,
                   massageType: type,
                   textOverflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   color: Colors.white,
-                  viewOnly: viewOnly,
                 ),
         ],
       ),

@@ -64,7 +64,6 @@ class LastMassageChatWidget extends StatelessWidget {
               child: MassageToShowWidget(
                 massageType: massageType,
                 massage: lastMassage,
-                context: context,
               ),
             ),
           ],

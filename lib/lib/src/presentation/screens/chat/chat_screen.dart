@@ -211,15 +211,15 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                   friendId: widget.friendId,
                   onEmojiSelected: (String emoji, Massage massage) {
                     if (emoji == '➕') {
-                      // Future.delayed(const Duration(milliseconds: 500), () {
-                      //   _navigateBackEvent();
-                      // });
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        _navigateBackEvent();
+                      });
                       //show emoji keyword
                       _showEmojiPickerDialog(massage);
                     } else {
-                      // Future.delayed(const Duration(milliseconds: 500), () {
-                      //   _navigateBackEvent();
-                      // });
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        _navigateBackEvent();
+                      });
                       _bloc.add(SelectReactionEvent(
                         massageId: massage.messageId,
                         senderId: currentUser.uId,
@@ -230,12 +230,9 @@ class _ChatScreenState extends BaseState<ChatScreen> {
                     }
                   },
                   onContextMenuSelected: (String contextMenu, Massage massage) {
-                    // Future.delayed(
-                    //   const Duration(milliseconds: 500),
-                    //   () {
-                    //     _navigateBackEvent();
-                    //   },
-                    // );
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      _navigateBackEvent();
+                    });
                     _onContextMenuSelected(contextMenu, massage);
                   },
                   deleteMessage: ({

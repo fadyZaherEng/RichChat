@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rich_chat_copilot/lib/src/presentation/new_chat_city_eye/chats/chat_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/chat_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/play_video_full_screen.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/create_group/create_group_screen.dart';
@@ -19,13 +20,13 @@ class Routes {
   static const String logInScreen = "/logInScreen";
   static const String settingsScreen = "/settingsScreen";
   static const String mainScreen = "/mainScreen";
-  static const String chatScreen = "/chatScreen";
   static const String otpScreen = "/otpScreen";
   static const String userInfoScreen = "/userInfoScreen";
   static const String profileScreen = "/profileScreen";
   static const String friendRequestScreen = "/friendRequestScreen";
   static const String friendsScreen = "/friendsScreen";
-  static const String chatWithFriendScreen = "/chatWithFriendScreen";
+  static const String chatWithFriendGeneralScreen = "/chatWithFriendGeneralScreen";
+  static const String chatWithFriendCityEyeScreen = "/chatWithFriendCityEyeScreen";
   static const String fullVideoScreen = "/full_video_screen";
   static const String createGroupScreen = "/createGroupScreen";
   static const String settingsGroupScreen = "/settingsGroupScreen";
@@ -72,10 +73,19 @@ class RoutesManager {
         ));
       case Routes.friendsScreen:
         return _materialRoute(const FriendsScreen());
-      case Routes.chatWithFriendScreen:
+      case Routes.chatWithFriendGeneralScreen:
         Map<String, dynamic> arg =
             routeSettings.arguments as Map<String, dynamic>;
         return _materialRoute(ChatScreen(
+          friendId: arg["friendId"],
+          friendName: arg["friendName"],
+          friendImage: arg["friendImage"],
+          groupId: arg["groupId"],
+        ));
+      case Routes.chatWithFriendCityEyeScreen:
+        Map<String, dynamic> arg =
+        routeSettings.arguments as Map<String, dynamic>;
+        return _materialRoute(ChatCityEyeScreen(
           friendId: arg["friendId"],
           friendName: arg["friendName"],
           friendImage: arg["friendImage"],

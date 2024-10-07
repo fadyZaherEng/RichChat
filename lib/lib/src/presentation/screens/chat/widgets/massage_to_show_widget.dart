@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:rich_chat_copilot/generated/l10n.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 
 class MassageToShowWidget extends StatelessWidget {
   final MassageType massageType;
   final String massage;
-  final BuildContext context;
 
   const MassageToShowWidget({
     required this.massageType,
     required this.massage,
-    required this.context,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return massageReplayShow();
+    return massageReplayShow(context);
   }
 
-  Widget massageReplayShow() {
+  Widget massageReplayShow(BuildContext context) {
     switch (massageType) {
       case MassageType.text:
         return Text(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_reactions/widgets/stacked_reactions.dart';
 import 'package:intl/intl.dart';
 import 'package:rich_chat_copilot/lib/src/core/utils/enum/massage_type.dart';
 import 'package:rich_chat_copilot/lib/src/data/source/local/single_ton/firebase_single_ton.dart';
 import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage.dart';
+import 'package:rich_chat_copilot/lib/src/domain/entities/chat/massage_reply.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/display_massage_type_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/massage_reply_preview_widget.dart';
 import 'package:rich_chat_copilot/lib/src/presentation/screens/chat/widgets/stacked_reactions_widget.dart';
@@ -80,20 +80,25 @@ class MyMassageWidget extends StatelessWidget {
                           children: [
                             if (isReplying) ...[
                               MassageReplyPreviewWidget(
-                                massage: massage,
-                                viewOnly: viewOnly,
+                                massageReply: MassageReply(
+                                  isMe: true,
+                                  senderId: massage.senderId.toString(),
+                                  senderName: massage.senderName,
+                                  massage: massage.repliedMessage,
+                                  massageType: massage.repliedMessageType,
+                                  senderImage: massage.senderImage,
+                                ),
                                 setReplyMessageWithNull: () {
                                   setMassageReplyNull();
                                 },
+                                isShowCloseButton: false,
                               )
                             ],
                             DisplayMassageTypeWidget(
                               massageType: massage.massageType,
                               massage: massage.massage,
                               color: Colors.white,
-                              context: context,
                               isReplying: false,
-                              viewOnly: false,
                             ),
                             Row(
                               mainAxisSize: MainAxisSize.min,
@@ -122,22 +127,27 @@ class MyMassageWidget extends StatelessWidget {
                 ),
               ),
             ),
+            // Positioned(
+            //     bottom: 0,
+            //     right: 30,
+            //     child: //TODO: Add Package StackedReactions
+            //     StackedReactions(
+            //       size: 22,
+            //       reactions: massageReactions,
+            //     )
+            // ),
+            //TODO: Add My StackedReactionsWidget
             Positioned(
-                bottom: 4,
-                right: 30,
-                child: //TODO: Add Package StackedReactions
-                    StackedReactions(
-                  reactions: massageReactions,
-                )
-                //TODO: Add My StackedReactionsWidget
-                // StackedReactionsWidget(
-                //   massage: massage,
-                //   size: 20,
-                //   onPressed: () {
-                //     //show bottom sheet with list of people reactions with massage
-                //   },
-                // ),
-                )
+              bottom: 5,
+              right: 30,
+              child: StackedReactionsWidget(
+                massage: massage,
+                size: 22,
+                onPressed: () {
+                  //todo show bottom sheet with list of people reactions with massage
+                },
+              ),
+            ),
           ],
         ),
       ),

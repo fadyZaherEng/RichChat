@@ -7,11 +7,12 @@ void showReactionsDialog({
   required Massage massage,
   required bool isMe,
   required String groupId,
-  required void Function(String,Massage) onContextMenuSelected,
-  required void Function(String,Massage) onEmojiSelected,
+  required void Function(String, Massage) onContextMenuSelected,
+  required void Function(String, Massage) onEmojiSelected,
   required void Function() setMassageReplyNull,
 }) {
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) => Dialog(
       elevation: 0,
@@ -24,11 +25,11 @@ void showReactionsDialog({
           message: massage,
           isMe: isMe,
           groupId: groupId,
-          onContextMenuSelected: (contextMenu,massage) {
-            onContextMenuSelected(contextMenu,massage);
+          onContextMenuSelected: (contextMenu, massage) {
+            onContextMenuSelected(contextMenu, massage);
           },
-          onEmojiSelected: (emoji,massage) {
-            onEmojiSelected(emoji,massage);
+          onEmojiSelected: (emoji, massage) {
+            onEmojiSelected(emoji, massage);
           },
           setMassageReplyNull: setMassageReplyNull,
         ),
